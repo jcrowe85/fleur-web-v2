@@ -1378,6 +1378,15 @@ var pro_submit_btn = document.querySelector(
 
 if(pro_submit_btn){
   pro_submit_btn.addEventListener('click',function(event){
+    // Check if this is a subscription product
+    const customVariantBox = document.querySelector('.custom-variant-box');
+    const isSubscription = customVariantBox && customVariantBox.getAttribute('data-subscription-product') === 'true';
+    
+    // If NOT a subscription, let the default handler or one-time handler take over
+    if (!isSubscription) {
+      return; // Don't prevent default, let other handlers work
+    }
+    
     event.preventDefault();
         pro_submit_btn.classList.add('loading');
     
@@ -1455,6 +1464,70 @@ if(pro_submit_btn){
   
         
         return false;
+  });
+}
+
+// One-time purchase handler (for main Add to Cart button)
+var pro_submit_btn_onetime = document.querySelector(
+  ".template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit"
+);
+
+if(pro_submit_btn_onetime){
+  pro_submit_btn_onetime.addEventListener('click',function(event){
+    // Check if this is a subscription product - if so, skip (subscription handler will handle it)
+    const customVariantBox = document.querySelector('.custom-variant-box');
+    const isSubscription = customVariantBox && customVariantBox.getAttribute('data-subscription-product') === 'true';
+    
+    // Only handle one-time purchases
+    if (isSubscription) {
+      return; // Let subscription handler take over
+    }
+    
+    event.preventDefault();
+    pro_submit_btn_onetime.classList.add('loading');
+    
+    var main_pro_id = document.querySelector('[name="id"]').value;
+    var sections = ['cart-drawer', 'cart-icon-bubble'];
+    
+    if(!main_pro_id) {
+      pro_submit_btn_onetime.classList.remove('loading');
+      return;
+    }
+    
+    // Single API call for one-time purchase (no gifts, no selling plan)
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        items: [{ id: main_pro_id, quantity: 1 }],
+        sections: sections
+      }),
+    })
+    .then(response => response.json())
+    .then(response => {
+      const cartDrawer = document.querySelector('cart-drawer');
+      if (cartDrawer) {
+        cartDrawer.classList.remove('is-empty');
+        cartDrawer.renderContents(response);
+        
+        var time = document.querySelector('cart-drawer').getAttribute('data-timer');
+        if (time) {
+          window.cart_limit = time * 60 * 1000;
+        }
+      }
+      
+      pro_submit_btn_onetime.classList.remove('loading');
+    })
+    .catch((err) => {
+      console.error('Error adding to cart:', err);
+      pro_submit_btn_onetime.classList.remove('loading');
+      // Fallback to normal form submission
+      event.target.closest('form').submit();
+    });
+    
+    return false;
   });
 }
 
