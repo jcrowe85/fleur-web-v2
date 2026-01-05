@@ -1,0 +1,223 @@
+.how-to-use {
+    background: url(https://tryfleur.com/cdn/shop/files/how_to_use_vertical.png?v=1725993239&width=5000) no-repeat center center;
+    display: flex;
+    justify-content: center;
+    background-size: cover;
+    background-position: left;
+}
+
+.how-to-use .container {
+    display: flex;
+    margin: 0 auto;
+    flex-direction: column;
+    align-items: center;
+    padding: 5rem 0;
+}
+
+.how-to-use .container .header {
+    min-height: none !important;
+    border: none !important;
+}
+
+.how-to-use h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.infinity-circles {
+  width: 300px;
+  height: 898px;
+  margin-top: 2rem;
+}
+
+.circles {
+    background-image: url(https://tryfleur.com/cdn/shop/files/Mobile-Overlay-Circles-only_1.png?v=1725993239&width=5000);
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+}
+
+.circles div {
+    width: 207px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+    margin-top: 0rem;
+}
+
+.how-to-use .container .header h2 {
+    color: white !important;
+    text-transform: lowercase;
+}
+
+.infinity-circles div p {
+    color: white !important;
+}
+
+/* @media only screen and (min-width: 576px) {
+    .how-to-use {
+        background: url(https://tryfleur.com/cdn/shop/files/Homepage-howto-3-step-2019--x-1055-D-BG-only_1.png?v=1725993239&width=5000) no-repeat center center;
+        height: 728px;
+        display: flex;
+        justify-content: center;
+        background-size: cover;
+        margin-top: 0rem;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    .circles {
+        background-image: url(https://tryfleur.com/cdn/shop/files/407.png?v=1725993239&width=5000);
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: row;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    
+    .circles div {
+        width: 207px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+    .infinity-circles {
+        width: 407px;
+        height: 136px;
+    } 
+} */
+
+@media only screen and (min-width: 768px) {
+    .how-to-use {
+        background: url(https://tryfleur.com/cdn/shop/files/Homepage-howto-3-step-2019--x-1055-E-BG-only.png?v=1725993239&width=5000) no-repeat center center;
+        height: 728px;
+        display: flex;
+        justify-content: center;
+        background-size: cover;
+        margin-top: 0rem;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    .circles {
+        background-image: url(https://tryfleur.com/cdn/shop/files/1222.png?v=1725993239&width=5000);
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: row;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    
+    .circles div {
+        width: 207px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+    .infinity-circles {
+        width: 815px;
+        height: 273px;
+    } 
+}
+
+@media only screen and (min-width: 1200px) {
+
+    .how-to-use {
+        background: url(https://tryfleur.com/cdn/shop/files/Homepage-howto-3-step-2019--x-1055-E-BG-only.png?v=1725993239&width=5000) no-repeat center center;
+        height: 913px;
+        display: flex;
+        justify-content: center;
+        background-size: cover;
+        margin-top: 0rem;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    .circles {
+        background-image: url(https://tryfleur.com/cdn/shop/files/1222.png?v=1725993239&width=5000);
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: row;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    
+    .circles div {
+        width: 207px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+    .infinity-circles {
+        width: 1222px;
+        height: 409px;
+    }
+}
+
+
+@media only screen and (min-width: 1560px) {
+    .how-to-use {
+        background: url(https://tryfleur.com/cdn/shop/files/Homepage-howto-3-step-2019--x-1055-E-BG-only.png?v=1725993239&width=5000) no-repeat center center;
+        height: 913px;
+        display: flex;
+        justify-content: center;
+        background-size: cover;
+        margin-top: 0rem;
+    }
+
+    .how-to-use .container {
+        padding: 15rem 0;
+    }
+    
+    .circles {
+        background-image: url(https://tryfleur.com/cdn/shop/files/Circles-Overlay_cab77885-f8f3-418c-9de5-9fc9571c8fac.png?v=1725993239&width=5000);
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: row;
+    }
+    .circles div {
+        width: 207px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+    .infinity-circles {
+        width: 1504px;
+        height: 504px;
+    }
+}

@@ -1,0 +1,14 @@
+.announcement-bar__text p { margin: 0; font-size: 14px; }
+.announcement-bar__text {padding: 10px 0; }
+
+@media only screen and (max-width: 480px) {
+    .announcement-bar__text p { font-size: 12px }
+}
+
+
+
+
+
+
+
+

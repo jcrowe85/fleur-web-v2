@@ -1,0 +1,204 @@
+{{ 'doctor-recommended.css' | asset_url | stylesheet_tag }}
+
+<section class="doctor-recommended section-{{ section.id }} color-{{ section.settings.color_scheme }} background section-{{ section.id }}-paddings">
+    <div class="container doctor-recommended__wrapper">
+      <div class="section-header__line">
+          {% if section.settings.heading != blank %}
+                  <h2
+                  class="title--section {% if section.settings.heading_size == 'medium' %}h2{% else %}h1{% endif %}"
+                  {{ section.shopify_attributes }}
+                  >
+                  {{ section.settings.heading }}
+                  </h2> 
+          {% endif %}
+          {% if section.settings.description != blank %}
+              <div class="rte">{{ section.settings.description }}</div>
+          {% endif %}
+      </div>  
+      <div class="doctors">
+        <div class="doctor">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0683/1256/3891/files/derma_5.png?v=1766282320"
+            alt="Doctor portrait"
+            width=""
+            height=""
+          />
+          <p class="doctor__endorsement">
+            “In my practice, I look for solutions that support hair health from multiple angles. This approach has become a consistent part of how I guide patients dealing with thinning and shedding.”
+          </p>
+          <div class="doctor__info">
+            <p class="doctor__name">Dr. Amanda Klein, M.D.</p>
+            <p class="doctor__certification">Board-Certified Dermatologist</p>
+          </div>
+        </div>   
+        <div class="doctor">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0683/1256/3891/files/derma_9.png?v=1766282822"
+            alt="Doctor portrait"
+            width=""
+            height=""
+          />
+          <p class="doctor__endorsement">
+            “As a physician, evidence and patient experience matter most to me. Over time, patients have reported stronger hair, improved density, and greater confidence in their appearance.”
+          </p>
+          <div class="doctor__info">
+            <p class="doctor__name">Dr. Andrew Micheals, M.D.</p>
+            <p class="doctor__certification">Double Board-Certified Dermatologist</p>
+          </div>
+        </div>  
+        <div class="doctor">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0683/1256/3891/files/derma_11.png?v=1766283143"
+            alt="Doctor portrait"
+            width=""
+            height=""
+          />
+          <p class="doctor__endorsement">
+            “I’ve always been cautious about recommending hair products, but I’ve seen steady, noticeable improvements in patients who stay consistent with this routine. The feedback has been overwhelmingly positive.”
+          </p>
+          <div class="doctor__info">
+            <p class="doctor__name">Dr. Amber Hartwell, M.D.</p>
+            <p class="doctor__certification">Board-Certified Dermatologist</p>
+          </div>
+        </div>         
+        <div class="doctor">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0683/1256/3891/files/derma_12.png?v=1766283405"
+            alt="Doctor portrait"
+            width=""
+            height=""
+          />
+          <p class="doctor__endorsement">
+            “In my experience, consistency and formulation matter most when addressing hair concerns. Patients who commit to this routine often report healthier-looking hair and improved overall scalp confidence.”
+          </p>
+          <div class="doctor__info">
+            <p class="doctor__name">Dr. Steven Morales, M.D.</p>
+            <p class="doctor__certification">Board-Certified Dermatologist</p>
+          </div>
+        </div>                   
+      </div>      
+    </div>
+</section>
+
+<script>
+(function () {
+  function initDoctorAnimation(sectionId) {
+    const section = document.querySelector(".doctor-recommended.section-" + sectionId);
+    if (!section) return;
+
+    const cards = Array.from(section.querySelectorAll(".doctor"));
+    if (!cards.length) return;
+
+    // prevent double init (Shopify editor re-renders)
+    if (section.dataset.animated === "1") return;
+    section.dataset.animated = "1";
+
+    const STAGGER_MS = 140;
+
+    // Prefer observing the list (more reliable than the whole section on mobile)
+    const triggerEl = section.querySelector(".doctors") || cards[0];
+
+    // Mobile-friendly observer settings
+    const isMobile = window.matchMedia("(max-width: 989px)").matches;
+
+    // If IntersectionObserver is missing, just reveal
+    if (!("IntersectionObserver" in window)) {
+      cards.forEach((card, i) => {
+        card.style.transitionDelay = `${i * STAGGER_MS}ms`;
+        card.classList.add("is-visible");
+      });
+      return;
+    }
+
+    // iOS can be finicky with high thresholds + negative bottom margins
+    const options = isMobile
+      ? { threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
+      : { threshold: 0.35, rootMargin: "0px 0px -160px 0px" };
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        cards.forEach((card, i) => {
+          card.style.transitionDelay = `${i * STAGGER_MS}ms`;
+          card.classList.add("is-visible");
+        });
+
+        io.disconnect();
+      });
+    }, options);
+
+    io.observe(triggerEl);
+  }
+
+  // Run on load
+  document.addEventListener("DOMContentLoaded", function () {
+    initDoctorAnimation("{{ section.id }}");
+  });
+
+  // Shopify theme editor can re-render sections without full reload
+  document.addEventListener("shopify:section:load", function (event) {
+    if (!event?.detail?.sectionId) return;
+    if (event.detail.sectionId === "{{ section.id }}") {
+      // allow re-init
+      const section = document.querySelector(".doctor-recommended.section-{{ section.id }}");
+      if (section) section.dataset.animated = "0";
+      initDoctorAnimation("{{ section.id }}");
+    }
+  });
+
+  // iOS/Safari sometimes needs a re-check after orientation changes
+  window.addEventListener("orientationchange", function () {
+    const section = document.querySelector(".doctor-recommended.section-{{ section.id }}");
+    if (section) section.dataset.animated = "0";
+    initDoctorAnimation("{{ section.id }}");
+  });
+})();
+</script>
+
+
+
+{% schema %}
+{
+  "name": "Doctor Recommended",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "background-2",
+      "label": "t:sections.all.color_scheme.label"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "medium",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.rich-text.blocks.heading.settings.heading_size.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Doctor Recommended Section"
+    }
+  ]
+}
+{% endschema %}

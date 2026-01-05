@@ -1,0 +1,205 @@
+.multicolumn .multicolumn-buttons {
+  display: none;
+}
+@media screen and (max-width: 991px) {
+  .multicolumn .swiper--multicolumn .multicolumn-buttons {
+    display: grid;
+    grid-template-columns: 4.4rem 4.4rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 2rem;
+  }
+  .multicolumn .swiper--multicolumn .multicolumn-buttons .multicolumn-button {
+    width: 4.4rem;
+    height: 4.4rem;
+    max-width: 4.4rem;
+    max-height: 4.4rem;
+    min-width: 4.4rem;
+    min-height: 4.4rem;
+    border-radius: 50%;
+    padding: 0;
+  }
+  .multicolumn .swiper--multicolumn .multicolumn-buttons .multicolumn-button span {
+    display: flex;
+  }
+  .multicolumn .swiper--multicolumn .multicolumn-buttons .multicolumn-button-prev {
+    transform: rotate(180deg);
+  }
+  .multicolumn .swiper--multicolumn .multicolumn-list__wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    grid-template-columns: auto;
+    gap: 0;
+    justify-content: unset;
+  }
+}
+
+.multicolumn {
+  --col-gap: 6rem;
+  --row-gap: 4rem;
+}
+@media screen and (min-width: 1200px) {
+  .multicolumn {
+    --col-gap: clamp(4rem, calc(2rem + 2rem * (4 - var(--per-row))), 12rem);
+    --row-gap: 4rem;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .multicolumn {
+    --col-gap: clamp(4rem, calc(2rem + 2rem * (6 - var(--per-row))), 12rem);
+  }
+}
+.multicolumn .multicolumn-card__info:first-child > *:first-child {
+  margin-top: 0;
+}
+.multicolumn .multicolumn-card__info:last-child > *:last-child {
+  margin-bottom: 0;
+}
+.multicolumn .multicolumn-card__image-wrapper,
+.multicolumn .multicolumn_card-icon {
+  margin-bottom: 1.2rem;
+}
+@media screen and (min-width: 990px) {
+  .multicolumn .multicolumn-card__image-wrapper,
+  .multicolumn .multicolumn_card-icon {
+    margin-bottom: 2.4rem;
+  }
+}
+.multicolumn .multicolumn-list__wrapper {
+  display: grid;
+  column-gap: var(--col-gap);
+  row-gap: var(--row-gap);
+  grid-template-columns: 1fr;
+  flex: 1 1 auto;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  margin-bottom: 3.6rem;
+}
+@media screen and (min-width: 990px) {
+  .multicolumn .multicolumn-list__wrapper {
+    margin-bottom: 0;
+  }
+}
+@media screen and (min-width: 990px) {
+  .multicolumn .multicolumn-list__wrapper {
+    grid-template-columns: repeat(clamp(1, var(--per-row), 2), 1fr);
+  }
+}
+@media screen and (min-width: 1200px) {
+  .multicolumn .multicolumn-list__wrapper {
+    grid-template-columns: repeat(var(--per-row), 1fr);
+  }
+}
+.multicolumn__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.6rem;
+}
+.multicolumn__image-wrapper {
+  flex: none;
+  width: 17.2rem;
+  height: 23.5rem;
+  border-radius: 0.3rem;
+  overflow: hidden;
+}
+@media screen and (max-width: 1200px) {
+  .multicolumn__image-wrapper {
+    width: 13rem;
+    height: 17rem;
+  }
+}
+.multicolumn__image-wrapper .multicolumn_card-icon {
+  margin-bottom: 2.4rem;
+}
+.multicolumn__image-wrapper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--duration-default);
+  transform-origin: 50% 50%;
+}
+.multicolumn__link:empty {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+.multicolumn__button {
+  position: relative;
+  z-index: 3;
+}
+.multicolumn .horizontal-alignment-center .multicolumn-card {
+  text-align: center;
+  align-items: center;
+}
+.multicolumn .horizontal-alignment-center .multicolumn-card__info {
+  align-items: center;
+}
+.multicolumn .horizontal-alignment-center .multicolumn-card__image-block {
+  margin: 0 auto;
+}
+.multicolumn .horizontal-alignment-center .multicolumn-card__button {
+  display: flex;
+  justify-content: center;
+}
+
+.multicolumn-card__image-wrapper {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+.multicolumn-card .multicolumn-card__info-title {
+  margin-bottom: 0.8rem;
+}
+.multicolumn-card .button {
+  padding: 0;
+}
+.multicolumn-card .multicolumn_card-desc {
+  margin-bottom: 2.4rem;
+}
+.multicolumn-card__image-item {
+  margin: 0 auto;
+  position: relative;
+  display: block;
+}
+.multicolumn-card__image-item img,
+.multicolumn-card__image-item svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.multicolumn-card__image-item img {
+  bottom: 24px;
+}
+.multicolumn-card__image-size-small {
+  width: 3.3rem;
+}
+.multicolumn-card__image-size-medium {
+  width: 6.6rem;
+}
+.multicolumn-card__image-size-large {
+  width: 8.8rem;
+}
+.multicolumn-card__image-size-icon {
+  width: 64px;
+}
+.multicolumn-card__image-ratio-landscape {
+  padding-bottom: 56.25%;
+}
+.multicolumn-card__image-ratio-portrait {
+  padding-bottom: 125%;
+}
+.multicolumn-card__image-ratio-square {
+  padding-bottom: 100%;
+}

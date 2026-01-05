@@ -1,0 +1,7 @@
+.footer-bottom-bar { background-size: cover; background-position: center center; width: 100%; position:relative;}
+.footer-bottom-bar::before { content: ""; position: absolute; inset: 0px; height: 100%; width: 100%; background-blend-mode: multiply;  }
+.footer__copyright, .footer__copyright * { color: #fcfcf7; opacity: 1; text-decoration:none;}
+.git-image-caption-wrap { text-align: center; position: relative; z-index: 1; }
+.footer__copyright {opacity:0.7;}
+.footer__copyright { opacity: 0.7; display: flex; justify-content: center; gap: 4px; }
+.footer-bottom-bar { margin-top: -1px; }

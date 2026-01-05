@@ -1,0 +1,177 @@
+.countdown {
+  text-align: center;
+}
+.countdown__wrapper {
+  flex-direction: column-reverse;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 2.4rem 1.6rem;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+.countdown__wrapper .countdown__body {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+@media screen and (min-width: 750px) {
+  .countdown__wrapper {
+    gap: 3rem;
+  }
+  .countdown__wrapper .countdown__body {
+    width: auto;
+    margin-bottom: 0;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .countdown__wrapper {
+    flex-direction: row;
+    padding: 3.4rem;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .countdown__wrapper {
+    padding: 6.4rem;
+  }
+}
+@media screen and (min-width: 1860px) {
+  .countdown__wrapper {
+    gap: 12rem;
+  }
+}
+.countdown__wrapper::before {
+  background: var(--countdown-overlay);
+}
+.countdown .countdown__font h3 {
+  font-family: Satoshi;
+}
+.countdown .countdown__column {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+}
+@media screen and (min-width: 750px) {
+  .countdown .countdown__column {
+    gap: 4.8rem;
+  }
+}
+.countdown .countdown__column .countdown__header {
+  text-align: left;
+}
+.countdown .countdown__position {
+  align-items: center;
+}
+.countdown .countdown__position .countdown__header {
+  text-align: center;
+}
+.countdown__header {
+  text-align: center;
+}
+@media screen and (min-width: 1200px) {
+  .countdown__header {
+    width: 100%;
+    max-width: 660px;
+    text-align: left;
+  }
+}
+.countdown__img,
+.countdown__img img,
+.countdown__img video {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -2;
+}
+.countdown__img img,
+.countdown__img video {
+  object-fit: cover;
+  object-position: center;
+}
+.countdown__body:only-child {
+  margin-bottom: 0;
+}
+.countdown__main {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+@media screen and (min-width: 576px) {
+  .countdown__main {
+    gap: 1.6rem;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .countdown__main {
+    gap: 2.4rem;
+  }
+}
+@media screen and (min-width: 1540px) {
+  .countdown__main {
+    gap: 3.2rem;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .countdown__main .countdown__block__num:last-child {
+    min-width: 9rem;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .countdown__main .countdown__block__num:last-child {
+    min-width: 13rem;
+  }
+}
+.countdown__main .countdown__block__num > div {
+  margin: 0;
+  font-family: var(--numbers-font);
+  font-weight: var(--numbers-font-weight);
+  font-style: var(--numbers-font-style);
+}
+.countdown__main .countdown__block__num p {
+  margin: 0;
+  font-weight: 500;
+}
+.countdown__header-title {
+  margin: 0;
+  margin-bottom: 2.4rem;
+}
+.countdown .countdown__header-text {
+  margin-bottom: 2.4rem;
+}
+.countdown__heading {
+  display: none;
+}
+.countdown__heading h3 {
+  margin: 0;
+}
+.countdown .countdown__delimiter {
+  display: inline-block;
+  background: rgba(var(--color-foreground), 0.12);
+  align-self: center;
+  width: 0.3rem;
+  height: 3.2rem;
+}
+@media screen and (min-width: 750px) {
+  .countdown .countdown__delimiter {
+    width: 3.2rem;
+    height: 0.3rem;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .countdown .countdown__delimiter {
+    width: 4.4rem;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .countdown .countdown__delimiter {
+    width: 5.6rem;
+  }
+}

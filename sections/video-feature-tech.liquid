@@ -1,0 +1,541 @@
+{{ 'video-feature-tech.css' | asset_url | stylesheet_tag }}
+{% style %}
+  .section-{{ section.id }}-padding {
+  {% if section.settings.padding_top == 'no-indent' %}
+    padding-top: 0;
+  {% else %}
+    padding-top: 3.2rem;
+  {% endif %}
+
+  {% if section.settings.padding_bottom == 'no-indent' %}
+    padding-bottom: 0;
+  {% else %}
+    padding-bottom: 3.2rem;
+  {% endif %}
+}
+
+@media screen and (min-width: 990px) {
+  .section-{{ section.id }}-padding {
+    {% if section.settings.padding_top == 'no-indent' %}
+      padding-top: 0;
+    {% elsif section.settings.padding_top == 'l' %}
+      padding-top: 4rem;
+    {% else %}
+      padding-top: 3.2rem;
+    {% endif %}
+
+    {% if section.settings.padding_bottom == 'no-indent' %}
+      padding-bottom: 0;
+    {% elsif section.settings.padding_bottom == 'l' %}
+      padding-bottom: 4rem;
+    {% else %}
+      padding-bottom: 3.2rem;
+    {% endif %}
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .section-{{ section.id }}-padding {
+    {% if section.settings.padding_top == 'no-indent' %}
+      padding-top: 0;
+    {% elsif section.settings.padding_top == 'l' %}
+      padding-top: 8rem;
+    {% elsif section.settings.padding_top == 'm' %}
+      padding-top: 4rem;
+    {% else %}
+      padding-top: 3.2rem;
+    {% endif %}
+
+    {% if section.settings.padding_bottom == 'no-indent' %}
+      padding-bottom: 0;
+    {% elsif section.settings.padding_bottom == 'l' %}
+      padding-bottom: 8rem;
+    {% elsif section.settings.padding_bottom == 'm' %}
+      padding-bottom: 4rem;
+    {% else %}
+      padding-bottom: 3.2rem;
+    {% endif %}
+  }
+}
+
+@media screen and (min-width: 1560px) {
+  .section-{{ section.id }}-padding {
+    {% if section.settings.padding_top == 'no-indent' %}
+      padding-top: 0;
+    {% elsif section.settings.padding_top == 'l' %}
+      padding-top: 16rem;
+    {% elsif section.settings.padding_top == 'm' %}
+      padding-top: 8rem;
+    {% elsif section.settings.padding_top == 's' %}
+      padding-top: 4rem;
+    {% else %}
+      padding-top: 3.2rem;
+    {% endif %}
+
+    {% if section.settings.padding_bottom == 'no-indent' %}
+      padding-bottom: 0;
+    {% elsif section.settings.padding_bottom == 'l' %}
+      padding-bottom: 16rem;
+    {% elsif section.settings.padding_bottom == 'm' %}
+      padding-bottom: 8rem;
+    {% elsif section.settings.padding_bottom == 's' %}
+      padding-bottom: 4rem;
+    {% else %}
+      padding-bottom: 3.2rem;
+    {% endif %}
+  }
+}
+
+  .tech-card-container {
+    background-color: {{ section.settings.card_color }};
+  }
+  .tech-video-section.{{ section.id }} {background-image:url({{ section.settings.bg_image | img_url:"master" }});}
+
+  /* Ensure video behaves predictably */
+  .tech-video-section.{{ section.id }} .mobile_video_show {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+{% endstyle %}
+
+<section class="tech-video-section {{ section.id }} color-{{ section.settings.color_scheme }}  section-{{ section.id }}-padding"
+  data-hevc-desktop="{{ section.settings.cloudinary_hevc_desktop_url | strip | escape }}"
+  data-webm-desktop="{{ section.settings.cloudinary_webm_desktop_url | strip | escape }}"
+  data-mp4-desktop="{{ section.settings.cloudinary_mp4_desktop_url | strip | escape }}"
+  data-hevc-mobile="{{ section.settings.cloudinary_hevc_mobile_url | strip | escape }}"
+  data-webm-mobile="{{ section.settings.cloudinary_webm_mobile_url | strip | escape }}"
+  data-mp4-mobile="{{ section.settings.cloudinary_mp4_mobile_url | strip | escape }}"
+>
+  <div class="tech-card-container container">
+    <div class="tech-content-grid fade-up-on-scroll">
+
+      <div class="left-column">
+        {% if section.settings.caption_text != blank %}
+          <p id="animatedCaption" class="tech-caption text-xl font-light text-green-400">
+            {{ section.settings.caption_text | escape }}
+          </p>
+           <style>
+        .tech-caption span {
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            display: inline-block;
+            padding-right: 0.1em;
+        }
+    </style>
+    <script>
+        function startWordAnimation(captionElement) {
+            if (captionElement.hasAttribute('data-animated')) return;
+            captionElement.setAttribute('data-animated', 'true');
+
+            const textContent = captionElement.textContent.trim();
+            if (textContent.length === 0) return;
+
+            const wordsWithSpaces = textContent.match(/(\S+\s*)/g) || [];
+            captionElement.innerHTML = '';
+
+            const animationDelay = 120;
+
+            wordsWithSpaces.forEach((word, index) => {
+                const span = document.createElement('span');
+                span.textContent = word;
+                captionElement.appendChild(span);
+
+                setTimeout(() => {
+                    span.offsetHeight;
+                    span.style.opacity = '1';
+                }, index * animationDelay);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const captionElement = document.getElementById('animatedCaption');
+            if (!captionElement) return;
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startWordAnimation(entry.target);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
+
+            observer.observe(captionElement);
+        });
+    </script>
+        {% endif %}
+
+        {% if section.settings.main_title != blank %}
+         <h2 class="tech-title h2">{{ section.settings.main_title  }}</h2>
+        {% endif %}
+
+        {% if section.settings.body_text != blank %}
+          <div class="tech-body">
+            {{ section.settings.body_text }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.stat_value != blank %}
+          <div class="tech-stat-box desktop-show">
+            <div class="stat-box-inner">
+              <span class="stat-box-caption">{{ section.settings.stat_caption | escape }}</span>
+              <span class="stat-box-value">
+               <em>↑</em>
+               <dd class="stat-counter animate-count text-6xl" data-target="{{ section.settings.stat_value | escape }}">{{ section.settings.stat_value | escape }}</dd>%
+              </span>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if section.settings.disclaimer_text != blank %}
+        <p class="tech-disclaimer desktop-show">{{ section.settings.disclaimer_text }}</p>
+         {% endif %}
+      </div>
+
+      {% if section.settings.video_url != blank
+         or section.settings.cloudinary_mp4_desktop_url != blank
+         or section.settings.cloudinary_hevc_desktop_url != blank
+         or section.settings.cloudinary_webm_desktop_url != blank
+         or section.settings.cloudinary_mp4_mobile_url != blank
+         or section.settings.cloudinary_hevc_mobile_url != blank
+         or section.settings.cloudinary_webm_mobile_url != blank
+         or section.settings.video_url_mobile != blank %}
+
+        <div class="right-column desktop-show">
+          {% if section.settings.video_text_top != blank %}
+            <div class="video-text video-text-top fade-up-on-scroll">{{ section.settings.video_text_top }}</div>
+          {% endif %}
+
+          <div class="video-wrapper" style="display: flex; justify-content: center; align-items: center;">
+            {% if section.settings.video_url != blank %}
+              <img
+                src="{{ section.settings.video_url | image_url: width: 1000 }}"
+                width="280"
+                alt=""
+                loading="lazy"
+                class="dekstop-gif-show"
+              >
+            {% endif %}
+
+            <video
+              class="mobile_video_show js-tech-video"
+              muted
+              playsinline
+              autoplay
+              loop
+              preload="metadata"
+            ></video>
+          </div>
+
+          {% if section.settings.video_text_bottom != blank %}
+            <div class="video-text video-text-bottom fade-up-on-scroll">{{ section.settings.video_text_bottom }}</div>
+          {% endif %}
+        </div>
+
+        <div class="right-column mobile-show">
+          <div class="text-bottom-top-wraper">
+            {% if section.settings.video_text_top != blank %}
+              <div class="video-text video-text-top">{{ section.settings.video_text_top }}</div>
+            {% endif %}
+
+            {% if section.settings.video_text_bottom != blank %}
+              <div class="video-text video-text-bottom">{{ section.settings.video_text_bottom }}</div>
+            {% endif %}
+          </div>
+
+          <div class="video-wrapper">
+            {% if section.settings.video_url != blank %}
+              <img
+                src="{{ section.settings.video_url | image_url: width: 1000 }}"
+                alt=""
+                loading="lazy"
+                class="mobile-gif-show"
+              >
+            {% endif %}
+
+            <video
+              class="mobile_video_show js-tech-video"
+              muted
+              playsinline
+              autoplay
+              loop
+              preload="metadata"
+            ></video>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if section.settings.stat_value != blank %}
+        <div class="tech-stat-box mobile-show">
+          <div class="stat-box-inner">
+            <span class="stat-box-caption">{{ section.settings.stat_caption | escape }}</span>
+            <span class="stat-box-value">
+              <em>↑</em>
+              {{ section.settings.stat_value | escape }}
+            </span>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if section.settings.disclaimer_text != blank %}
+        <p class="tech-disclaimer mobile-show">{{ section.settings.disclaimer_text }}</p>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const root = document.querySelector('.tech-video-section.{{ section.id }}');
+    if (!root) return;
+
+    const isMobile = () => window.matchMedia('(max-width: 989px)').matches;
+
+    const canPlayHEVC = () => {
+      const v = document.createElement('video');
+      return !!(v.canPlayType && v.canPlayType('video/mp4; codecs="hvc1"').replace(/no/, ''));
+    };
+
+    const canPlayWebM = () => {
+      const v = document.createElement('video');
+      return !!(v.canPlayType && v.canPlayType('video/webm; codecs="vp9"').replace(/no/, ''));
+    };
+
+    const pick = () => {
+      const mobile = isMobile();
+
+      const hevc = mobile ? (root.dataset.hevcMobile || '') : (root.dataset.hevcDesktop || '');
+      const webm = mobile ? (root.dataset.webmMobile || '') : (root.dataset.webmDesktop || '');
+      const mp4  = mobile ? (root.dataset.mp4Mobile  || '') : (root.dataset.mp4Desktop  || '');
+
+      if (hevc && canPlayHEVC()) return { url: hevc, type: 'video/mp4; codecs="hvc1"' };
+      if (webm && canPlayWebM()) return { url: webm, type: 'video/webm' };
+      if (mp4) return { url: mp4, type: 'video/mp4' };
+      return null;
+    };
+
+    const setSource = (video, picked) => {
+      if (!video || !picked || !picked.url) return;
+
+      const current = video.getAttribute('data-active-src');
+      if (current === picked.url) return;
+
+      // Clear sources
+      while (video.firstChild) video.removeChild(video.firstChild);
+
+      const s = document.createElement('source');
+      s.src = picked.url;
+      s.type = picked.type || '';
+      video.appendChild(s);
+
+      video.setAttribute('data-active-src', picked.url);
+
+      try {
+        video.muted = true;
+        video.playsInline = true;
+        video.loop = true;
+      } catch(e) {}
+
+      video.load();
+
+      // Force autoplay in Safari
+      try {
+        const p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(function(){});
+      } catch(e) {}
+    };
+
+    const applyAll = () => {
+      const picked = pick();
+      root.querySelectorAll('video.js-tech-video').forEach(v => setSource(v, picked));
+    };
+
+    document.addEventListener('DOMContentLoaded', applyAll);
+
+    // Re-apply on resize/orientation changes (debounced)
+    let t = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(t);
+      t = setTimeout(applyAll, 200);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video Feature Tech",
+  "tag": "section",
+  "class": "video-tech-section",
+  "settings": [
+    {
+      "type":"color_scheme",
+      "id":"color_scheme",
+      "default":"background-2",
+      "label":"t:sections.all.color_scheme.label"
+    },
+    {
+      "type":"image_picker",
+      "id":"bg_image",
+      "label":"Background Image"
+    },
+    {
+      "type": "header",
+      "content": "Left Column: Caption & Title"
+    },
+    {
+      "type": "text",
+      "id": "caption_text",
+      "label": "Small Caption Text (e.g., VISCAP® TECHNOLOGY)",
+      "default": "VISCAP® TECHNOLOGY"
+    },
+    {
+      "type": "color",
+      "id": "caption_color",
+      "label": "Caption Color",
+      "default": "#556b2f"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Main Title",
+      "default": "Most probiotics don't survive digestion—DS-01® does."
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body Text",
+      "info": "This content appears below the title."
+    },
+    {
+      "type": "header",
+      "content": "Stats Box"
+    },
+    {
+      "type": "text",
+      "id": "stat_caption",
+      "label": "Stat Box Caption",
+      "default": "DS-01® increases healthy bacteria by"
+    },
+    {
+      "type": "text",
+      "id": "stat_value",
+      "label": "Stat Value",
+      "default": "4.6x*"
+    },
+    {
+      "type": "color",
+      "id": "stat_value_color",
+      "label": "Stat Value Color",
+      "default": "#556b2f"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer_text",
+      "label": "Disclaimer Text (Small Print)",
+      "default": "*In a clinical trial of n=103 individuals with occasional GI challenges"
+    },
+
+    {
+      "type": "header",
+      "content": "Right Column: Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_url",
+      "label": "Gif Image (fallback)"
+    },
+
+    {
+      "type": "header",
+      "content": "Desktop Video URLs"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_hevc_desktop_url",
+      "label": "Desktop HEVC (Safari) URL"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_webm_desktop_url",
+      "label": "Desktop WebM (Chrome/Firefox) URL"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_mp4_desktop_url",
+      "label": "Desktop MP4 fallback URL"
+    },
+
+    {
+      "type": "header",
+      "content": "Mobile Video URLs"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_hevc_mobile_url",
+      "label": "Mobile HEVC (Safari) URL (e.g. 320w)"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_webm_mobile_url",
+      "label": "Mobile WebM (Chrome/Firefox) URL"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_mp4_mobile_url",
+      "label": "Mobile MP4 fallback URL"
+    },
+
+    {
+      "type": "video",
+      "id": "video_url_mobile",
+      "label": "Shopify Video fallback (optional)"
+    },
+    {
+      "type": "richtext",
+      "id": "video_text_top",
+      "label": "Top Supporting Text"
+    },
+    {
+      "type": "richtext",
+      "id": "video_text_bottom",
+      "label": "Bottom Supporting Text"
+    },
+
+    {
+      "type": "header",
+      "content": "t:sections.all.section-padding.header.content"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "options": [
+        { "value": "no-indent", "label": "t:sections.all.section-padding.options__1.label" },
+        { "value": "xs", "label": "t:sections.all.section-padding.options__2.label" },
+        { "value": "s", "label": "t:sections.all.section-padding.options__3.label" },
+        { "value": "m", "label": "t:sections.all.section-padding.options__4.label" },
+        { "value": "l", "label": "t:sections.all.section-padding.options__5.label" }
+      ],
+      "default": "s",
+      "label": "t:sections.all.section-padding.padding_top.label"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "options": [
+        { "value": "no-indent", "label": "t:sections.all.section-padding.options__1.label" },
+        { "value": "xs", "label": "t:sections.all.section-padding.options__2.label" },
+        { "value": "s", "label": "t:sections.all.section-padding.options__3.label" },
+        { "value": "m", "label": "t:sections.all.section-padding.options__4.label" },
+        { "value": "l", "label": "t:sections.all.section-padding.options__5.label" }
+      ],
+      "default": "s",
+      "label": "t:sections.all.section-padding.padding_bottom.label"
+    }
+  ],
+  "presets": [
+    { "name": "Video Feature Tech (Desktop/Mobile URLs)" }
+  ]
+}
+{% endschema %}

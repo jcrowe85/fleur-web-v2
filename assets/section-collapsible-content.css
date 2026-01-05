@@ -1,0 +1,78 @@
+.collapsible-content-wrapper {
+  display: grid;
+  gap: var(--main-padding);
+  align-items: flex-start;
+  grid-template-columns: 1fr;
+}
+@media screen and (min-width: 1200px) {
+  .collapsible-content-wrapper {
+    grid-template-columns: 0.6fr 0.4fr;
+  }
+}
+.collapsible-content .collapsible-content-contact {
+  position: sticky;
+  top: 35%;
+  padding: 3.2rem;
+  border-radius: 0.8rem;
+}
+@media screen and (min-width: 576px) {
+  .collapsible-content .collapsible-content-contact {
+    padding: 6.4rem;
+  }
+}
+.collapsible-content .have-sticky {
+  position: unset !important;
+}
+.collapsible-content .collapsible-content-contact_desc {
+  margin-bottom: 3.2rem;
+}
+.collapsible-content-block + .collapsible-content-block .accordion {
+  border-top: none;
+}
+.collapsible-content-block__heading {
+  margin: 0;
+  padding-right: 2rem;
+}
+.collapsible-content-block .accordion {
+  margin: 0;
+}
+.collapsible-content-block .accordion summary {
+  padding: 1.6rem 0;
+  transition: all var(--duration-default) ease;
+}
+.collapsible-content-block .accordion summary svg {
+  height: 2.4rem;
+}
+@media screen and (min-width: 750px) {
+  .collapsible-content-block .accordion summary {
+    padding: 3.2rem 0;
+  }
+}
+.collapsible-content-block .accordion summary:hover {
+  opacity: 0.5;
+}
+.collapsible-content-block__description {
+  max-width: 90%;
+  padding-bottom: 1.6rem;
+}
+@media screen and (min-width: 750px) {
+  .collapsible-content-block__description {
+    padding-bottom: 3.2rem;
+  }
+}
+
+@keyframes appear-down {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.collapsible-content details[open] summary ~ * {
+  animation: appear-down var(--duration-long) ease;
+}
+
+.section-header__desc {
+  margin-top: 1.6rem;
+}

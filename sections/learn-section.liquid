@@ -1,0 +1,656 @@
+{% style %}
+.section2,
+.section3,
+.section4,
+.section5,
+.section6 {
+  display: flex;
+  flex-direction: column;
+}
+
+.section2 {
+  background-color: #692C2A;
+}
+.section2 .left {
+  width: 100%;
+}
+
+.section2 .left img {
+  width: 100%;
+  vertical-align: top;
+}
+
+.section2 .right {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: #f5f0e8 !important;
+  padding: 30px;
+  gap: 2rem;
+}
+
+.section2 .right .title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.section2 .right .title h2 {
+  color: #f5f0e8 !important;
+}
+
+.section2 .right .statements {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section2 .right .statement {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 400px;
+  text-align: left;
+  font-size: 1.5rem;
+}
+
+.section2 .right .statement h3 {
+  color: inherit;
+  margin: 0;
+}
+
+.section2 .right .statement p {
+  color: #f5f0e8 !important;
+}
+
+.section3 {
+  background-color: #2a0700;
+  color: #f5f0e8 !important;
+}
+
+.section3 .left {
+  width: 100%;
+}
+
+.section3 .left img {
+  width: 100%;
+  vertical-align: top;
+}
+
+.section3 .right {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: #f5f0e8 !important;
+  padding: 30px;
+  gap: 2rem;
+}
+
+.section3 .right .title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.section3 .right .title h2 {
+  color: #f5f0e8 !important;
+}
+
+.section3 .right .title h2 {
+  color: #f5f0e8 !important;
+}
+
+.section3 .right .statements {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section3 .right .statement {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 400px;
+  text-align: left;
+  font-size: 1.5rem;
+}
+
+.section3 .right .statement h3 {
+  color: inherit;
+  margin: 0;
+}
+
+.section3 .right .statement p {
+  color: #f5f0e8 !important;
+}
+
+.section4 {
+  background-color: #692C2A;
+  color: #f5f0e8 !important;
+}
+
+.section4 .left {
+  width: 100%;
+}
+
+.section4 .left img {
+  width: 100%;
+  vertical-align: top;
+}
+
+.section4 .right {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: #f5f0e8 !important;
+  padding: 30px;
+  gap: 2rem;
+}
+
+.section4 .right .title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+
+.section4 .right .title h2 {
+  color: #f5f0e8 !important;
+}
+
+.section4 .right .title h2 {
+  color: #f5f0e8 !important;
+}
+
+.section4 .right .statements {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section4 .right .statement {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 400px;
+  text-align: left;
+  font-size: 1.5rem;
+}
+
+.section4 .right .statement h3 {
+  color: inherit;
+  margin: 0;
+}
+
+.section4 .right .statement p {
+  color: #f5f0e8 !important;
+}
+
+.desktop {
+  display: none;
+}
+
+.mobile {
+  display: flex;
+}
+
+@media only screen and (min-width: 768px) {
+  .section2,
+  .section3,
+  .section4,
+  .section5,
+  .section6 {
+    flex-direction: row;
+  }
+
+  .section2 {
+    padding: 5rem 40px;
+    background-color: #692C2A;
+    gap: 10rem;
+  }
+
+  .section2 .left {
+    display: flex;
+    flex-direction: row;
+    /* background-color: #9e8580; */
+    /* border-top: 1px solid #f5f0e8;
+       border-bottom: 1px solid #f5f0e8; */
+    padding: 5rem 0;
+    padding-right: 0;
+  }
+  .section2 .left h2 {
+    flex: 2;
+    color: #f5f0e8 !important;
+  }
+  .section2 .left img {
+    max-width: 500px;
+    width: 76%;
+    height: 100%;
+    vertical-align: top;
+    border-radius: 10px;
+  }
+  .section2 .right {
+    width: 60%;
+    padding: 40px 0;
+    /* border-top: 1px solid #f5f0e8;
+        border-bottom: 1px solid #f5f0e8; */
+    gap: 10rem;
+  }
+
+  .section2 .right .statements {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+  }
+
+  .section2 .right .statements div:nth-child(1) {
+    border-top: none;
+  }
+
+  .section2 .right .statement {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 400px;
+    text-align: left;
+    font-size: 1.5rem;
+    /* border-top: 1px solid #f5f0e8; */
+    width: 100%;
+    padding-top: 2rem;
+  }
+
+  .section2 .right .statement h3 {
+    color: inherit;
+    margin: 0;
+  }
+
+  .section2 .right .statement p {
+    color: #f5f0e8 !important;
+  }
+
+  .section3 {
+    padding: 5rem 40px;
+    background-color: #2a0700;
+    gap: 10rem;
+  }
+
+  .section3 .left {
+    display: flex;
+    flex-direction: row;
+    /* border-top: 1px solid #f5f0e8; */
+    /* border-bottom: 1px solid #f5f0e8; */
+    padding: 5rem 0;
+    padding-right: 0;
+    gap: 10rem;
+  }
+  .section3 .left h2 {
+    flex: 2;
+    color: #f5f0e8 !important;
+  }
+  .section3 .left img {
+    max-width: 500px;
+    width: 76%;
+    height: 100%;
+    vertical-align: top;
+    border-radius: 10px;
+  }
+  .section3 .right {
+    width: 60%;
+    padding: 40px 0;
+    /* border-top: 1px solid #f5f0e8; */
+    /* border-bottom: 1px solid #f5f0e8; */
+  }
+
+  .section3 .right .statements {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+  }
+
+  .section3 .right .statements div:nth-child(1) {
+    border-top: none;
+  }
+
+  .section3 .right .statement {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 400px;
+    text-align: left;
+    font-size: 1.5rem;
+    /* border-top: 1px solid #f5f0e8; */
+    width: 100%;
+    padding-top: 2rem;
+  }
+
+  .section3 .right .statement h3 {
+    color: #f5f0e8 !important;
+    margin: 0;
+  }
+
+  .section3 .right .statement p {
+    color: #f5f0e8 !important;
+  }
+
+  .section4 {
+    padding: 5rem 40px;
+    background-color: #692C2A;
+    gap: 10rem;
+  }
+
+  .section4 .left {
+    display: flex;
+    flex-direction: row;
+    /* border-top: 1px solid #f5f0e8; */
+    /* border-bottom: 1px solid #f5f0e8; */
+    padding: 5rem 0;
+    padding-right: 0;
+    gap: 10rem;
+  }
+  .section4 .left h2 {
+    flex: 2;
+    color: #f5f0e8 !important;
+  }
+  .section4 .left img {
+    max-width: 500px;
+    width: 76%;
+    height: 100%;
+    vertical-align: top;
+    border-radius: 10px;
+  }
+  .section4 .right {
+    width: 60%;
+    padding: 40px 0;
+    /* border-top: 1px solid #f5f0e8; */
+    /* border-bottom: 1px solid #f5f0e8; */
+  }
+
+  .section4 .right .statements {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+  }
+
+  .section4 .right .statements div:nth-child(1) {
+    border-top: none;
+  }
+
+  .section4 .right .statement {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 400px;
+    text-align: left;
+    font-size: 1.5rem;
+    /* border-top: 1px solid #f5f0e8; */
+    width: 100%;
+    padding-top: 2rem;
+  }
+
+  .section4 .right .statement h3 {
+    color: #f5f0e8 !important;
+    margin: 0;
+  }
+
+  .section4 .right .statement p {
+    color: #f5f0e8 !important;
+  }
+
+  .header-top {
+    border: none;
+  }
+
+  .desktop {
+    display: flex;
+  }
+
+  .mobile {
+    display: none;
+  }
+}
+
+{% endstyle %}
+
+<div class="section2 mobile">
+  <!-- <div class="left">
+    
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/cf3397c6def01c5786f2caacc6517ce0.jpg?v=1718003963">
+  </div> -->
+  <div class="right">
+          <div class="title">
+        <h2>Enhanced Penetration</h2>
+      </div>
+   
+    <div class="statements">
+      <div class="statement">
+        <h3>Pentrating the Epidermis</h3>
+        <p>
+          Our specialized serum penetrates the epidermis through a combination of sophisticated formulation and
+          specialized delivery mechanisms, it effectively navigates the intricate layers of the epidermis.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Entering the Dermis</h3>
+        <p>
+          Once the epidermal barrier is breached, the serum seamlessly infiltrates the dermis, proceeding directly
+          towards the hair's root. It navigates the dermal layers with precision, ensuring optimal access to the hair
+          follicle.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Accessing the Root</h3>
+        <p>
+          Having effectively traversed the epidermis and penetrated the dermis, our formulation now stands at the
+          threshold of the hair bulb, primed to interface with the intricate biology of the follicle.
+        </p>
+      </div>
+    </div>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/cf3397c6def01c5786f2caacc6517ce0.jpg?v=1718003963">
+  </div>
+</div>
+
+
+<div class="section2 desktop">
+  <div class="left">
+    <h2>Enhanced Penetration</h2>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/cf3397c6def01c5786f2caacc6517ce0.jpg?v=1718003963">
+  </div>
+  <div class="right">
+    <!--
+      <div class="title">
+        <h2>Enhanced Penetration</h2>
+      </div>
+    -->
+    <div class="statements">
+      <div class="statement">
+        <h3>Pentrating the Epidermis</h3>
+        <p>
+          Our specialized serum penetrates the epidermis through a combination of sophisticated formulation and
+          specialized delivery mechanisms, it effectively navigates the intricate layers of the epidermis.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Entering the Dermis</h3>
+        <p>
+          Once the epidermal barrier is breached, the serum seamlessly infiltrates the dermis, proceeding directly
+          towards the hair's root. It navigates the dermal layers with precision, ensuring optimal access to the hair
+          follicle.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Accessing the Root</h3>
+        <p>
+          Having effectively traversed the epidermis and penetrated the dermis, our formulation now stands at the
+          threshold of the hair bulb, primed to interface with the intricate biology of the follicle.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section3 mobile">
+  <!-- <div class="left">
+    <h2>Bioactive Stimulation</h2>
+  </div> -->
+  <div class="right">
+      <div class="title">
+        <h2>Bioactive Stimulation</h2>
+      </div>
+    <div class="statements">
+      <div class="statement">
+        <h3>Enhancing Dermal Papilla Function</h3>
+        <p>
+          The formula works to enhance the function of the dermal papilla by providing essential nutrients and promoting
+          improved blood circulation to the hair follicle.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Promotion of Keratinocyte</h3>
+        <p>
+          The improved function of the dermal papilla stimulates the production of keratinocytes within the hair
+          follicle, creating a healthy hair shaft, characterized by a strong cuticle, resilient cortex, and vibrant
+          medulla, contributing to overall hair health and appearance.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Subum Regulation, Balanced Microbiome, and Anti-Inflammation</h3>
+        <p>
+          The formula regulates sebum, balances the scalp microbiome, and reduces inflammation for robust hair growth.
+          Its antioxidants also protect hair follicles from damage.
+        </p>
+      </div>
+    </div>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/69f5bdbfc56466f8e53d7209388a6757.jpg?v=1718004296">
+  </div>
+</div>
+
+<div class="section3 desktop">
+  <div class="left">
+    <h2>Bioactive Stimulation</h2>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/69f5bdbfc56466f8e53d7209388a6757.jpg?v=1718004296">
+  </div>
+  <div class="right">
+    <div class="statements">
+      <div class="statement">
+        <h3>Enhancing Dermal Papilla Function</h3>
+        <p>
+          The formula works to enhance the function of the dermal papilla by providing essential nutrients and promoting
+          improved blood circulation to the hair follicle.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Promotion of Keratinocyte</h3>
+        <p>
+          The improved function of the dermal papilla stimulates the production of keratinocytes within the hair
+          follicle, creating a healthy hair shaft, characterized by a strong cuticle, resilient cortex, and vibrant
+          medulla, contributing to overall hair health and appearance.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Subum Regulation, Balanced Microbiome, and Anti-Inflammation</h3>
+        <p>
+          The formula regulates sebum, balances the scalp microbiome, and reduces inflammation for robust hair growth.
+          Its antioxidants also protect hair follicles from damage.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section4 mobile">
+  <!-- <div class="left">
+    <h2>Hydric Augmentation</h2>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/9bd1885f6529d2be2a3618bc243d426c.jpg?v=1718012796">
+  </div> -->
+  <div class="right">
+      <div class="title">
+        <h2>Hydric Augmentation</h2>
+      </div>
+    <div class="statements">
+      <div class="statement">
+        <h3>Humectant Facilitators</h3>
+        <p>
+           Our proprietary blend of humectancts help to keep the scalp hydrated by attracting and pulling moisture from the air and holding onto it in the top most layer of the skin.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Rosa Damascena Flower Water</h3>
+        <p>
+          Rose Water includes essential hair health and scalp vitamins A, C, E and B. The combination helps to reduce oiliness, prevent dandruff, smooths frizz, and improves the overall look and feel of the hair.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Cucumis Sativus Fruit Extract</h3>
+        <p>
+          Soothes and hydrates the skin, imparting a refreshing and revitalizing sensation. Rich in antioxidants and vitamins, it helps to nourish and protect the skin against environmental stressors.
+        </p>
+      </div>
+    </div>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/9bd1885f6529d2be2a3618bc243d426c.jpg?v=1718012796">
+  </div>
+</div>
+
+<div class="section4 desktop">
+  <div class="left">
+    <h2>Hydric Augmentation</h2>
+    <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/9bd1885f6529d2be2a3618bc243d426c.jpg?v=1718012796">
+  </div>
+  <div class="right">
+    <!--
+      <div class="title">
+        <h2>Enhanced Penetration</h2>
+      </div>
+    -->
+    <div class="statements">
+      <div class="statement">
+        <h3>Humectant Facilitators</h3>
+        <p>
+           Our proprietary blend of humectancts help to keep the scalp hydrated by attracting and pulling moisture from the air and holding onto it in the top most layer of the skin.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Rosa Damascena Flower Water</h3>
+        <p>
+          Rose Water includes essential hair health and scalp vitamins A, C, E and B. The combination helps to reduce oiliness, prevent dandruff, smooths frizz, and improves the overall look and feel of the hair.
+        </p>
+      </div>
+      <div class="statement">
+        <h3>Cucumis Sativus Fruit Extract</h3>
+        <p>
+          Soothes and hydrates the skin, imparting a refreshing and revitalizing sensation. Rich in antioxidants and vitamins, it helps to nourish and protect the skin against environmental stressors.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Learn Section",
+  "tag": "section",
+  "settings": [],
+    "presets": [
+    {
+      "name": "Learn Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

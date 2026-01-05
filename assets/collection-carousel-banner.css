@@ -1,0 +1,85 @@
+.collection-carousel-banner .collection-carousel-wrapper__list {
+  flex: 0 0 50%;
+  max-width: 50%;
+  z-index: 1;
+}
+@media screen and (min-width: 1200px) {
+  .collection-carousel-banner .collection-carousel-wrapper__list {
+    flex: 0 0 calc(40% - 10rem);
+    max-width: calc(40% - 10rem);
+  }
+}
+.collection-carousel-banner .collection-carousel-wrapper-swiper {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+@media screen and (min-width: 1200px) {
+  .collection-carousel-banner .collection-carousel-wrapper-swiper {
+    flex: 0 0 calc(60% - 10rem);
+    max-width: calc(60% - 10rem);
+  }
+}
+.collection-carousel-banner .collection-product-card {
+  margin-right: 2.4rem;
+}
+.collection-carousel-banner .collection-carousel-banner__wrapper {
+  display: flex;
+  gap: 10rem;
+  flex-direction: column;
+}
+@media screen and (min-width: 1200px) {
+  .collection-carousel-banner .collection-carousel-banner__wrapper {
+    flex-direction: unset;
+    gap: 20rem;
+    justify-content: space-between;
+  }
+}
+.collection-carousel-banner .collection-carousel-heading {
+  margin-bottom: 2.4rem;
+}
+.collection-carousel-banner .collection-products-slider {
+  margin-top: 1rem;
+  margin-right: unset;
+  width: 100%;
+  max-width: unset;
+}
+@media screen and (min-width: 1200px) {
+  .collection-carousel-banner .collection-products-slider {
+    max-width: 86rem;
+    min-width: 68rem;
+  }
+}
+.collection-carousel-banner .collection-carousel-icon {
+  margin-bottom: 3.2rem;
+}
+.collection-carousel-banner .collection-carousel-banner__img img,
+.collection-carousel-banner .collection-carousel-banner__img svg,
+.collection-carousel-banner .collection-carousel-banner__img video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.collection-carousel-banner .card__title {
+  margin: 0;
+}
+.collection-carousel-banner .card-wrapper {
+  background-color: unset;
+}
+.collection-carousel-banner .card-information__wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.collection-carousel-banner .product-parameters {
+  margin-bottom: 0;
+}
+.collection-carousel-banner .card-information-block {
+  gap: 1rem;
+}
+.collection-carousel-banner .collection-carousel-btn {
+  margin-top: 3.2rem;
+}

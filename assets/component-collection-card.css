@@ -1,0 +1,167 @@
+.collection-card {
+  --space: 2.4rem;
+  position: relative;
+  z-index: 1;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  display: flex;
+  height: 100%;
+}
+.collection-card.collection-card-small {
+  --space: 1.6rem;
+}
+@media screen and (min-width: 1360px) {
+  .collection-card.collection-card-small {
+    --space: 2.4rem;
+  }
+}
+.collection-card.collection-card__text-overlay {
+  --space: 3.2rem;
+}
+@media screen and (min-width: 1360px) {
+  .collection-card.collection-card__text-overlay {
+    --space: 4rem;
+  }
+}
+.collection-card.collection-card__text-overlay.collection-card-small {
+  --space: 2.4rem;
+}
+.collection-card.collection-card__text-overlay .collection-card__wrapper {
+  justify-content: space-between;
+  pointer-events: none;
+  padding: var(--space);
+}
+.collection-card.collection-card__image-overlay {
+  --space: 1.6rem;
+}
+@media screen and (min-width: 1200px) {
+  .collection-card.collection-card__image-overlay {
+    --space: 2.4rem;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .collection-card.collection-card__image-overlay {
+    --space: 4rem;
+  }
+}
+.collection-card.collection-card__image-overlay .collection-card__text {
+  margin-top: var(--margin-top);
+  height: 100%;
+  padding: var(--space);
+  border-radius: 0.8rem;
+  background: rgba(var(--color-background), var(--bg-alpha));
+  transition: all var(--duration-long) linear;
+}
+.collection-card.collection-card__image-overlay .collection-card__wrapper {
+  position: relative;
+  z-index: 1;
+}
+.collection-card.collection-card__image-overlay .collection-card__img {
+  transition: all var(--duration-default) linear;
+}
+@media screen and (min-width: 1200px) {
+  .collection-card.collection-card__image-overlay:hover .collection-card__text {
+    transform: translateY(110%);
+  }
+  .collection-card.collection-card__image-overlay:hover .collection-card__img {
+    transform: scale(1.1);
+  }
+}
+.collection-card .collection-card__wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--space);
+}
+.collection-card .collection-card__title {
+  margin: 0;
+  pointer-events: all;
+}
+.collection-card .collection-card__title a {
+  transition: all var(--duration-default) linear;
+}
+.collection-card .collection-card__title a:hover {
+  opacity: 0.7;
+}
+.collection-card .collection-card__desc {
+  margin-top: 1.2rem;
+}
+.collection-card .collection-card__img {
+  position: relative;
+  pointer-events: all;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+.collection-card .collection-card__img.collection-card__img-overlay,
+.collection-card .collection-card__img.collection-card__img-overlay > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  object-fit: cover;
+}
+.collection-card .collection-card__img img,
+.collection-card .collection-card__img svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  object-fit: cover;
+}
+.collection-card .collection-card__img svg {
+  background-color: rgba(var(--color-foreground), 0.04);
+  fill: rgba(var(--color-foreground), 0.55);
+}
+.collection-card .collection-card__img img,
+.collection-card .collection-card__img svg {
+  border-radius: 0.8rem;
+}
+.collection-card .collection-card__tags-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.2rem;
+  pointer-events: none;
+}
+.collection-card .collection-card__tags-list li {
+  overflow: hidden;
+}
+.collection-card .collection-card__tags-list li span {
+  transform: translateY(110%);
+  display: block;
+}
+.collection-card .collection-card__tags-list a {
+  text-decoration: none;
+  pointer-events: all;
+}
+@keyframes show {
+  0% {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.collection-card:hover .collection-card__tags-list li span {
+  animation: show 0.8s forwards;
+  animation-delay: calc(var(--animation-delay) / 4);
+}
+.collection-card:hover .collection-card__tags-list li a {
+  transition: all var(--duration-default) ease;
+}
+.collection-card:hover .collection-card__tags-list li a:hover {
+  opacity: 0.6;
+}
+.collection-card-default .collection-card__img > img {
+  transition: transform var(--duration-long) ease;
+}
+.collection-card-default .collection-card__img:hover > img {
+  transform: scale(1.05);
+  transition: transform var(--duration-long) ease;
+}

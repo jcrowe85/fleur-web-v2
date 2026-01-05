@@ -1,0 +1,550 @@
+{{ 'stories-carousel.css' | asset_url | stylesheet_tag }}
+{% style %}
+	.section-{{ section.id }}-padding {
+	{% if section.settings.padding_top == 'no-indent' %}
+		padding-top: 0;
+	{% else %}
+		padding-top: 3.2rem;
+	{% endif %} 
+
+	{% if section.settings.padding_bottom == 'no-indent' %}
+		padding-bottom: 0;
+	{% else %}
+		padding-bottom: 3.2rem;
+	{% endif %}
+}
+
+@media screen and (min-width: 990px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+@media screen and (min-width: 1200px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 8rem;
+		{% elsif section.settings.padding_top == 'm' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 8rem;
+		{% elsif section.settings.padding_bottom == 'm' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+@media screen and (min-width: 1560px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 16rem;
+		{% elsif section.settings.padding_top == 'm' %}
+			padding-top: 8rem;
+		{% elsif section.settings.padding_top == 's' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 16rem;
+		{% elsif section.settings.padding_bottom == 'm' %}
+			padding-bottom: 8rem;
+		{% elsif section.settings.padding_bottom == 's' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+{% endstyle %}
+
+<div class="stories-section-bg {{ section.id }} color-{{ section.settings.color_scheme }} background section-{{ section.id }}-padding">
+  <div class="container">
+      <div class="section-header__line">
+        {% if section.settings.heading != blank %}
+          <h2 class="h1 heading-sections">
+            {{ section.settings.heading | newline_to_br }}
+          </h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+            <div class="rte">{{ section.settings.description }}</div>
+        {% endif %}        
+      </div>
+  </div>
+  <div class="swiper story-carousel-container">
+    <div class="swiper-wrapper">
+
+      {% for block in section.blocks %}
+        {% case block.type %}
+
+          {% when 'circular_image' %}
+            <div class="swiper-slide story-card rounded-full overflow-hidden shadow-2xl relative circular-image-wrapper" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                {{ block.settings.image | image_url: width: 600 | image_tag: 
+                  loading: 'lazy',
+                  class: 'w-full h-full object-cover',
+                  sizes: '320px',
+                  widths: '320, 480, 600'
+                }}
+              {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+                  <p>Circular Image Placeholder</p>
+                </div>
+              {% endif %}
+            </div>
+
+          {% when 'simple_image' %}
+            <div class="swiper-slide simole-image-slide story-card story-card-fixed-height rounded-xl overflow-hidden shadow-xl" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                {{ block.settings.image | image_url: width: 600 | image_tag: 
+                  loading: 'lazy',
+                  class: 'w-full h-full object-cover',
+                  sizes: '(min-width: 768px) 320px, 256px',
+                  widths: '256, 320, 480'
+                }}
+              {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 rounded-xl">
+                  <p>Simple Image Placeholder</p>
+                </div>
+              {% endif %}
+            </div>
+
+          {% when 'video_embed' %}
+            <div class="swiper-slide video-block-slide story-card story-card-fixed-height rounded-xl overflow-hidden shadow-xl bg-black relative video-wrapper" {{ block.shopify_attributes }}>
+
+              {% assign preview_vid = block.settings.preview_video_url %}
+              {% assign full_vid = block.settings.video_url %}
+              {% assign active_vid = preview_vid | default: full_vid %}
+              {% assign poster_image = active_vid.preview_image %}
+
+              {% if active_vid != blank %}
+                <div class="aspect-w-16 aspect-h-9 w-full h-full">
+
+                  <div class="video-poster-overlay">
+                    <button class="video-play-btn-symbol" aria-label="Play video">
+                      <span class="play-icon-svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                          <path fill="#fcfcf7" d="M12.4231 8 5.5 12.5v-9L12.4231 8Z"></path>
+                        </svg>
+                      </span>
+                      <span class="pause-icon-svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+                          <path stroke="#fcfcf7" stroke-width="1.5" d="M6 3v10M10 3v10"></path>
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
+
+                  <video
+                    class="story-video"
+                    playsinline
+                    {% if preview_vid != blank %}
+                      muted autoplay loop
+                    {% else %}
+                      muted
+                    {% endif %}
+                    preload="metadata"
+                    poster="{{ poster_image | image_url: width: 800 }}"
+                    data-has-preview="{% if preview_vid != blank %}true{% else %}false{% endif %}"
+                    data-is-full="false"
+                    data-full-sources='[
+                      {% if full_vid != blank %}
+                        {% for s in full_vid.sources %}
+                          {"url":"{{ s.url }}","type":"{{ s.format | prepend: "video/" }}"}{% unless forloop.last %},{% endunless %}
+                        {% endfor %}
+                      {% endif %}
+                    ]'>
+
+                    {% for source in active_vid.sources %}
+                      <source src="{{ source.url }}" type="{{ source.format | prepend: 'video/' }}">
+                    {% endfor %}
+                  </video>
+
+                </div>
+              {% endif %}
+            </div>
+
+          {% when 'quote_with_image' %}
+            <div class="swiper-slide story-card quote_with_image-slide story-card-fixed-height bg-white rounded-xl shadow-xl overflow-hidden flex flex-col" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank or block.settings.image1 != blank %}
+                <div class="images-block-wrap {% if block.settings.flex_reverse %}flex-reverce{% endif %}">
+                  <img src="{{ block.settings.image | image_url: width: '400px' }}" alt="" width="" height="" loading="lazy">
+                  <img src="{{ block.settings.image1 | image_url: width: '400px' }}" alt="" width="" height="" loading="lazy">
+                </div>
+              {% endif %}
+            </div>
+
+        {% endcase %}
+      {% endfor %}
+    </div>
+    {% comment %} <div class="swiper-pagination mt-8 relative"></div>  {% endcomment %}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const container = document.querySelector('.story-carousel-container');
+  if (!container) return;
+
+  const wrapper = container.querySelector('.swiper-wrapper');
+  const sectionEl = container.closest('.section-stories-carousel') || container;
+  if (!wrapper || !sectionEl) return;
+
+  // If Swiper isn't loaded yet, don't crash
+  let swiper = null;
+  if (typeof window.Swiper !== 'undefined') {
+    swiper = new Swiper(container, {
+      slidesPerView: 'auto',
+      spaceBetween: 20,
+      centeredSlides: false,
+      freeMode: true,
+      freeModeMomentum: true,
+      freeModeSticky: false,
+      loop: false,
+      watchSlidesProgress: true,
+      observer: true,
+      observeParents: true
+    });
+  }
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    wrapper.style.transform = 'translate3d(0px,0,0)';
+    return;
+  }
+
+  function computeMaxTranslate() {
+    return Math.max(0, wrapper.scrollWidth - container.clientWidth);
+  }
+
+  function applyX(x) {
+    wrapper.style.transform = 'translate3d(' + x + 'px,0,0)';
+    if (swiper) {
+      swiper.setTranslate(x);
+      swiper.updateProgress();
+    }
+  }
+
+  let rafId = null;
+
+  function updateFromScroll() {
+    rafId = null;
+
+    const maxTranslate = computeMaxTranslate();
+    if (maxTranslate <= 0) {
+      applyX(0);
+      return;
+    }
+
+    const rect = sectionEl.getBoundingClientRect();
+    const vh = window.innerHeight;
+
+    // progress 0 → 1 as section passes through viewport
+    let p = (vh - rect.top) / (vh + rect.height);
+    p = Math.max(0, Math.min(1, p));
+
+    // Match your CSS breakpoint: <990px = mobile/tablet
+    const mobile = window.matchMedia('(max-width: 989px)').matches;
+
+    /* ======= DIALS =======
+       DELAY: how long before horizontal movement starts (0–1)
+       EASE_EXP (>1): higher = slower/premium drift early
+       SPEED_SCALE: global speed multiplier (<1 slower, >1 faster)
+    */
+
+    // Desktop dials
+    const DESKTOP_DELAY = 0.05;
+    const DESKTOP_EASE_EXP = 1.8;
+    const DESKTOP_SPEED_SCALE = 2.0;
+
+    // Mobile dials
+    const MOBILE_DELAY = 0.2;
+    const MOBILE_EASE_EXP = .9;
+    const MOBILE_SPEED_SCALE = 0.40;
+
+    const DELAY = mobile ? MOBILE_DELAY : DESKTOP_DELAY;
+    const EASE_EXP = mobile ? MOBILE_EASE_EXP : DESKTOP_EASE_EXP;
+    const SPEED_SCALE = mobile ? MOBILE_SPEED_SCALE : DESKTOP_SPEED_SCALE;
+
+    // 1) Delay
+    if (p < DELAY) p = 0;
+    else p = (p - DELAY) / (1 - DELAY);
+
+    // 2) Ease curve
+    p = Math.pow(p, EASE_EXP);
+
+    // 3) Global speed
+    p *= SPEED_SCALE;
+
+    // clamp
+    p = Math.max(0, Math.min(1, p));
+
+    const x = -maxTranslate * p;
+    applyX(x);
+  }
+
+  function onScrollOrResize() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(updateFromScroll);
+  }
+
+  // Run now + on scroll/resize/load  
+  updateFromScroll();
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize);
+  window.addEventListener('load', onScrollOrResize);
+
+  // Re-run after media loads (prevents mobile maxTranslate=0 issues)
+  container.querySelectorAll('img, video').forEach(function (el) {
+    el.addEventListener('load', onScrollOrResize, { once: true });
+    el.addEventListener('loadedmetadata', onScrollOrResize, { once: true });
+  });
+});
+</script>
+
+<script>
+
+function pauseAllCarouselVideos() {
+  const videos = document.querySelectorAll('.story-carousel-container video');
+  videos.forEach(video => {
+    if (!video.paused) video.pause();
+
+    const wrapper = video.closest('.video-wrapper');
+    if (wrapper) wrapper.classList.remove('video-playing');
+  });
+}
+
+/**
+ * If a preview exists, swap the <video> sources to full video the first time user clicks.
+ */
+function swapToFullVideo(video) {
+  const hasPreview = video.dataset.hasPreview === "true";
+  const isAlreadyFull = video.dataset.isFull === "true";
+  if (!hasPreview || isAlreadyFull) return;
+
+  let fullSources = [];
+  try {
+    fullSources = JSON.parse(video.dataset.fullSources || "[]");
+  } catch (e) {
+    console.warn("Invalid data-full-sources JSON", e);
+    return;
+  }
+
+  if (!fullSources.length) return;
+
+  // Remove preview sources
+  while (video.firstChild) video.removeChild(video.firstChild);
+
+  // Add full sources
+  fullSources.forEach(s => {
+    const srcEl = document.createElement("source");
+    srcEl.src = s.url;
+    srcEl.type = s.type;
+    video.appendChild(srcEl);
+  });
+
+  // Full video should not loop and should allow audio after click
+  video.loop = false;
+  video.muted = false;
+
+  video.dataset.isFull = "true";
+  video.load();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const videoWrappers = document.querySelectorAll('.story-carousel-container .video-wrapper');
+
+  videoWrappers.forEach(wrapper => {
+    const video = wrapper.querySelector('video');
+    if (!video) return;
+
+    wrapper.addEventListener('click', function (event) {
+      event.stopPropagation();
+
+      // swap preview -> full (if preview exists)
+      swapToFullVideo(video);
+
+      if (video.paused || video.ended) {
+        pauseAllCarouselVideos();
+
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => wrapper.classList.add('video-playing'))
+            .catch(err => console.warn("Video playback prevented:", err));
+        }
+      } else {
+        video.pause();
+        wrapper.classList.remove('video-playing');
+      }
+    });
+
+    video.addEventListener('pause', () => wrapper.classList.remove('video-playing'));
+    video.addEventListener('ended', () => wrapper.classList.remove('video-playing'));
+  });
+});
+</script>
+  
+{% schema %}
+{
+  "name": "Stories Carousel",
+  "tag": "section",
+  "class": "section-stories-carousel",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Stories from scientists, innovators, and members like you."
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "background-2",
+      "label": "t:sections.all.color_scheme.label"
+    },
+    {
+      "type":"image_picker",
+      "id":"bg_image",
+      "label":"Background Image"
+    },
+    {
+      "type":"image_picker",
+      "id":"image",
+      "label":"Image"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section-padding.header.content"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "options": [
+        { "value": "no-indent", "label": "t:sections.all.section-padding.options__1.label" },
+        { "value": "xs", "label": "t:sections.all.section-padding.options__2.label" },
+        { "value": "s", "label": "t:sections.all.section-padding.options__3.label" },
+        { "value": "m", "label": "t:sections.all.section-padding.options__4.label" },
+        { "value": "l", "label": "t:sections.all.section-padding.options__5.label" }
+      ],
+      "default": "s",
+      "label": "t:sections.all.section-padding.padding_top.label"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "options": [
+        { "value": "no-indent", "label": "t:sections.all.section-padding.options__1.label" },
+        { "value": "xs", "label": "t:sections.all.section-padding.options__2.label" },
+        { "value": "s", "label": "t:sections.all.section-padding.options__3.label" },
+        { "value": "m", "label": "t:sections.all.section-padding.options__4.label" },
+        { "value": "l", "label": "t:sections.all.section-padding.options__5.label" }
+      ],
+      "default": "s",
+      "label": "t:sections.all.section-padding.padding_bottom.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "circular_image",
+      "name": "Circular Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    },
+    {
+      "type": "simple_image",
+      "name": "Simple Image Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    },
+    {
+      "type": "video_embed",
+      "name": "Video Block",
+      "settings": [
+        {
+          "type": "video",
+          "id": "preview_video_url",
+          "label": "Preview Loop Video (2–4s teaser)"
+        },
+        {
+          "type": "video",
+          "id": "video_url",
+          "label": "Video Link"
+        }
+      ]
+    },
+    {
+      "type": "quote_with_image",
+      "name": "Quote/Text Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image1",
+          "label": "Image 2"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Story Carousel",
+      "blocks": [
+        { "type": "circular_image" },
+        { "type": "video_embed" },
+        { "type": "video_embed" },
+        { "type": "quote_with_image" },
+        { "type": "simple_image" }
+      ]
+    }
+  ]
+}
+{% endschema %}

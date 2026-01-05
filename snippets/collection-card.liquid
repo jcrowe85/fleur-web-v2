@@ -1,0 +1,118 @@
+{{ 'component-collection-card.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+	case media_size
+		when 'landscape'
+			assign section_size = '56.25%'
+			assign margin_top = '30%'
+		when 'portrait'
+			assign section_size = '125%'
+			assign margin_top = '97%'
+		when 'square'
+			assign section_size = '100%'
+			assign margin_top = '60%'
+		else
+			assign section_size = '100%'
+			assign margin_top = '60%'
+	endcase
+%}
+
+{% style %}
+	.collection-card.collection-card-overlay::after {
+		content : '';
+		display : block;
+		padding-bottom : {{ section_size }};
+	}
+	.collection-card:not(.collection-card-overlay) .collection-card__img::after {
+		content : '';
+		display : block;
+		padding-bottom : {{ section_size }};
+	}
+{% endstyle %}
+<div class="collection-card{% if card_type == 'default' %} collection-card-default{% endif %}{% if card_type == 'text-overlay' or card_type == 'image-overlay' %} collection-card-overlay{% endif %}{% if card_type == 'text-overlay'%} collection-card__text-overlay color-inverse{% endif %}{% if card_type == 'image-overlay' %} collection-card__image-overlay color-background-4{% endif %}{% if per_row >= 4 %} collection-card-small{% endif %}">
+	<div class="collection-card__wrapper">
+		<a
+			class="collection-card__img{% if card_type == 'text-overlay' or card_type == 'image-overlay' %} collection-card__img-overlay{% endif %}{% if card_type == 'text-overlay' %} have-overlay{% endif %}"
+			{% if block_collection != blank %}
+				href="{{ url }}"
+			{% endif %}
+		>
+			{% if block_image != blank
+				or collection_image != blank
+				or block_collection.featured_image
+			%}
+				{% liquid
+					if block_image != blank
+						assign collectionImg = block_image
+					elsif collection_image != blank
+						assign collectionImg = collection_image
+					elsif block_collection.featured_image != blank
+						assign collectionImg = block_collection.featured_image
+					endif
+					assign image_height = collectionImg.width | divided_by: collectionImg.aspect_ratio
+					assign image_width = collectionImg.width
+					assign sizes = '(min-width: 750px) 50vw, 100vw'
+				%}
+				{{
+					collectionImg
+					| image_url: width: 3840
+					| image_tag:
+						loading: 'lazy',
+						width: image_width,
+						height: image_height,
+						sizes: sizes, 
+						widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+				}}
+			{%- else -%}
+				{{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+			{% endif %}
+		</a>
+		<div
+			class="collection-card__text"
+			{% if card_type == 'image-overlay' -%}
+				style="--bg-alpha: {% if text_bg_opacity != blank %}{{ text_bg_opacity }}%{% else %}100%{% endif %}; --margin-top: {{ margin_top }}"
+			{%- endif %}
+		>
+			<h3 class="collection-card__title{% if per_row >= 4 %} h6 collection-grid__small-pad{% else %}{% if card_type == 'default' or card_type == 'image-overlay' %} h5{% else %} h4{% endif %}{% endif %}">
+				<a
+					class="full-unstyled-link"
+					{% if block_collection != blank %}
+						href="{{ url }}"
+					{% endif %}
+				>
+					{% if block_collection != blank %}
+						{{ collection_title }}
+					{% else %}
+						{{- 'general.card.collection_name' | t -}}
+					{% endif %}
+				</a>
+			</h3>
+			{% if show_collection_desc %}
+				<div class="collection-card__desc richtext__content{% if per_row >= 4 %} small-font{% else %} large-font{% endif %}">
+					{%- if collection_desc != blank -%}
+						{{ collection_desc }}
+					{% else %}
+						{{ 'collection.collection_desc' | t }}
+					{%- endif -%}
+				</div>
+			{% endif %}
+		</div>
+		{% if show_collection_tags and card_type == 'text-overlay' %}
+			<ul class="collection-card__tags-list list-unstyled{% if per_row < 4 %} h6{% else %} h7{% endif %}">
+				{%liquid
+					if block_collection.all_types.size >= 4
+						assign size_limit = 4
+					else
+						assign size_limit = block_collection.all_types.size
+					endif
+				%}
+				{% for product_type in block_collection.all_types limit: 4 %}
+					{% assign delay = size_limit | minus : forloop.index %}
+					<li style="--animation-delay: {{ delay }}s">
+						<span>{{ product_type | link_to_type }}</span>
+					</li>
+				{% endfor %}
+			</ul>
+		{%- endif -%}
+	</div>
+</div>

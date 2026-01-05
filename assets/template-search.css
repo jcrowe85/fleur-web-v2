@@ -1,0 +1,173 @@
+.template-404 .field,
+.template-search .field {
+  gap: 0.8rem;
+}
+.template-404 .breadcrumb,
+.template-search .breadcrumb {
+  margin: 0;
+}
+.template-404 .spinner,
+.template-search .spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.template-404 predictive-search:not([loading]) .predictive-search__heading .spinner,
+.template-404 predictive-search:not([loading]) .predictive-search__loading-state,
+.template-404 predictive-search:not([loading]) .predictive-search-status__loading,
+.template-search predictive-search:not([loading]) .predictive-search__heading .spinner,
+.template-search predictive-search:not([loading]) .predictive-search__loading-state,
+.template-search predictive-search:not([loading]) .predictive-search-status__loading {
+  display: none;
+}
+
+.template-404 .page-header {
+  margin: 4.8rem 0 2.4rem;
+}
+.template-404 .search__form-inner .field input[type=search] {
+  background-color: rgb(var(--color-background-input));
+}
+
+.search__form-text {
+  margin: 0;
+  font-size: 1.5rem;
+  color: rgb(var(--color-foreground));
+  font-weight: var(--font-subtitle-weight);
+}
+.search__form-no-result {
+  font-size: 1.8rem;
+}
+.search-results_count {
+  color: rgba(var(--color-foreground), 0.6);
+}
+.search__form-text-404 {
+  margin: 0 0 4rem;
+  max-width: 85rem;
+}
+.search-results__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.search__form-inner {
+  margin-bottom: 2.4rem;
+  position: relative;
+}
+.search__form-inner .field {
+  max-width: 100rem;
+  width: 100%;
+}
+.search__form-inner .search__input-wrapper {
+  width: 100%;
+}
+.search-results__top {
+  margin-top: 6.4rem;
+  margin-bottom: 4rem;
+}
+@media screen and (min-width: 750px) {
+  .search-results__top {
+    margin-top: 9rem;
+  }
+}
+.search-results__top.first {
+  margin-top: 0;
+}
+.search-results__top h3 {
+  margin: 0;
+}
+
+.template-search__header,
+.template-404__header {
+  padding: 3.2rem 0;
+}
+
+.template-search__page {
+  position: relative;
+}
+.template-search__page .card-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 30rem;
+  background-color: rgb(var(--color-background-secondary));
+  border-radius: 0.3rem;
+  clip-path: inset(0 round 0.3rem);
+}
+
+.template-search__search {
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.template-search__results .collection-product-card {
+  width: 100%;
+}
+.template-search__results ul {
+  list-style: none;
+  margin-top: 0;
+  padding: 0;
+}
+
+.card-page {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding: 3rem;
+}
+@media screen and (min-width: 576px) {
+  .card-page {
+    padding: 4rem;
+  }
+}
+.card-page__content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.collection-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4rem;
+}
+.collection-results .template-search__item {
+  width: 100%;
+}
+@media screen and (min-width: 576px) {
+  .collection-results .template-search__item {
+    width: calc(50% - 1.2rem);
+  }
+}
+@media screen and (min-width: 990px) {
+  .collection-results .template-search__item {
+    width: calc(33.3333333333% - 1.6rem);
+  }
+}
+@media screen and (min-width: 1200px) {
+  .collection-results {
+    gap: 6.4rem 2.4rem;
+  }
+  .collection-results .template-search__item {
+    width: calc(25% - 1.8rem);
+  }
+  .collection-results .template-search__item.article {
+    width: calc(33.3333333333% - 1.6rem);
+  }
+}
+.collection-results_no-filter, .collection-results.full-width {
+  grid-column: span 2;
+}
+@media screen and (min-width: 576px) {
+  .collection-results_no-filter .template-search__item, .collection-results.full-width .template-search__item {
+    width: calc(50% - 1.2rem);
+  }
+}
+@media screen and (min-width: 750px) {
+  .collection-results_no-filter .template-search__item, .collection-results.full-width .template-search__item {
+    width: calc(33.3333333333% - 1.6rem);
+  }
+}
+@media screen and (min-width: 1200px) {
+  .collection-results_no-filter .template-search__item, .collection-results.full-width .template-search__item {
+    width: calc(25% - 1.8rem);
+  }
+}

@@ -1,0 +1,80 @@
+.banner-grid {
+  --gap: 1.6rem;
+  --grid-width: calc(100% - (var(--gap) * (1 - 1 / var(--per-row))));
+}
+.banner-grid.collection-grid-one {
+  --grid-width: calc(100% - (var(--gap) * (1 - 1 / var(--per-row))));
+}
+@media screen and (min-width: 576px) {
+  .banner-grid {
+    --grid-width: calc(50% - (var(--gap) * (1 - 1 / var(--per-row))));
+  }
+}
+@media screen and (min-width: 1200px) {
+  .banner-grid {
+    --gap: 3.2rem;
+    --grid-width: calc(
+    	100% / var(--per-row) - (var(--gap) * (1 - 1 / var(--per-row)))
+    );
+  }
+}
+.banner-grid .banner-grid__card {
+  position: relative;
+  padding-bottom: var(--padding-bottom);
+  border-radius: 8px;
+}
+.banner-grid .banner-grid__card .banner-grid__image img,
+.banner-grid .banner-grid__card .banner-grid__image svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.banner-grid .banner-grid__card .banner-grid__image svg {
+  background-color: rgba(var(--color-foreground), 0.04);
+  fill: rgba(var(--color-foreground), 0.55);
+}
+.banner-grid .banner-grid__title {
+  margin-bottom: 3.2rem;
+}
+.banner-grid .banner-grid__text-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 4rem;
+}
+.banner-grid__list {
+  display: grid;
+  gap: 2.4rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  align-self: flex-start;
+  grid-template-columns: 1fr;
+}
+@media screen and (min-width: 990px) {
+  .banner-grid__list {
+    grid-template-columns: repeat(clamp(1, var(--per-row), 2), 1fr);
+  }
+}
+@media screen and (min-width: 1200px) {
+  .banner-grid__list {
+    grid-template-columns: repeat(var(--per-row), 1fr);
+  }
+}
+.banner-grid__list .multicolumn-card__image-wrapper {
+  width: var(--grid-width);
+  position: relative;
+  z-index: 1;
+}
+.banner-grid__list .multicolumn-card__image-wrapper img,
+.banner-grid__list .multicolumn-card__image-wrapper svg {
+  transition: transform var(--duration-long) ease;
+}
+.banner-grid__list .multicolumn-card__image-wrapper:hover img,
+.banner-grid__list .multicolumn-card__image-wrapper:hover svg {
+  transform: scale(1.12);
+}

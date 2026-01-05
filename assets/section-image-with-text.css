@@ -1,0 +1,157 @@
+.image-with-text {
+    background-image: url('https://cdn.shopify.com/s/files/1/0683/1256/3891/files/benefits-banner.jpg?v=1734494861');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.image-with-text .image-with-text__grid {
+  display: flex;
+  gap: var(--main-padding);
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 1567px) {
+  .image-with-text__image-item > img {
+    width: 453px;
+  } 
+}
+
+@media screen and (max-width: 500px) {
+  .image-with-text__image-item > img {
+    width: 100%;
+  } 
+}
+
+.image-with-text .image-with-text-image img,
+.image-with-text .image-with-text-image svg,
+.image-with-text .image-with-text-image video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.image-with-text .image-with-text__grid--reverse {
+  flex-direction: row-reverse;
+}
+.image-with-text .image-with-text__grid--reverse .multicolumn {
+  --gap: 6.4rem;
+}
+.image-with-text .image-with-text__button-wrapper {
+  margin-top: 0;
+}
+
+.multicolumn-card__info .richtext__content p{
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+@media screen and (min-width: 990px) {
+  .image-with-text .image-with-text__button-wrapper {
+    margin-top: 6.4rem;
+  }
+}
+.image-with-text .image-with-text__media-item {
+  flex: 0 0 100%;
+  max-width: 100%;
+  position: relative;
+  max-height: 45vh;
+}
+@media screen and (min-width: 900px) {
+  .image-with-text .image-with-text__media-item {
+    flex: 0 0 calc(50% - 44px);
+    max-width: calc(50% - 44px);
+    max-height: unset;
+  }
+  .image-with-text .image-with-text__media-item .multicolumn-list__wrapper {
+    row-gap: unset;
+  }
+}
+.image-with-text .image-with-text__media-item::after {
+  content: "";
+  display: block;
+  padding-bottom: var(--image-height);
+}
+.image-with-text .image-with-text__media-item .image-with-text__media {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.image-with-text .image-with-text__media-item .image-with-text__media img,
+.image-with-text .image-with-text__media-item .image-with-text__media svg,
+.image-with-text .image-with-text__media-item .image-with-text__media video {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 8px;
+}
+.image-with-text .image-with-text__text {
+  text-transform: inherit;
+  margin-bottom: 0;
+}
+.image-with-text .image-with-text__text.image-with-text__text-big:not(:first-child) {
+  margin-top: 2.4rem;
+}
+.image-with-text .image-with-text__text.image-with-text__text-big p:not(:last-child) {
+  margin-bottom: 2.4rem;
+}
+@media screen and (min-width: 990px) {
+  .image-with-text .image-with-text__text.image-with-text__text-big p:not(:last-child) {
+    margin-bottom: 4.8rem;
+  }
+}
+.image-with-text .image-with-text__text-item {
+  flex: 0 0 100%;
+  max-width: 100%;
+  z-index: 1;
+}
+@media screen and (min-width: 900px) {
+  .image-with-text .image-with-text__text-item {
+    flex: 0 0 calc(50% - 44px);
+    max-width: calc(50% - 44px);
+  }
+}
+.image-with-text .image-with-text__text-item .image-with-text__content,
+.image-with-text .image-with-text__text-item .multicolumn-list__item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+@media screen and (min-width: 1200px) {
+  .image-with-text .image-with-text__text-item .image-with-text__content,
+  .image-with-text .image-with-text__text-item .multicolumn-list__item {
+    width: var(--grid-width);
+  }
+}
+.image-with-text .image-with-text__content:not(.image-with-text__content-full) {
+  max-width: unset;
+}
+@media screen and (min-width: 1200px) {
+  .image-with-text .image-with-text__content:not(.image-with-text__content-full) {
+    max-width: 600px;
+  }
+}
+.image-with-text .multicolumn {
+  margin-top: 6.4rem;
+}
+@media screen and (min-width: 1200px) {
+  .image-with-text .multicolumn {
+    --gap: 4.8rem 6.4rem;
+  }
+}
+.image-with-text .multicolumn .multicolumn-card--image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.image-with-text .multicolumn .multicolumn_card-icon {
+  margin-bottom: 2.4rem;
+}
+.image-with-text .multicolumn-card--title {
+  margin-bottom: 1.2rem;
+  display: block;
+}

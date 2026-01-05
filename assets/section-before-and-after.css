@@ -1,0 +1,13 @@
+.image-with-text .multicolumn {
+  margin-top: 2.5rem !important;
+}
+
+
+@media only screen and (min-width: 768px) {
+  .image-with-text .multicolumn {
+  margin-top: 2.5rem !important;
+}
+  .before-and-after .richtext__content p:last-child {
+      width: 250px;
+}
+}

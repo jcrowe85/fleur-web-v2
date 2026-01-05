@@ -1,0 +1,196 @@
+.product-markers .card-horizontal__title,
+.product-markers .card__title {
+  letter-spacing: calc(var(--letter-spacing) * 0.1);
+}
+.product-markers .card__link {
+  width: max-content;
+  padding: 1rem 1.5rem;
+}
+.product-markers .right {
+  text-align: left;
+}
+.product-markers .have-overlay {
+  background: rgba(var(--color-foreground), var(--overlay-alpha));
+}
+@media screen and (min-width: 990px) {
+  .product-markers .product-markers-for-mobile {
+    display: none;
+  }
+}
+.product-markers .product-markers-for-mobile .product-markers__product {
+  display: none;
+}
+.product-markers .product-card {
+  width: 44rem;
+  display: flex;
+  height: 18rem;
+  border-radius: 8px;
+}
+.product-markers .card--product {
+  width: 14rem;
+}
+.product-markers .card-horizontal__inner {
+  height: 100%;
+}
+.product-markers .card-horizontal__inner .media {
+  height: 100%;
+  padding-bottom: 0;
+}
+.product-markers .product-parameters {
+  margin: 0;
+}
+.product-markers .card-horizontal__collection-title {
+  margin-top: 0.8rem;
+  font-weight: 500;
+}
+@media (min-width: 750px) {
+  .product-markers .card-horizontal__collection-title {
+    margin-top: 1.6rem;
+  }
+}
+.product-markers .card-horizontal__collection-title a {
+  margin-right: 1rem;
+  opacity: 0.5;
+}
+.product-markers .card-information {
+  padding: 4.4rem 3.2rem;
+  display: flex;
+  align-items: center;
+}
+.product-markers .product-markers-for-mobile {
+  margin-bottom: 2rem;
+}
+.product-markers .product-markers__card {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  opacity: 0;
+  width: 46rem;
+  pointer-events: none;
+  padding-top: 1.6rem;
+  visibility: hidden;
+  display: none;
+}
+.product-markers .card-horizontal__block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.product-markers .product-markers__card-top .product-markers__card {
+  bottom: 100%;
+  top: unset;
+  padding-top: unset;
+  padding-bottom: 1.6rem;
+}
+.product-markers .product-markers__card-left .product-markers__card {
+  left: unset;
+  right: 50%;
+}
+.product-markers .product-markers__marker:before {
+  content: "";
+  padding: 40px;
+  position: absolute;
+  width: 130px;
+  left: -40px;
+  top: 26px;
+}
+@media screen and (min-width: 990px) {
+  .product-markers .product-markers__marker:hover {
+    z-index: 10;
+  }
+  .product-markers .product-markers__marker:hover .product-markers__card {
+    display: block;
+    opacity: 1;
+    pointer-events: unset;
+    visibility: unset;
+  }
+}
+.product-markers .card-wrapper {
+  display: flex;
+  border-radius: 0.8rem;
+}
+.product-markers .card-wrapper .media {
+  height: 18rem;
+}
+.product-markers__img {
+  width: 100%;
+  position: relative;
+  max-width: 100%;
+}
+.product-markers .product-markers__overlay {
+  z-index: -1;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  line-height: 0;
+}
+.product-markers .product-markers__overlay img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  position: relative;
+  z-index: -2;
+}
+.product-markers__img-box {
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+.product-markers__product-wrapper {
+  max-width: 100%;
+  position: relative;
+}
+@media screen and (min-width: 990px) {
+  .product-markers__product-wrapper {
+    max-width: 50%;
+    margin: 0 auto;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .product-markers__product-wrapper {
+    max-width: 30%;
+  }
+}
+.product-markers__marker {
+  position: absolute;
+  box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.1);
+  width: 3.2rem;
+  height: 3.2rem;
+  backdrop-filter: blur(6.7px);
+  background-color: rgb(var(--color-background), 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-long) linear;
+  cursor: pointer;
+}
+.product-markers__marker:hover:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 300%;
+  height: 120%;
+  transform: translateX(-25%);
+}
+.product-markers__marker svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  transition: inherit;
+}
+@media screen and (min-width: 990px) {
+  .product-markers__marker svg {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}
+@media screen and (min-width: 990px) {
+  .product-markers__marker {
+    width: 6.4rem;
+    height: 6.4rem;
+  }
+}
+.product-markers__media .placeholder-svg {
+  width: 100%;
+  height: 80vh;
+}

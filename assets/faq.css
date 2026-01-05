@@ -1,0 +1,21 @@
+.faq-section-custom .section-header__title__block { justify-content: center !important; }
+.faq-section-custom .section-header__title-item { width: 100%; }
+.faq-section-custom .section-header__line .section-header__title { margin: 0; text-align: center;}
+.faq-section-custom .collapsible-content-block .accordion { margin: 0; border-bottom:none; border-top: solid 1px #B1B1B2; }
+.faq-section-custom .collapsible-content-block .collapsible-content-block:nth-last-child(1) .accordion {border-bottom:solid 1px #B1B1B1;}
+.faq-section-custom h3.collapsible-content-block__heading { font-family: Neue Haas Unica W1G; font-weight:600; font-size: 20px; line-height: 120%; letter-spacing: 0;}
+.faq-section-custom summary { padding: 17px 0 !important; }
+.faq-section-custom .collapsible-content-item ul { margin-top: 0;    padding: 0 0 0 20px;}
+.faq-section-custom .collapsible-content-block__description.richtext__content { font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 16px; line-height: 1.35; letter-spacing: -.3px; padding-bottom: 15px; }
+.faq-section-custom .minus-icon {display:none;}
+.faq-section-custom details[open] .plus-icon {display:none;}
+.faq-section-custom details[open] .minus-icon {display:block;}
+.faq-section-custom summary { display: flex; justify-content: space-between; }
+.faq-section-custom .collapsible-content-block .accordion summary svg { height: 2.4rem; width: 24px; height: 24px; min-height:24px; min-width:24px;}
+
+@media(max-width:1199px){
+    .faq-section-custom h3.collapsible-content-block__heading {font-size:18px;}
+}
+
+
+

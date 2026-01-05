@@ -1,0 +1,249 @@
+{{ 'twentytwenty.css' | asset_url | stylesheet_tag }}
+{{ 'section-compare.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'jquery.event.move.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'jquery.twentytwenty.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'compare.js' | asset_url }}" defer="defer"></script>
+
+{% style %}
+	{% render 'section-padding' %}
+		{% render 'section-margin' %}
+{% endstyle %}
+
+<div class="compare">
+	<div class="compare__wrapper">
+		{% render 'section-header' %}
+
+		<div class="compare__box">
+			<div class="container">
+				<div class="compare__slayd">
+					{%- if section.settings.image_before != blank
+						and section.settings.image_after != blank
+					-%}
+						<div class="twentytwenty-wrapper twentytwenty-horizontal">
+							<div class="compare__block">
+								<div class="compare__item">
+									{{ section.settings.compare_before }}
+								</div>
+								<div class="compare__item">
+									{{ section.settings.compare_after }}
+								</div>
+							</div>
+							{%liquid
+								assign image_before_height = section.settings.image_before.width | divided_by: section.settings.image_before.aspect_ratio
+								assign image_after_height = section.settings.image_after.width | divided_by: section.settings.image_after.aspect_ratio
+								if image_before_height > image_after_height
+									assign image_height = image_after_height | round: 0
+								else
+									assign image_height = image_before_height | round: 0
+								endif
+								if image_height > 710
+									assign image_height = 710
+								endif
+							%}
+							<style>
+								#shopify-section-{{ section.id }} {
+									--min-height: {{ image_height }}px;
+								}
+							</style>
+							<div class="twentytwenty-container">
+								{{
+									section.settings.image_before
+									| image_url: width: 3840
+									| image_tag:
+										loading: 'fast',
+										width: section.settings.image_before.width,
+										widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+										sizes: '100vw',
+										height: image_before_height
+								}}
+								{{
+									section.settings.image_after
+									| image_url: width: 3840
+									| image_tag:
+										loading: 'fast',
+										width: section.settings.image.width,
+										widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+										sizes: '100vw',
+										height: image_after_height
+								}}
+							</div>
+						</div>
+					{%- else -%}
+						<div class="compare__defoult">
+							{{
+								'product-1'
+								| placeholder_svg_tag: 'placeholder-svg placeholder'
+							}}
+							{{
+								'product-2'
+								| placeholder_svg_tag: 'placeholder-svg placeholder'
+							}}
+						</div>
+					{%- endif -%}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "t:sections.compare-block.name",
+	"tag": "section",
+	"class": "compare-section spaced-section",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "inline_richtext",
+			"id": "heading",
+			"label": "t:sections.all.heading.label",
+			"default": "Heading"
+		},
+		{
+			"type": "richtext",
+			"id": "description",
+			"default": "<p>Some description</p>",
+			"label": "t:sections.all.text.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.button.header.content"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"default": "Button label",
+			"label": "t:sections.all.button.label.label",
+			"info": "t:sections.all.button.label.info"
+		},
+		{
+			"type": "url",
+			"id": "button_link",
+			"label": "t:sections.all.button.link.label"
+		},
+		{
+			"type": "select",
+			"id": "button_style",
+			"options": [
+				{
+					"value": "primary",
+					"label": "t:sections.all.button.style.options__1.label"
+				},
+				{
+					"value": "secondary",
+					"label": "t:sections.all.button.style.options__2.label"
+				},
+				{
+					"value": "tertiary",
+					"label": "t:sections.all.button.style.options__3.label"
+				}
+			],
+			"default": "primary",
+			"label": "t:sections.all.button.style.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "button_arrow",
+			"default": true,
+			"label": "t:sections.all.button.arrow.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.image.header.content"
+		},
+
+		{
+			"type": "image_picker",
+			"id": "image_before",
+			"label": "t:sections.compare-block.settings.image_before.label",
+			"info": "t:sections.compare-block.settings.image_before.info"
+		},
+		{
+			"type": "image_picker",
+			"id": "image_after",
+			"label": "t:sections.compare-block.settings.image_after.label",
+			"info": "t:sections.compare-block.settings.image_before.info"
+		},
+		{
+			"type": "text",
+			"id": "compare_before",
+			"default": "Before",
+			"label": "t:sections.compare-block.settings.compare_before.label"
+		},
+		{
+			"type": "text",
+			"id": "compare_after",
+			"default": "After",
+			"label": "t:sections.compare-block.settings.compare_after.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		}
+	],
+	"presets": [
+		{
+			"name": "t:sections.compare-block.presets.name"
+		}
+	]
+}
+{% endschema %}

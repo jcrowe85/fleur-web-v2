@@ -1,0 +1,502 @@
+{{ 'split-screen-slideshow.css' | asset_url | stylesheet_tag }}
+{{ 'component-additional-text.css' | asset_url | stylesheet_tag }}
+<script
+	src="{{ 'split-screen-slideshow.js' | asset_url }}"
+	defer="defer"
+></script>
+{% style %}
+{% render 'section-margin' %}
+{% endstyle %}
+{% liquid
+	assign text_animation = section.settings.text_animation
+
+	assign slide_effects = section.settings.slide_effects
+	assign parallax = section.settings.parallax
+	assign slideshow_speed = section.settings.slideshow_speed
+	assign autoplay = section.settings.is_autoplay
+	assign stop_autoplay = section.settings.is_hover_stop_autoplay
+	assign slideshow_delay = section.settings.slideshow_delay
+	assign image_size = section.settings.image_size
+
+	case image_size
+		when 'adapt'
+			assign section_size = 0
+			assign slide_class = image_size
+		when 'large'
+			assign section_size = 'calc(100vh - var(--header-height) - var(--announcement-height))'
+			assign slide_class = image_size
+		else
+			assign section_size = 'calc(100vh - var(--header-height) - var(--announcement-height))'
+			assign slide_class = image_size
+	endcase
+%}
+
+{% if section.settings.section_layout == "container" %}
+	<div class="container">
+{% endif %}
+<div
+	class="split-screen-slideshow {{ slide_class }}"
+	data-id="shopify-section-{{ section.id }}"
+	data-autoplay="{{ autoplay }}"
+	data-stop-autoplay="{{ stop_autoplay }}"
+	data-speed="{{ slideshow_speed }}"
+	data-delay="{{ slideshow_delay }}"
+	data-parallax="{{ parallax }}"
+	data-effect="{{ slide_effects }}"
+	style="--bullet-duration : {{ slideshow_delay }}s"
+>	
+	<div class="split-screen-slideshow__wrapper">
+		<div class="split-screen-slideshow__text-slider">
+			<div class="split-screen-slideshow__text-swiper swiper">
+				<div class="swiper-wrapper">
+					{% for block in section.blocks %}
+						{% liquid
+							assign image_height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio
+							assign adapt_height = 1 | divided_by: block.settings.image.aspect_ratio | times: 100 | append: '%'
+							if image_size == 'adapt'
+								assign section_size = adapt_height
+							endif
+							assign slide_color = block.settings.color_scheme
+						%}
+						{% style %}
+						{% if image_size == 'adapt' or image_size == 'large' %}
+							[data-id="split-screen-slideshow-{{ block.id }}"]{
+								--slide-height : {{ section_size }};
+							}
+						{% endif %}
+						{% if image_size != 'adapt' and image_size != 'large' %}
+							[data-id="split-screen-slideshow-{{ block.id }}"] .split-screen-slideshow__image-slider__box {
+									aspect-ratio : {{ image_size }};
+							}
+						{% endif %}
+						{% endstyle %}
+					<div class="split-screen-slideshow__text-slide swiper-slide background color-{{ slide_color }}" data-color-scheme="color-{{ slide_color }}" data-id="split-screen-slideshow-{{ block.id }}">
+						<div class="split-screen-slideshow__text-slider__wrapper">
+							<div class="container">
+								{% if block.settings.heading != blank %}
+									<h1
+										class="split-screen-slideshow-slide__title h2{% if text_animation and parallax == false %} slide-up-animated{% endif %}"
+										{% if text_animation == false %}data-swiper-parallax="-600"{% endif %}
+									>
+										{% if text_animation %}<div class="slide-up-item">{% endif %}
+										{{ block.settings.heading }}
+										{% if text_animation %}</div>{% endif %}
+									</h1>
+								{% endif %}
+								{% if block.settings.text != blank %}
+									<div
+										class="split-screen-slideshow-slide__desc richtext__content{% if text_animation and parallax == false %} slide-up-animated{% endif %}"
+										{% if text_animation == false %}data-swiper-parallax="-800"{% endif %}
+									>
+										{% if text_animation %}<div class="slide-up-item">{% endif %}
+										{{ block.settings.text }}
+										{% if text_animation %}</div>{% endif %}
+									</div>
+								{% endif %}
+								<div class="split-screen-slideshow-slide__button">
+									{% render 'button', layout: block %}
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+				</div>
+			</div>
+			{% if section.settings.show_bullets or section.settings.enable_additional_text %}
+				<div class="split-screen-slideshow-bottom slider-pagiantion-bullet{% for block in section.blocks %} color-{{ block.settings.color_scheme }}{% break %}{% endfor %}">
+					<div class="container">
+						<div class="split-screen-slideshow-bottom__wrapper">
+							{% if section.settings.show_bullets %}
+									<div class="swiper-pagination__wrapper">
+										<div class="swiper-pagination swiper-pagination__button"></div>
+									</div>
+							{% endif %}
+							{% if section.settings.enable_additional_text %}
+										<div class="additional-text">
+											<div class="additional-text__desc small-font richtext__content">{{ section.settings.additional_text }}</div>
+											<div class="additional-text__icon">{% render 'icon-additional-text' %}{% render 'icon-additional-text' %}</div>
+										</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="split-screen-slideshow__image-slider {{ slide_effects }}">
+			<div class="split-screen-slideshow__image-swiper swiper">
+				<div class="swiper-wrapper">
+					{% for block in section.blocks %}
+						{% liquid
+							assign image_height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio
+							assign adapt_height = 1 | divided_by: block.settings.image.aspect_ratio | times: 100 | append: '%'
+							if image_size == 'adapt'
+								assign section_size = adapt_height
+							endif
+						%}
+						{% style %}
+						{% if image_size == 'adapt' or image_size == 'large' %}
+							[data-id="split-screen-slideshow-{{ block.id }}"]{
+								--slide-height : {{ section_size }};
+							}
+							{% endif %}
+						{% endstyle %}
+					<div class="swiper-slide" data-id="split-screen-slideshow-{{ block.id }}">
+						<div class="split-screen-slideshow__image-slider__box">
+							{% if block.settings.image != blank %}
+								{{
+									block.settings.image
+									| image_url: width: 3840
+									| image_tag:
+										loading: 'lazy',
+										width: block.settings.image.width,
+										height: image_height,
+										sizes: '100vw,(min-width: 990px) 50vw',
+										widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+								}}
+								{% elsif block.settings.video != blank %}
+								{{
+									block.settings.video
+									| video_tag:
+										image_size: '1100x',
+										autoplay: true,
+										loop: true,
+										controls: false,
+										muted: true
+								}}
+							{% else %}
+								{{ 'image' | placeholder_svg_tag }}
+							{% endif %}
+						</div>
+					</div>
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	{% if section.settings.section_layout == "container" %}
+		</div>
+	{% endif %}
+{% schema %}
+{
+	"name": "t:sections.split_screen_slideshow.name",
+	"tag": "section",
+	"class": "split-screen-slideshow__section spaced-section",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "select",
+			"id": "section_layout",
+			"default": "full",
+			"label": "t:sections.all.section_layout.label",
+			"options": [
+				{
+					"value": "full",
+					"label": "t:sections.all.section_layout.options.options__1.label"
+				},
+				{
+					"value": "container",
+					"label": "t:sections.all.section_layout.options.options__2.label"
+				}
+			]
+		},
+		{
+			"type": "checkbox",
+			"id": "text_animation",
+			"default": true,
+			"label": "t:sections.all.animations.label",
+			"info":"t:sections.all.animations.info"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.image.header.content"
+		},
+		{
+			"type": "select",
+			"id": "image_size",
+			"default": "large",
+			"label": "t:sections.all.image.aspect_ratio.label",
+			"options": [
+				{
+					"value": "1/1",
+					"label": "t:sections.all.image.aspect_ratio.options__1.label"
+				},
+				{
+					"value": "3/2",
+					"label": "t:sections.all.image.aspect_ratio.options__2.label"
+				},
+				{
+					"value": "4/3",
+					"label": "t:sections.all.image.aspect_ratio.options__3.label"
+				},
+				{
+					"value": "16/9",
+					"label": "t:sections.all.image.aspect_ratio.options__4.label"
+				},
+				{
+					"value": "21/9",
+					"label": "t:sections.all.image.aspect_ratio.options__5.label"
+				},
+				{
+					"value": "adapt",
+					"label": "t:sections.all.image.aspect_ratio.options__6.label"
+				},
+				{
+					"value": "large",
+					"label": "t:sections.all.image.aspect_ratio.options__7.label"
+				}
+			]
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.slider_options.header.content"
+		},
+		{
+			"type": "checkbox",
+			"id": "is_autoplay",
+			"default": true,
+			"label": "t:sections.all.slider_options.slider_is_autoplay.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "is_hover_stop_autoplay",
+			"default": false,
+			"label": "t:sections.all.slider_options.slider_hover_autoplay_stop.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_bullets",
+			"default": true,
+			"label": "t:sections.all.slider_options.pagination.label"
+		},
+		{
+			"type": "range",
+			"id": "slideshow_speed",
+			"min": 0,
+			"max": 6,
+			"step": 0.1,
+			"default": 1.1,
+			"unit": "s",
+			"label": "t:sections.all.slider_options.speed.label"
+		},
+		{
+			"type": "range",
+			"id": "slideshow_delay",
+			"min": 0,
+			"max": 8,
+			"step": 0.1,
+			"default": 3,
+			"unit": "s",
+			"label": "t:sections.all.slider_options.delay.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "parallax",
+			"default": false,
+			"label": "t:sections.all.slider_options.parallax.label",
+			"info" : "t:sections.all.slider_options.parallax.info"
+		},
+		{
+			"type": "select",
+			"id": "slide_effects",
+			"options": [
+				{
+					"value": "slide",
+					"label": "t:sections.all.slider_options.effects.options.options__1.label"
+				},
+				{
+					"value": "fade",
+					"label": "t:sections.all.slider_options.effects.options.options__2.label"
+				},
+				{
+					"value": "coverflow",
+					"label": "t:sections.all.slider_options.effects.options.options__3.label"
+				},
+				{
+					"value": "creative",
+					"label": "t:sections.all.slider_options.effects.options.options__4.label"
+				},
+				{
+					"value": "flip",
+					"label": "t:sections.all.slider_options.effects.options.options__5.label"
+				}
+			],
+			"default": "slide",
+			"label": "t:sections.all.slider_options.effects.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.slideshow.settings.additional_text.header"
+		},
+		{
+			"type": "richtext",
+			"id": "additional_text",
+			"default": "<p>Scroll</p>",
+			"label": "t:sections.all.text.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_additional_text",
+			"default": true,
+			"label": "t:sections.slideshow.settings.additional_text.enable"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "no-indent",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "no-indent",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		}
+	],
+	"blocks": [
+		{
+			"type": "split_screen_slid",
+			"name": "t:sections.slideshow.blocks.name",
+			"limit": 8,
+			"settings": [
+				{
+					"type": "color_scheme",
+					"id": "color_scheme",
+					"default": "background-1",
+					"label": "t:sections.all.color_scheme.label"
+				},
+				{
+					"type": "text",
+					"id": "heading",
+					"label": "t:sections.all.heading.label",
+					"default": "Slide heading"
+				},
+				{
+					"type": "richtext",
+					"id": "text",
+					"label": "t:sections.all.text.label",
+					"default": "<p>Text from here describes your slide</p>"
+				},
+				{
+					"type": "header",
+					"content": "t:sections.all.button.header.content"
+				},
+				{
+					"type": "text",
+					"id": "button_label",
+					"default": "Button label",
+					"label": "t:sections.all.button.label.label",
+					"info": "t:sections.all.button.label.info"
+				},
+				{
+					"type": "url",
+					"id": "button_link",
+					"label": "t:sections.all.button.link.label"
+				},
+				{
+					"type": "select",
+					"id": "button_style",
+					"options": [
+						{
+							"value": "primary",
+							"label": "t:sections.all.button.style.options__1.label"
+						},
+						{
+							"value": "secondary",
+							"label": "t:sections.all.button.style.options__2.label"
+						},
+						{
+							"value": "tertiary",
+							"label": "t:sections.all.button.style.options__3.label"
+						}
+					],
+					"default": "secondary",
+					"label": "t:sections.all.button.style.label"
+				},
+				{
+					"type": "checkbox",
+					"id": "button_arrow",
+					"default": true,
+					"label": "t:sections.all.button.arrow.label"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "t:sections.all.image.label"
+				},
+				{
+					"type": "video",
+					"id": "video",
+					"label": "t:sections.all.video.label"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "t:sections.split_screen_slideshow.name",
+			"blocks": [
+				{
+					"type": "split_screen_slid"
+				},
+				{
+					"type": "split_screen_slid"
+				},
+				{
+					"type": "split_screen_slid"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

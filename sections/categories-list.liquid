@@ -1,0 +1,172 @@
+{{ 'section-categories-list.css' | asset_url | stylesheet_tag }}
+{{ 'component-collection-card-horizantal.css' | asset_url | stylesheet_tag }}
+{% style %}
+	{% render 'section-margin' %}
+	#shopify-section-{{ section.id }} {
+		--per-row : {{ section.settings.per_row }}
+	}
+{% endstyle %}
+
+<div class="collection-grid">
+	<div class="container">
+		<div class="collection-grid__wrapper">
+			<div class="collection-grid__box">
+				<ul class="collection-grid__list">
+					{%- for block in section.blocks -%}
+						<li class="collection-grid__card-horizantal color-{{ section.settings.color_scheme }} background">
+							{% render 'collection-card-horizantal',
+								block_collection: block.settings.collection,
+								media_size: section.settings.image_ratio,
+								url: block.settings.collection.url,
+								collection_title: block.settings.collection.title,
+								block_image: block.settings.collection_image,
+								collection_desc: block.settings.collection.description,
+								collection_image: block.settings.collection.image,
+								per_row: section.settings.per_row
+							%}
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "t:sections.categories-list.name",
+	"tag": "section",
+	"class": "categories-list-section spaced-section",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "range",
+			"id": "per_row",
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"default": 4,
+			"label": "t:sections.all.column_per_row.label",
+			"info": "t:sections.all.column_per_row.info"
+		},
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-2",
+			"label": "t:sections.all.color_scheme.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "no-indent",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "no-indent",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		}
+	],
+	"blocks": [
+		{
+			"type": "categories",
+			"name": "t:sections.collection-grid.blocks.categories.name",
+			"settings": [
+				{
+					"type": "collection",
+					"id": "collection",
+					"label": "t:sections.all.collection.label"
+				},
+				{
+					"type": "image_picker",
+					"id": "collection_image",
+					"label": "t:sections.all.image.label",
+					"info": "t:sections.collection-grid.info"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "t:sections.categories-list.presets.name",
+			"blocks": [
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				},
+				{
+					"type": "categories"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

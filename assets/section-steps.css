@@ -1,0 +1,262 @@
+.steps-section {
+  overflow: hidden;
+}
+
+.steps {
+  overflow: hidden;
+}
+@media (min-width: 990px) {
+  .steps {
+    min-height: 100vh;
+    max-height: 100vh;
+  }
+}
+.steps.no-js {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+@media (min-width: 990px) {
+  .steps.no-js {
+    min-height: auto;
+    max-height: 100%;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+.steps.no-js .steps__wrapper {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 4rem 2rem;
+  padding-top: 0;
+}
+.steps.no-js .steps__slide-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  top: 0;
+  bottom: unset;
+  opacity: 1;
+  transform: none;
+}
+@media (min-width: 750px) {
+  .steps.no-js .steps__slide-item {
+    width: calc(50% - 2rem);
+  }
+}
+@media (min-width: 1200px) {
+  .steps.no-js .steps__slide-item {
+    width: calc(33.3333% - 2rem);
+  }
+}
+.steps.no-js .steps__image {
+  order: -1;
+  margin-top: 0;
+  margin-bottom: 1.6rem;
+}
+.steps.no-js .steps__scroll-parallax {
+  height: 0;
+  padding-top: 100%;
+}
+.steps.no-js .steps__scroll-parallax img,
+.steps.no-js .steps__scroll-parallax svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.steps.no-js .steps__num {
+  margin-bottom: 0;
+}
+.steps.no-js .steps__text {
+  margin-top: 0;
+}
+.steps .steps-anim {
+  height: 100%;
+}
+.steps__title {
+  letter-spacing: -0.02em;
+  background-color: rgb(var(--color-background));
+  position: relative;
+  z-index: 1;
+  padding-bottom: 4.2rem;
+  margin: 0;
+}
+@media (max-width: 1359px) and (orientation: landscape) and (max-height: 700px) {
+  .steps__title {
+    margin-top: -9.6rem;
+    padding-top: 9.6rem;
+  }
+}
+@media (min-width: 990px) {
+  .steps__container {
+    height: 100%;
+  }
+}
+.steps__wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--spaced-section);
+}
+@media (min-width: 990px) {
+  .steps__wrapper {
+    height: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+}
+.steps__left {
+  width: 100%;
+  max-height: calc(100vh - var(--spaced-section));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 0;
+}
+@media (min-width: 990px) {
+  .steps__left {
+    width: auto;
+    max-width: 53rem;
+    padding-bottom: var(--spaced-section);
+    flex-grow: 1;
+  }
+}
+@media (max-width: 1359px) and (orientation: landscape) and (max-height: 700px) {
+  .steps__left {
+    justify-content: flex-start;
+  }
+}
+.steps__right {
+  width: 100%;
+  flex-grow: 1;
+}
+@media (min-width: 990px) {
+  .steps__right {
+    max-width: 62rem;
+    width: 62rem;
+    max-height: 83.8rem;
+  }
+}
+.steps__scroll {
+  position: relative;
+}
+.steps__slides {
+  position: relative;
+  flex-grow: 1;
+}
+@media (min-width: 990px) {
+  .steps__slide-item {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(calc(100% + 2rem));
+    opacity: 0;
+  }
+}
+@media (max-width: 1359px) and (orientation: landscape) and (max-height: 700px) {
+  .steps__slide-item {
+    top: 0;
+    bottom: unset;
+  }
+}
+.steps__slide-item--desktop {
+  display: none;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+@media (min-width: 990px) {
+  .steps__slide-item--desktop {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+}
+.steps__slide-item--desktop.prev {
+  opacity: 0;
+  transform: translateY(calc(-100% - 2rem));
+}
+.steps__slide-item--desktop.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.steps__slide-item--mobile {
+  margin-bottom: 2rem;
+}
+@media (min-width: 990px) {
+  .steps__slide-item--mobile {
+    display: none;
+  }
+}
+.steps__text {
+  max-width: 41.5rem;
+  font-size: 1.8rem;
+  line-height: 150%;
+  color: rgb(var(--color-foreground));
+  opacity: 0.8;
+  margin-top: 1.6rem;
+}
+@media (min-width: 990px) {
+  .steps__text {
+    max-height: 14rem;
+    overflow: hidden;
+  }
+}
+.steps.color-background-2 .steps__image--placeholder {
+  border: 1px solid rgb(0, 0, 0);
+}
+.steps.color-background-2 .steps__image svg {
+  fill: rgb(0, 0, 0);
+}
+.steps.color-background-3 .steps__image--placeholder {
+  border: 1px solid rgb(255, 255, 255);
+}
+.steps.color-background-3 .steps__image svg {
+  fill: rgb(255, 255, 255);
+}
+.steps__image {
+  border-radius: 0.3rem;
+  overflow: hidden;
+  margin-bottom: 4.8rem;
+}
+.steps__scroll-parallax {
+  height: 0;
+  padding-top: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 0.3rem;
+}
+@media (min-width: 990px) {
+  .steps__scroll-parallax {
+    height: 66.2rem;
+    padding-top: 0;
+    overflow: hidden;
+  }
+}
+.steps__scroll-parallax svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0.3rem;
+}
+.steps__scroll-parallax img {
+  width: 100%;
+  height: calc(100% + 4rem);
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.3rem;
+}
+@media (min-width: 990px) {
+  .steps__scroll-parallax img {
+    position: relative;
+    bottom: unset;
+    right: unset;
+  }
+}

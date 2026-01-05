@@ -1,0 +1,198 @@
+{{ 'footer-bottom-bar.css' | asset_url | stylesheet_tag }}
+{% style %}
+	.section-{{ section.id }}-padding {
+	{% if section.settings.padding_top == 'no-indent' %}
+		padding-top: 0;
+	{% else %}
+		padding-top: 3.2rem;
+	{% endif %} 
+
+	{% if section.settings.padding_bottom == 'no-indent' %}
+		padding-bottom: 0;
+	{% else %}
+		padding-bottom: 3.2rem;
+	{% endif %}
+}
+
+@media screen and (min-width: 990px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+@media screen and (min-width: 1200px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 8rem;
+		{% elsif section.settings.padding_top == 'm' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 8rem;
+		{% elsif section.settings.padding_bottom == 'm' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+@media screen and (min-width: 1560px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 16rem;
+		{% elsif section.settings.padding_top == 'm' %}
+			padding-top: 8rem;
+		{% elsif section.settings.padding_top == 's' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 16rem;
+		{% elsif section.settings.padding_bottom == 'm' %}
+			padding-bottom: 8rem;
+		{% elsif section.settings.padding_bottom == 's' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+  .footer-bottom-bar.{{ section.id }} {background-image:url({{ section.settings.bg_image | img_url:"master" }});}
+{% endstyle %}
+
+<div class="footer-bottom-bar {{ section.id }} color-{{ section.settings.color_scheme }} background section-{{ section.id }}-padding">
+    <div class="container">
+         
+        <div class="git-image-caption-wrap">
+            {% if section.settings.image != blank %}
+                <img src="{{ section.settings.image | image_url:width:'1200px' }}" width="" height="" alt="{{ section.settings.image.alt }}" loading="lazy"> 
+            {% endif %}
+            <div class="footer__copyright">
+							<small class="footer__copyright__content footer__copyright__content-text"
+								>&copy; </small><small> {{- 'now' | date: '%Y' -}}</small>
+<small>
+								{{- shop.name | link_to: routes.root_url }}
+                               
+								</small>
+						</div>
+        </div>
+    </div>
+</div>
+ 
+{% schema %}
+{
+  "name": "Footer Bottom Bar",
+  "tag": "section",
+  "settings": [
+     {
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-2",
+			"label": "t:sections.all.color_scheme.label"
+	},
+    {
+        "type":"image_picker",
+        "id":"bg_image",
+        "label":"Background Image"
+    },
+    {
+        "type":"image_picker",
+        "id":"image",
+        "label":"Image"
+    },
+    {
+			"type": "header",
+			"content": "t:sections.all.section-padding.header.content"
+		},
+		{
+			"type": "select",
+			"id": "padding_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-padding.padding_top.label"
+		},
+		{
+			"type": "select",
+			"id": "padding_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-padding.padding_bottom.label"
+		}
+  ],
+  "presets": [
+    {
+      "name": "Footer Bottom Bar"
+    }
+  ]
+}
+{% endschema %}

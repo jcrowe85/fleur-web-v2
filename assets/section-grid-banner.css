@@ -1,0 +1,125 @@
+.cards-grid__wrapper {
+  display: grid;
+  gap: 2.4rem;
+}
+.cards-grid__item {
+  position: relative;
+  min-height: 20rem;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  display: flex;
+}
+.cards-grid__item:after {
+  content: "";
+  display: block;
+  padding-bottom: var(--block-height);
+}
+.cards-grid__item-height--large {
+  min-height: 26vw;
+}
+@media screen and (min-width: 1200px) {
+  .cards-grid__item-height--large {
+    min-height: 26vw;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .cards-grid__item-height--large {
+    min-height: 71.2rem;
+  }
+}
+.cards-grid__item-height--small {
+  min-height: 14vw;
+}
+@media screen and (min-width: 1200px) {
+  .cards-grid__item-height--small {
+    min-height: 14vw;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .cards-grid__item-height--small {
+    min-height: 40rem;
+  }
+}
+.cards-grid__item-height--medium {
+  min-height: 19vw;
+}
+@media screen and (min-width: 1200px) {
+  .cards-grid__item-height--medium {
+    min-height: 19vw;
+  }
+}
+@media screen and (min-width: 1360px) {
+  .cards-grid__item-height--medium {
+    min-height: 52rem;
+  }
+}
+.cards-grid__item:hover .cards-grid__image {
+  transform: scale(1.05);
+  transition: transform var(--duration-long) ease;
+}
+.cards-grid__item:hover .cards-grid__button-wrapper {
+  margin-bottom: 0;
+  opacity: 1;
+  transform: translateY(0);
+}
+.cards-grid__item--overlay .cards-grid__overlay {
+  position: absolute;
+  content: "";
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(var(--color-overlay));
+  border-radius: 0.8rem;
+}
+.cards-grid .cards-grid__button-wrapper {
+  margin-top: 2.4rem;
+  pointer-events: all;
+}
+@media screen and (min-width: 1200px) {
+  .cards-grid .cards-grid__button-wrapper {
+    transition: all var(--duration-default) linear;
+    margin-bottom: -6rem;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+.cards-grid .cards-grid__heading {
+  margin-bottom: 0;
+  max-width: 55rem;
+}
+.cards-grid__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-long) ease;
+  z-index: -2;
+}
+.cards-grid__link:empty {
+  position: absolute;
+  display: block;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.cards-grid__info {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  width: 100%;
+  padding: 2rem;
+}
+@media screen and (min-width: 1360px) {
+  .cards-grid__info {
+    padding: 4rem;
+  }
+}
+.cards-grid__info .cards-grid-text {
+  font-weight: 500;
+}

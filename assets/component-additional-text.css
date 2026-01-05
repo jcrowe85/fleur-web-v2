@@ -1,0 +1,48 @@
+.additional-text {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  z-index: 5;
+  margin-left: auto;
+  flex: none;
+}
+
+.additional-text__icon {
+  display: flex;
+  border-radius: 50%;
+  background: rgba(var(--color-foreground), 0.2);
+  backdrop-filter: blur(0.7rem);
+  padding: 0.8rem;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.additional-text__icon svg {
+  width: 2.4rem;
+  height: 2.4rem;
+  animation: scrollArrow 5s 3s linear infinite;
+}
+.additional-text__icon svg:first-child {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.additional-text__desc {
+  font-weight: 600;
+  max-width: 25rem;
+  word-break: break-all;
+}
+
+@keyframes scrollArrow {
+  20%, 100% {
+    translate: 0 calc(100% + 0.8rem);
+  }
+  0% {
+    translate: 0 0;
+  }
+}

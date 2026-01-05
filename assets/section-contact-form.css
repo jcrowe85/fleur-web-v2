@@ -1,0 +1,138 @@
+.spaced-section:last-child.contact-section.no-padding {
+  padding-bottom: 0 !important;
+}
+
+.contact__wrapper {
+  position: relative;
+}
+.contact__container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-left: 0;
+}
+@media screen and (min-width: 1200px) {
+  .contact__container {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 8rem;
+  }
+}
+.contact__text {
+  max-width: 77rem;
+}
+@media screen and (min-width: 1200px) {
+  .contact__text {
+    flex: 0 0 calc(48% - 5rem);
+    max-width: calc(48% - 5rem);
+  }
+}
+.contact-form__block {
+  flex: 1;
+  max-width: 72rem;
+  padding: 3.2rem;
+  border-radius: 0.8rem;
+}
+@media screen and (min-width: 1200px) {
+  .contact-form__block {
+    padding: 6.4rem;
+    flex: 0 0 calc(45% - 5rem);
+    max-width: calc(45% - 5rem);
+  }
+}
+.contact__title {
+  margin: 3.2rem 0 1.6rem;
+  line-height: 1;
+}
+.contact__title > p {
+  margin: 0;
+}
+.contact-form__desc {
+  margin-bottom: 3.2rem;
+}
+.contact .contact__field-error .form__message {
+  align-items: flex-start;
+  margin: 1rem 0 0;
+  font-size: 1.2rem;
+  font-weight: var(--font-body-weight);
+  color: rgba(var(--color-error));
+}
+.contact .contact__field-error .form__message:before {
+  content: "*";
+  color: rgba(var(--color-error));
+  margin-right: 0.2rem;
+}
+@media screen and (min-width: 750px) {
+  .contact__fields {
+    display: flex;
+    grid-column-gap: 2.4rem;
+  }
+}
+.contact .field {
+  margin-bottom: 1.5rem;
+}
+@media screen and (min-width: 750px) {
+  .contact .field {
+    margin-bottom: 2.4rem;
+  }
+}
+.contact .text-area {
+  min-height: 9rem;
+  margin-bottom: 0.8rem;
+}
+.contact__bottom {
+  margin-top: 1.5rem;
+}
+@media screen and (min-width: 750px) {
+  .contact__bottom {
+    margin-top: 2.4rem;
+  }
+}
+.contact__add-text {
+  font-size: 1.2rem;
+  line-height: var(--font-body-linhe-height);
+  color: rgba(var(--color-foreground), 0.6);
+  margin-top: 1.6rem;
+}
+.contact__add-text a {
+  transition: all var(--duration-default) ease;
+  position: relative;
+  text-decoration-color: currentColor;
+}
+.contact__add-text a:hover {
+  color: rgba(var(--color-foreground), 0.6);
+}
+.contact__add-text > * {
+  margin: 0;
+}
+.contact .icon-success {
+  margin-top: 0.2rem;
+}
+.contact input[type=text]::placeholder,
+.contact input[type=email]::placeholder,
+.contact input[type=tel]::placeholder,
+.contact input[type=password]::placeholder,
+.contact .field__input::placeholder {
+  opacity: 1;
+}
+.contact .field {
+  display: block;
+}
+.contact .field label {
+  font-weight: 700;
+  letter-spacing: 0;
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: unset;
+  margin-bottom: 1.2rem;
+  display: inline-block;
+}
+.contact .form-asterisk {
+  color: rgb(217, 76, 76);
+  padding-left: 0.5rem;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
+}

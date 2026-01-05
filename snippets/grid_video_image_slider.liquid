@@ -1,0 +1,293 @@
+{%- comment -%}
+  grid_video_image_slider (complete snippet)
+
+  Requirements implemented:
+  - Fallback image shows immediately
+  - Preview loop video (mp4) fades in ONLY after it's ready (loadeddata/canplay)
+  - Full-length video plays when user clicks custom play button
+  - Custom play/pause toggles full video
+  - Native video controls are hidden (we never enable controls)
+  - When full video ends, returns to preview loop
+  - Right side slider markup preserved
+
+  Expected schema IDs:
+  - left_image (image_picker)        => Fallback
+  - video_loop (video)               => Preview loop mp4 (4–6s)
+  - video_full (video)               => Full video mp4
+  - bg_image (image_picker)
+  - text_color (color)
+  - footer_text (text)
+  - title1..4, subtitle1..4 (text)
+{%- endcomment -%}
+
+{%- assign has_loop = false -%}
+{%- if block.settings.video_loop != blank -%}{%- assign has_loop = true -%}{%- endif -%}
+
+{%- assign has_full = false -%}
+{%- if block.settings.video_full != blank -%}{%- assign has_full = true -%}{%- endif -%}
+
+<div class="col-left-media gvim" data-gvim>
+  {%- comment -%} Fallback image always present (if provided) {%- endcomment -%}
+  {% if block.settings.left_image != blank %}
+    <img
+      class="gvim-fallback"
+      src="{{ block.settings.left_image | image_url: width: 1200 }}"
+      alt="{{ block.settings.left_image.alt | escape }}"
+      loading="eager"
+      fetchpriority="high"
+      width=""
+      height=""
+    >
+  {% endif %}
+
+  {%- comment -%} Preview loop video (hidden until ready) {%- endcomment -%}
+  {% if has_loop %}
+    <video class="gvim-loop" autoplay muted loop playsinline preload="auto">
+      {% if block.settings.video_loop.sources[0].url == blank %}
+        <source src="{{ block.settings.video_loop.sources[1].url }}" type="video/mp4">
+      {% else %}
+        <source src="{{ block.settings.video_loop.sources[0].url }}" type="video/mp4">
+      {% endif %}
+    </video>
+  {% endif %}
+
+  {%- comment -%} Full length video (hidden until play) {%- endcomment -%}
+  {% if has_full %}
+    <video class="gvim-full" muted playsinline preload="metadata">
+      {% if block.settings.video_full.sources[0].url == blank %}
+        <source src="{{ block.settings.video_full.sources[1].url }}" type="video/mp4">
+      {% else %}
+        <source src="{{ block.settings.video_full.sources[0].url }}" type="video/mp4">
+      {% endif %}
+    </video>
+
+    <div class="col-left-mediaplay-pause-btn gvim-btn" role="button" tabindex="0" aria-label="Play/Pause full video">
+      <?xml version="1.0" encoding="utf-8"?>
+      <svg class="play-button" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.6582 9.28638C18.098 10.1862 18.8178 10.6361 19.0647 11.2122C19.2803 11.7152 19.2803 12.2847 19.0647 12.7878C18.8178 13.3638 18.098 13.8137 16.6582 14.7136L9.896 18.94C8.29805 19.9387 7.49907 20.4381 6.83973 20.385C6.26501 20.3388 5.73818 20.0469 5.3944 19.584C5 19.053 5 18.1108 5 16.2264V7.77357C5 5.88919 5 4.94701 5.3944 4.41598C5.73818 3.9531 6.26501 3.66111 6.83973 3.6149C7.49907 3.5619 8.29805 4.06126 9.896 5.05998L16.6582 9.28638Z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+
+      <svg class="pause-btn" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+        <path stroke="#fcfcf7" stroke-width="1.5" d="M6 3v10M10 3v10"></path>
+      </svg>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  /* ===== Left media stacking ===== */
+  .col-left-media.gvim { position: relative; }
+
+  .col-left-media.gvim .gvim-fallback,
+  .col-left-media.gvim .gvim-loop,
+  .col-left-media.gvim .gvim-full {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* fallback is base */
+  .col-left-media.gvim .gvim-fallback {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* loop overlays fallback */
+  .col-left-media.gvim .gvim-loop {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;              /* hidden until ready */
+    pointer-events: none;
+    transition: opacity 250ms ease;
+  }
+
+  .col-left-media.gvim.is-loop-ready .gvim-loop {
+    opacity: 1;
+  }
+
+  /* full video overlays everything but hidden until play */
+  .col-left-media.gvim .gvim-full {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: none;
+  }
+
+  .col-left-media.gvim.is-full .gvim-full { display: block; }
+  .col-left-media.gvim.is-full .gvim-loop { display: none; }
+
+  /* button bottom-right */
+  .col-left-mediaplay-pause-btn {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 5;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* icon swap */
+  .col-left-mediaplay-pause-btn .pause-btn { display: none; }
+  .col-left-media.gvim.is-full .col-left-mediaplay-pause-btn .play-button { display: none; }
+  .col-left-media.gvim.is-full .col-left-mediaplay-pause-btn .pause-btn { display: block; }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".col-left-media[data-gvim]").forEach(function (wrap) {
+    if (wrap.dataset.bound === "1") return;
+    wrap.dataset.bound = "1";
+
+    var btn = wrap.querySelector(".gvim-btn");
+    var loopVid = wrap.querySelector("video.gvim-loop");
+    var fullVid = wrap.querySelector("video.gvim-full");
+
+    // Show fallback until preview loop can paint a frame
+    if (loopVid) {
+      var markReady = function () { wrap.classList.add("is-loop-ready"); };
+
+      loopVid.addEventListener("loadeddata", markReady, { once: true });
+      loopVid.addEventListener("canplay", markReady, { once: true });
+
+      // if cached
+      if (loopVid.readyState >= 2) markReady();
+
+      // attempt autoplay (muted)
+      var p0 = loopVid.play();
+      if (p0 && typeof p0.catch === "function") p0.catch(function(){});
+    }
+
+    // If no full video/button, we're done (still fallback->loop works)
+    if (!btn || !fullVid) return;
+
+    // Ensure no native controls
+    fullVid.controls = false;
+    fullVid.loop = false;
+    fullVid.playsInline = true;
+    fullVid.setAttribute("playsinline", "");
+
+    function playFull() {
+      wrap.classList.add("is-full");
+      if (loopVid) loopVid.pause();
+
+      // keep muted to avoid surprises; set to false if you want audio
+      fullVid.muted = true;
+
+      var p = fullVid.play();
+      if (p && typeof p.catch === "function") p.catch(function(){});
+    }
+
+    function pauseFull() {
+      fullVid.pause();
+      fullVid.currentTime = 0;
+      wrap.classList.remove("is-full");
+
+      if (loopVid) {
+        var p = loopVid.play();
+        if (p && typeof p.catch === "function") p.catch(function(){});
+      }
+    }
+
+    function toggle() {
+      if (wrap.classList.contains("is-full")) pauseFull();
+      else playFull();
+    }
+
+    btn.addEventListener("click", toggle);
+    btn.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle();
+      }
+    });
+
+    fullVid.addEventListener("ended", pauseFull);
+  });
+});
+</script>
+
+<div class="col-right-slider" style="background-image:url({{ block.settings.bg_image | img_url:"master" }}); --col-right-text-color:{{ block.settings.text_color }};">
+  <div class="results-slider-container {{ block.id }}" data-block-id="{{ block.id }}">
+    <div class="swiper resultsSwiper-{{ block.id }}">
+      <div class="swiper-wrapper">
+        {%- if block.settings.title1 != blank or block.settings.subtitle1 != blank -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="slide-content">
+              {%- if block.settings.title1 != blank -%}
+                <div class="slide-stat">{{ block.settings.title1 }}</div>
+              {%- endif -%}
+              {%- if block.settings.subtitle1 != blank -%}
+                <div class="slide-copy">{{ block.settings.subtitle1 }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if block.settings.title2 != blank or block.settings.subtitle2 != blank -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="slide-content">
+              {%- if block.settings.title2 != blank -%}
+                <div class="slide-stat">{{ block.settings.title2 }}</div>
+              {%- endif -%}
+              {%- if block.settings.subtitle2 != blank -%}
+                <div class="slide-copy">{{ block.settings.subtitle2 }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if block.settings.title3 != blank or block.settings.subtitle3 != blank -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="slide-content">
+              {%- if block.settings.title3 != blank -%}
+                <div class="slide-stat">{{ block.settings.title3 }}</div>
+              {%- endif -%}
+              {%- if block.settings.subtitle3 != blank -%}
+                <div class="slide-copy">{{ block.settings.subtitle3 }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if block.settings.title4 != blank or block.settings.subtitle4 != blank -%}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="slide-content">
+              {%- if block.settings.title4 != blank -%}
+                <div class="slide-stat">{{ block.settings.title4 }}</div>
+              {%- endif -%}
+              {%- if block.settings.subtitle4 != blank -%}
+                <div class="slide-copy">{{ block.settings.subtitle4 }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="slider-footer">
+      <div class="progress-bar-container">
+        <div class="swiper-pagination swiper-pagination-{{ block.id }}"></div>
+      </div>
+
+      <div class="nav-controls">
+        <button class="custom-nav-btn prev-btn prev-btn-{{ block.id }}" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="20" fill="white"/>
+            <path d="M13.2631 5.75L13.2631 15.2763L5.01314 10.5131L13.2631 5.75Z" fill="#3B0C00"/>
+          </svg>
+        </button>
+
+        <span class="nav-label">{{ block.settings.footer_text }}</span>
+
+        <button class="custom-nav-btn next-btn next-btn-{{ block.id }}" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="20" height="20" transform="rotate(-180 20 20)" fill="white"/>
+            <path d="M6.73686 14.25L6.73686 4.72372L14.9869 9.48686L6.73686 14.25Z" fill="#3B0C00"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

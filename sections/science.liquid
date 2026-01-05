@@ -1,0 +1,345 @@
+{{ 'section-science.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ "testimonials.js" | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  {% render 'section-margin' %}
+{%- endstyle -%}
+{% liquid
+  assign slideshow_speed = section.settings.slideshow_speed
+  assign autoplay = section.settings.is_autoplay
+  assign stop_autoplay = section.settings.is_hover_stop_autoplay
+  assign slideshow_delay = section.settings.slideshow_delay
+%}
+<div
+  class="testimonials science"
+  data-id="shopify-section-{{ section.id }}"
+  data-autoplay="{{ autoplay }}"
+  data-stop-autoplay="{{ stop_autoplay }}"
+  data-speed="{{ slideshow_speed }}"
+  data-delay="{{ slideshow_delay }}"
+>
+  {% render 'section-header' %}
+  <div class="container">
+    <div class="testimonials__block">
+      <div class="testimonials__slider swiper">
+        <div class="testimonials__item-box swiper-wrapper">
+          {%- for block in section.blocks -%}
+            <div
+              class="science__item-block swiper-slide color-{{ section.settings.color_scheme }} background"
+              style="display: flex; flex-direction: column;  "
+            >
+              <div class="testimonials__author-img">
+                {% if block.settings.author_image != blank %}
+                  {% assign image_height = block.settings.author_image.width
+                    | divided_by: block.settings.author_image.aspect_ratio
+                  %}
+                  {%- capture style -%}
+												object-fit: {{ block.settings.object_fit }}; object-position: {{ block.settings.author_image.presentation.focal_point }};
+										{%- endcapture -%}
+                  {{
+                    block.settings.author_image
+                    | image_url: width: 3840
+                    | image_tag:
+                      loading: 'lazy',
+                      sizes: '30px, 60px, 90px, 120px',
+                      widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+                      height: image_height,
+                      style: style
+                  }}
+                {%- else -%}
+                  {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg ' }}
+                {% endif %}
+              </div>
+              <div class="testimonials__text-item" style="padding-left: 0; padding-right: 0">
+                <div class="testimonials__title">
+                  {{ block.settings.title }}
+                </div>
+                {% if block.settings.text != blank %}
+                  <div class="testimonials__desc richtext__content ">
+                    {{ block.settings.text }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+      {% if section.settings.show_arrows %}
+        <button class="swiper-button swiper-button-prev">
+          <span>{% render 'icon-arrow' %}</span>
+        </button>
+        <button class="swiper-button swiper-button-next">
+          <span>{% render 'icon-arrow' %}</span>
+        </button>
+        <div class="swiper-pagination swiper-pagination-default"></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+	"name": "Science Section",
+	"tag": "section",
+	"class": "testimonials-section spaced-section",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-3",
+			"label": "t:sections.all.color_scheme.label"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "heading",
+			"label": "t:sections.all.heading.label",
+			"default": "Heading"
+		},
+		{
+			"type": "richtext",
+			"id": "description",
+			"default": "<p>Some description</p>",
+			"label": "t:sections.all.text.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.button.header.content"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"default": "Button label",
+			"label": "t:sections.all.button.label.label",
+			"info": "t:sections.all.button.label.info"
+		},
+		{
+			"type": "url",
+			"id": "button_link",
+			"label": "t:sections.all.button.link.label"
+		},
+		{
+			"type": "select",
+			"id": "button_style",
+			"options": [
+				{
+					"value": "primary",
+					"label": "t:sections.all.button.style.options__1.label"
+				},
+				{
+					"value": "secondary",
+					"label": "t:sections.all.button.style.options__2.label"
+				},
+				{
+					"value": "tertiary",
+					"label": "t:sections.all.button.style.options__3.label"
+				}
+			],
+			"default": "primary",
+			"label": "t:sections.all.button.style.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "button_arrow",
+			"default": true,
+			"label": "t:sections.all.button.arrow.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.slider_options.header.content"
+		},
+		{
+			"type": "checkbox",
+			"id": "is_autoplay",
+			"default": true,
+			"label": "t:sections.all.slider_options.slider_is_autoplay.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "is_hover_stop_autoplay",
+			"default": false,
+			"label": "t:sections.all.slider_options.slider_hover_autoplay_stop.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_arrows",
+			"default": true,
+			"label": "t:sections.all.slider_options.navigation.label"
+		},
+		{
+			"type": "range",
+			"id": "slideshow_speed",
+			"min": 0,
+			"max": 6,
+			"step": 0.1,
+			"default": 1.1,
+			"unit": "s",
+			"label": "t:sections.all.slider_options.speed.label"
+		},
+		{
+			"type": "range",
+			"id": "slideshow_delay",
+			"min": 0,
+			"max": 8,
+			"step": 0.1,
+			"default": 3,
+			"unit": "s",
+			"label": "t:sections.all.slider_options.delay.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		}
+	],
+	"blocks": [
+		{
+			"type": "testimonials_slide",
+			"name": "t:sections.testimonials.blocks.testimonials_slide.name",
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "author_image",
+					"label": "t:sections.all.author.author_image.label"
+				},
+				{
+					"type": "select",
+					"id": "object_fit",
+					"options": [
+						{
+							"value": "cover",
+							"label": "t:sections.all.image.fit.options__2.label"
+						},
+						{
+							"value": "contain",
+							"label": "t:sections.all.image.fit.options__1.label"
+						}
+					],
+					"default": "cover",
+					"label": "t:sections.all.image.fit.label"
+				},
+              				{
+					"type": "richtext",
+					"id": "title",
+					"default": "<h5>Title here</h5>",
+					"label": "t:sections.all.title.label"
+				},
+				{
+					"type": "richtext",
+					"id": "text",
+					"default": "<p>Some description</p>",
+					"label": "t:sections.all.text.label"
+				},
+				{
+					"type": "text",
+					"id": "author_name",
+					"default": "Author name",
+					"label": "t:sections.all.author.author_name.label"
+				},
+				{
+					"type": "text",
+					"id": "author_data",
+					"default": "04/12/23",
+					"label": "t:sections.all.author.author_data.label"
+				},
+				{
+					"type": "header",
+					"content": "t:sections.testimonials.blocks.testimonials_slide.settings.rating_options.header.content"
+				},
+				{
+					"type": "checkbox",
+					"id": "enable_stars",
+					"default": true,
+					"label": "t:sections.testimonials.blocks.testimonials_slide.settings.rating_options.enable_stars.label"
+				},
+				{
+					"type": "range",
+					"id": "rating",
+					"min": 1,
+					"max": 5,
+					"step": 1,
+					"default": 5,
+					"label": "t:sections.testimonials.blocks.testimonials_slide.settings.rating_options.review_score.label"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Science Section",
+			"blocks": [
+				{
+					"type": "testimonials_slide"
+				},
+				{
+					"type": "testimonials_slide"
+				},
+				{
+					"type": "testimonials_slide"
+				},
+				{
+					"type": "testimonials_slide"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

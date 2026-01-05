@@ -1,0 +1,308 @@
+{{ 'section-collapsible-content.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+	{% render 'section-margin' %}
+{%- endstyle -%}
+
+<link
+	rel="stylesheet"
+	href="{{ 'component-accordion.css' | asset_url }}"
+	media="print"
+	onload="this.media='all'"
+>
+
+<div class="collapsible-content color-{{ section.settings.color_scheme }} background">
+	{% render 'section-header' %}
+	<div class="container">
+		<div class="collapsible-content-wrapper">
+			<div class="collapsible-content-box">
+				{% for block in section.blocks %}
+					{% if block.settings.block_heading != blank
+						and block.settings.text != blank
+					%}
+						<div class="collapsible-content-block">
+							<div class="accordion collapsible-content-item">
+								<details>
+									<summary>
+										<h3 class="collapsible-content-block__heading">
+											{{ block.settings.block_heading | escape }}
+										</h3>
+										{% render 'icon-caret' %}
+									</summary>
+									{%- if block.settings.text != blank -%}
+										<div class="collapsible-content-block__description richtext__content">
+											{{ block.settings.text }}
+										</div>
+									{%- endif -%}
+								</details>
+							</div>
+						</div>
+					{%- endif -%}
+				{% endfor %}
+			</div>
+			{% if section.settings.contact_heading != blank
+				or section.settings.contact_description != blank
+			%}
+				<div class="collapsible-content-contact {% if section.settings.button_sticky == blank %}have-sticky{% endif %} color-{{ section.settings.color_contacts }} background">
+					{%- if section.settings.contact_heading != blank -%}
+						<h4 class="collapsible-content-contact_title">
+							{{ section.settings.contact_heading | escape }}
+						</h4>
+					{%- endif -%}
+					{%- if section.settings.contact_description != blank -%}
+						<div class="collapsible-content-contact_desc richtext__content">
+							{{ section.settings.contact_description }}
+						</div>
+					{%- endif -%}
+					{% render 'button',
+						btn_label: section.settings.box_button_label,
+						btn_link: section.settings.box_button_link,
+						btn_style: section.settings.box_button_style,
+						enable_arrow: section.settings.box_button_arrow
+					%}
+				</div>
+			{%- endif -%}
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "t:sections.collapsible-content.name",
+	"class": "collapsible-content-section",
+	"tag": "section",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-1",
+			"label": "t:sections.all.color_scheme.label"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "heading",
+			"default": "Heading",
+			"label": "t:sections.all.heading.label"
+		},
+		{
+			"type": "richtext",
+			"id": "description",
+			"default": "<p>Description</p>",
+			"label": "t:sections.all.text.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.button.header.content"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"default": "Button label",
+			"label": "t:sections.all.button.label.label",
+			"info": "t:sections.all.button.label.info"
+		},
+		{
+			"type": "url",
+			"id": "button_link",
+			"label": "t:sections.all.button.link.label"
+		},
+		{
+			"type": "select",
+			"id": "button_style",
+			"options": [
+				{
+					"value": "primary",
+					"label": "t:sections.all.button.style.options__1.label"
+				},
+				{
+					"value": "secondary",
+					"label": "t:sections.all.button.style.options__2.label"
+				},
+				{
+					"value": "tertiary",
+					"label": "t:sections.all.button.style.options__3.label"
+				}
+			],
+			"default": "primary",
+			"label": "t:sections.all.button.style.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "button_arrow",
+			"default": false,
+			"label": "t:sections.all.button.arrow.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.mini_block.label"
+		},
+		{
+			"type": "color_scheme",
+			"id": "color_contacts",
+			"default": "background-2",
+			"label": "t:sections.all.color_scheme.label"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "contact_heading",
+			"default": "Heading",
+			"label": "t:sections.all.heading.label"
+		},
+		{
+			"type": "richtext",
+			"id": "contact_description",
+			"default": "<p>Description </p>",
+			"label": "t:sections.all.text.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.button.header.content"
+		},
+		{
+			"type": "text",
+			"id": "box_button_label",
+			"default": "Button label",
+			"label": "t:sections.all.button.label.label"
+		},
+		{
+			"type": "url",
+			"id": "box_button_link",
+			"label": "t:sections.all.button.link.label"
+		},
+		{
+			"type": "select",
+			"id": "box_button_style",
+			"options": [
+				{
+					"value": "primary",
+					"label": "t:sections.all.button.style.options__1.label"
+				},
+				{
+					"value": "secondary",
+					"label": "t:sections.all.button.style.options__2.label"
+				},
+				{
+					"value": "tertiary",
+					"label": "t:sections.all.button.style.options__3.label"
+				}
+			],
+			"default": "primary",
+			"label": "t:sections.all.button.style.options__1.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "box_button_arrow",
+			"default": false,
+			"label": "t:sections.all.button.arrow.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "button_sticky",
+			"default": true,
+			"label": "t:sections.collapsible-content.blocks.sticky"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "xs",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "xs",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		}
+	],
+	"blocks": [
+		{
+			"type": "text-block",
+			"name": "t:sections.collapsible-content.blocks.accordion.name",
+			"settings": [
+				{
+					"type": "inline_richtext",
+					"id": "block_heading",
+					"default": "Heading",
+					"label": "t:sections.all.heading.label"
+				},
+				{
+					"type": "richtext",
+					"id": "text",
+					"default": "<p>Description</p>",
+					"label": "t:sections.all.text.label"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "t:sections.collapsible-content.name",
+			"blocks": [
+				{
+					"type": "text-block"
+				},
+				{
+					"type": "text-block"
+				},
+				{
+					"type": "text-block"
+				},
+				{
+					"type": "text-block"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,267 @@
+{{ 'section-rich-text.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+	{% render 'section-padding' %}
+
+	.rich-text {
+		text-align: center;
+	}
+{%- endstyle -%}
+
+<div class="rich-text{% if section.settings.full_width %} rich-text--full-width{% endif %} color-{{ section.settings.color_scheme }} background section-{{ section.id }}-padding">
+	<div class="rich-text__blocks">
+		{%- for block in section.blocks -%}
+			{%- case block.type -%}
+				{%- when 'subheading' -%}
+					<div
+						class="rich-text__subheading subtitle"
+						{{ block.shopify_attributes }}
+					>
+						{{ block.settings.subheading | escape }}
+					</div>
+				{%- when 'heading' -%}
+					<h2
+						class="title--section {% if block.settings.heading_size == 'medium' %}h2{% else %}h1{% endif %}"
+						{{ block.shopify_attributes }}
+					>
+						{{ block.settings.heading }}
+					</h2>
+				{%- when 'text' -%}
+					<div class="rich-text__text" {{ block.shopify_attributes }}>
+						{{ block.settings.text }}
+					</div>
+				{%- when 'button' -%}
+					{% if block.settings.button_label != blank %}
+						<a
+							{% if block.settings.button_link == blank %}
+								aria-disabled="true"
+							{% else %}
+								href="{{ block.settings.button_link }}"
+							{% endif %}
+							class="button button--primary-size button--{{- block.settings.button_style -}}"
+							{{ block.shopify_attributes }}
+						>
+							<span class="button-label">
+								{{- block.settings.button_label | escape -}}
+							</span>
+							{% if block.settings.button_arrow %}
+								<span class="button-icon">
+									{% render 'icon-button-arrow' %}
+								</span>
+							{% endif %}
+						</a>
+					{% endif %}
+			{%- endcase -%}
+		{%- endfor -%}
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "t:sections.rich-text.name",
+	"tag": "section",
+	"class": "spaced-section spaced-section--full-width",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-2",
+			"label": "t:sections.all.color_scheme.label"
+		},
+		{
+			"type": "checkbox",
+			"id": "full_width",
+			"default": true,
+			"label": "t:sections.rich-text.settings.full_width.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-padding.header.content"
+		},
+		{
+			"type": "select",
+			"id": "padding_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "m",
+			"label": "t:sections.all.section-padding.padding_top.label"
+		},
+		{
+			"type": "select",
+			"id": "padding_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "m",
+			"label": "t:sections.all.section-padding.padding_bottom.label"
+		}
+	],
+	"blocks": [
+		{
+			"type": "subheading",
+			"name": "t:sections.rich-text.blocks.subheading.name",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "text",
+					"id": "subheading",
+					"default": "Subheading",
+					"label": "t:sections.rich-text.blocks.heading.settings.heading.label"
+				}
+			]
+		},
+		{
+			"type": "heading",
+			"name": "t:sections.rich-text.blocks.heading.name",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "richtext",
+					"id": "heading",
+					"default": "<p>Heading for your section</p>",
+					"label": "t:sections.rich-text.blocks.heading.settings.heading.label"
+				},
+				{
+					"type": "select",
+					"id": "heading_size",
+					"options": [
+						{
+							"value": "medium",
+							"label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+						},
+						{
+							"value": "large",
+							"label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+						}
+					],
+					"default": "medium",
+					"label": "t:sections.rich-text.blocks.heading.settings.heading_size.label"
+				}
+			]
+		},
+		{
+			"type": "text",
+			"name": "t:sections.rich-text.blocks.text.name",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "richtext",
+					"id": "text",
+					"default": "<p>Description for your section.</p>",
+					"label": "t:sections.rich-text.blocks.text.settings.text.label"
+				}
+			]
+		},
+		{
+			"type": "button",
+			"name": "t:sections.rich-text.blocks.button.name",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "header",
+					"content": "t:sections.all.button.header.content"
+				},
+				{
+					"type": "text",
+					"id": "button_label",
+					"default": "Subscribe",
+					"label": "t:sections.all.button.label.label",
+					"info": "t:sections.all.button.label.info"
+				},
+				{
+					"type": "url",
+					"id": "button_link",
+					"label": "t:sections.all.button.link.label"
+				},
+				{
+					"type": "select",
+					"id": "button_style",
+					"options": [
+						{
+							"value": "primary",
+							"label": "t:sections.all.button.style.options__1.label"
+						},
+						{
+							"value": "secondary",
+							"label": "t:sections.all.button.style.options__2.label"
+						},
+						{
+							"value": "tertiary",
+							"label": "t:sections.all.button.style.options__3.label"
+						}
+					],
+					"default": "primary",
+					"label": "t:sections.all.button.style.label"
+				},
+				{
+					"type": "checkbox",
+					"id": "button_arrow",
+					"default": true,
+					"label": "t:sections.all.button.arrow.label"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "t:sections.rich-text.presets.name",
+			"blocks": [
+				{
+					"type": "subheading"
+				},
+				{
+					"type": "heading"
+				},
+				{
+					"type": "text"
+				},
+				{
+					"type": "button"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

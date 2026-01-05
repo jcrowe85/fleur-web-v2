@@ -1,0 +1,67 @@
+<div class="collection-grid__horizantal-image-block">
+	<div class="collection-grid__horizantal-image-item">
+		{% if block_image != blank
+			or collection_image != blank
+			or block_collection.featured_image != blank
+		%}
+			{% liquid
+				if block_image != blank
+					assign collectionImg = block_image
+				elsif collection_image != blank
+					assign collectionImg = collection_image
+				elsif block_collection.featured_image != blank
+					assign collectionImg = block_collection.featured_image
+				endif
+				assign image_height = collectionImg.width | divided_by: collectionImg.aspect_ratio
+				assign image_width = collectionImg.width
+				assign sizes = '(min-width: 750px) 50vw, 100vw'
+			%}
+			{% assign image_style = 'object-fit: cover;' %}
+			<a
+				class="full-unstyled-link"
+				{% if block_collection != blank %}
+					href="{{ url }}"
+				{% endif %}
+			>
+				{{
+					collectionImg
+					| image_url: width: 3840
+					| image_tag:
+						loading: 'lazy',
+						width: image_width,
+						height: image_height,
+						sizes: sizes,
+						widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+						style: image_style
+				}}
+			</a>
+		{%- else -%}
+			{{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+		{% endif %}
+	</div>
+	<div class="collection-grid__horizantal-image-box">
+		<div class="collection-grid__horizantal-image-text">
+			<h2 class="collection-grid__horizantal-title h6">
+				<a
+					class="full-unstyled-link"
+					{% if block_collection != blank %}
+						href="{{ url }}"
+					{% endif %}
+				>
+					{% if block_collection != blank %}
+						{{ collection_title }}
+					{% else %}
+						{{- 'general.card.collection_name' | t -}}
+					{% endif %}
+				</a>
+			</h2>
+			<div class="collection-grid__horizantal-text richtext__content extra_small-font">
+				{%- if collection_desc != blank -%}
+					{{ collection_desc }}
+				{% else %}
+					{{ 'collection.collection_desc' | t }}
+				{%- endif -%}
+			</div>
+		</div>
+	</div>
+</div>

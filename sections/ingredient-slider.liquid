@@ -1,0 +1,404 @@
+{{ 'component-swiper.css' | asset_url | stylesheet_tag }}
+
+{% style %}
+  .section-{{ section.id }}-padding {
+  {% if section.settings.padding_top == 'no-indent' %}
+    padding-top: 0;
+  {% else %}
+    padding-top: 3.2rem;
+  {% endif %} 
+
+  {% if section.settings.padding_bottom == 'no-indent' %}
+    padding-bottom: 0;
+  {% else %}
+    padding-bottom: 3.2rem;
+  {% endif %}
+}
+  
+@media screen and (min-width: 990px) { 
+  .section-{{ section.id }}-padding {
+    {% if section.settings.padding_top == 'no-indent' %}
+      padding-top: 0;
+    {% elsif section.settings.padding_top == 'l' %}
+      padding-top: 4rem;
+    {% else %}
+      padding-top: 3.2rem;
+    {% endif %}
+
+    {% if section.settings.padding_bottom == 'no-indent' %}
+      padding-bottom: 0;
+    {% elsif section.settings.padding_bottom == 'l' %}
+      padding-bottom: 4rem;
+    {% else %}
+      padding-bottom: 3.2rem;
+    {% endif %}
+  }
+}
+
+@media screen and (min-width: 1200px) { 
+  .section-{{ section.id }}-padding {
+    {% if section.settings.padding_top == 'no-indent' %}
+      padding-top: 0;
+    {% elsif section.settings.padding_top == 'l' %}
+      padding-top: 8rem;
+    {% elsif section.settings.padding_top == 'm' %}
+      padding-top: 4rem;
+    {% else %}
+      padding-top: 3.2rem;
+    {% endif %}
+
+    {% if section.settings.padding_bottom == 'no-indent' %}
+      padding-bottom: 0;
+    {% elsif section.settings.padding_bottom == 'l' %}
+      padding-bottom: 8rem;
+    {% elsif section.settings.padding_bottom == 'm' %}
+      padding-bottom: 4rem;
+    {% else %}
+      padding-bottom: 3.2rem;
+    {% endif %}
+  }
+}
+
+@media screen and (min-width: 1560px) { 
+  .section-{{ section.id }}-padding {
+    {% if section.settings.padding_top == 'no-indent' %}
+      padding-top: 0;
+    {% elsif section.settings.padding_top == 'l' %}
+      padding-top: 16rem;
+    {% elsif section.settings.padding_top == 'm' %}
+      padding-top: 8rem;
+    {% elsif section.settings.padding_top == 's' %}
+      padding-top: 4rem;
+    {% else %}
+      padding-top: 3.2rem;
+    {% endif %}
+
+    {% if section.settings.padding_bottom == 'no-indent' %}
+      padding-bottom: 0;
+    {% elsif section.settings.padding_bottom == 'l' %}
+      padding-bottom: 16rem;
+    {% elsif section.settings.padding_bottom == 'm' %}
+      padding-bottom: 8rem;
+    {% elsif section.settings.padding_bottom == 's' %}
+      padding-bottom: 4rem;
+    {% else %}
+      padding-bottom: 3.2rem;
+    {% endif %}
+  }
+}
+{% endstyle %}
+
+{% liquid
+  assign section_id = section.id
+  assign autoplay_delay_ms = section.settings.slideshow_delay | times: 1000 | default: 5000
+%}
+
+{%- style -%}
+  #section-{{ section_id }} .control-item { position: relative; padding: 15px 20px !important; cursor: pointer; overflow:visible; border-radius:10px; } 
+  #section-{{ section_id }} .control-title { position: relative; z-index: 10; pointer-events: none; } 
+
+  @keyframes progress-animation-{{ section_id }} { from { width: 0%; } to { width: 100%; } } 
+
+  #section-{{ section_id }} .progress-bar {position:absolute; top:-2px; left:-2px; height:100%; width:0; background-color:rgba(22, 20, 20, 0.3); z-index:1; height: calc(100% + 4px);}
+  #section-{{ section_id }} .twoColumnSwiper-{{ section_id }} { width: 100%; height:100%;} 
+  #section-{{ section_id }} .placeholder-svg { width: 100%; height: 350px; background-color: #eeeeee; display: flex; align-items: center; justify-content: center; border-radius: 12px; } 
+  #section-{{ section_id }} .swiper-slide-active { opacity: 1 !important; } 
+  #section-{{ section_id }} .swiper-slide { opacity: 0; transition: opacity 0.8s ease-in-out;} 
+  
+  @media(min-width:1200px){
+    #section-{{ section_id }} .slider-controls-left {background-image:url({{ section.settings.bg_image | img_url:"master" }});}
+  }        
+  @media(max-width:1199px){
+      #section-{{ section_id }} .control-item {padding: 8px 20px !important; min-height: auto;} 
+    #section-{{ section_id }} .two-column-slider-sync-grid {background-image:url({{ section.settings.bg_image | img_url:"master" }});}
+  }        
+{%- endstyle -%}
+
+<section class="two-column-slider-sync color-{{ section.settings.color_scheme }} background section-{{ section.id }}-padding" id="section-{{ section_id }}">
+   
+    <div class="container">
+    <div class="two-column-slider-sync-grid">
+      
+      <div class="slider-controls-left">
+        <div class="slider-controls-left-inner">
+          {% if section.settings.caption != blank %}
+            <p class="top-caption">{{ section.settings.caption | default:'ingredients' }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2
+              class="title--section {% if section.settings.heading_size == 'medium' %}h2{% else %}h1{% endif %}"
+              {{ section.shopify_attributes }}
+            >
+              {{ section.settings.heading }}
+            </h2>
+          {% endif %}
+          <div class="tab-buttons-links">
+          {% for block in section.blocks %}
+            <div 
+              class="control-item button button--secondary {% if forloop.first %}active{% endif %}" 
+              data-slide-index="{{ forloop.index0 }}" 
+              {{ block.shopify_attributes }}
+            >
+              <div class="progress-bar"></div>
+              <h3 class="control-title">{{ block.settings.title | escape }}</h3>
+            </div>
+          {% endfor %}
+          </div>
+
+          <div class="swiper textSwiper-{{ section_id }} rte">
+            <div class="swiper-wrapper">
+              {% for block in section.blocks %}
+                <div class="swiper-slide">
+                  {{ block.settings.rte }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="slider-media-right">
+        <div class="swiper twoColumnSwiper-{{ section_id }}">
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+              <div class="swiper-slide">
+                {% if block.settings.image != blank %}
+                  <img 
+                    src="{{ block.settings.image | image_url: width: 1000 }}" 
+                    alt="{{ block.settings.title | escape }}" 
+                    loading="lazy" 
+                    class="slide-image" width="" height=""
+                  >
+                {% else %}
+                  <div class="placeholder-svg">
+                    {{ 'image' | placeholder_svg_tag: 'w-24 h-24 text-gray-300' }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof Swiper === 'undefined') return;
+
+  const sectionId = '{{ section.id }}';
+  const swiperSelector = `.twoColumnSwiper-${sectionId}`;
+  const controlsContainer = document.querySelector(`#section-${sectionId} .slider-controls-left`);
+  const controlItems = document.querySelectorAll(`#section-${sectionId} .control-item`);
+  const autoplayDelay = {{ autoplay_delay_ms }};
+  const cssKeyframeName = `progress-animation-${sectionId}`;
+
+  const swiper = new Swiper(swiperSelector, {
+    slidesPerView: 1,
+    autoHeight: false,
+    loop: false,
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    speed: 800,
+    autoplay: {
+      delay: autoplayDelay,
+      disableOnInteraction: false,
+    },
+  });
+
+  const textSwiper = new Swiper(`.textSwiper-${sectionId}`, {
+    slidesPerView: 1,
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    speed: 800,
+    allowTouchMove: false
+  });
+
+
+  function startProgressBar(item, delay) {
+    const progressBar = item.querySelector('.progress-bar');
+    if (progressBar) {
+      progressBar.style.animation = 'none';
+      requestAnimationFrame(() => {
+        progressBar.style.animation = `${cssKeyframeName} ${delay}ms linear forwards`;
+      });
+    }
+  }
+
+  function updateControls(activeIndex) {
+    controlItems.forEach((item, index) => {
+      item.classList.remove('active');
+      item.querySelector('.progress-bar').style.animation = 'none';
+
+      if (index === activeIndex) {
+        item.classList.add('active');
+        startProgressBar(item, autoplayDelay);
+      }
+    });
+  }
+
+  if (controlItems.length > 0) updateControls(0);
+
+  swiper.on('slideChangeTransitionStart', function () {
+    const i = swiper.activeIndex;
+    updateControls(i);
+    textSwiper.slideTo(i);
+  });
+
+  swiper.on('transitionEnd', function () {
+    if (swiper.autoplay.running) {
+      swiper.autoplay.start();
+      updateControls(swiper.activeIndex);
+    }
+  });
+
+
+  controlsContainer.addEventListener('click', function(event) {
+    const clickedItem = event.target.closest('.control-item');
+    if (clickedItem) {
+      const index = parseInt(clickedItem.dataset.slideIndex);
+
+      if (index !== swiper.activeIndex) {
+        swiper.slideTo(index);
+
+        textSwiper.slideTo(index);
+
+        swiper.autoplay.stop();
+        swiper.autoplay.start();
+
+        updateControls(index);
+      }
+    }
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Sync Slider Block List",
+  "tag": "section",
+  "class": "section-sync-slider",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "background-2",
+      "label": "t:sections.all.color_scheme.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Our Process in Action",
+      "label": "Title"
+    },
+    {
+					"type": "select",
+					"id": "heading_size",
+					"options": [
+						{
+							"value": "medium",
+							"label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__1.label"
+						},
+						{
+							"value": "large",
+							"label": "t:sections.rich-text.blocks.heading.settings.heading_size.options__2.label"
+						}
+					],
+					"default": "medium",
+					"label": "t:sections.rich-text.blocks.heading.settings.heading_size.label"
+				},
+    {
+      "type":"text",
+      "id":"caption",
+      "label":"Caption"
+    },
+    {
+      "type":"text",
+      "id":"bottom_description",
+      "label":"Text"
+    },
+    {
+      "type": "range",
+      "id": "slideshow_delay",
+      "min": 2,
+      "max": 10,
+      "step": 0.5,
+      "default": 5,
+      "unit": "s",
+      "label": "Autoplay Delay (in seconds)"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section-padding.header.content"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "options": [
+        { "value": "no-indent", "label": "t:sections.all.section-padding.options__1.label" },
+        { "value": "xs", "label": "t:sections.all.section-padding.options__2.label" },
+        { "value": "s", "label": "t:sections.all.section-padding.options__3.label" },
+        { "value": "m", "label": "t:sections.all.section-padding.options__4.label" },
+        { "value": "l", "label": "t:sections.all.section-padding.options__5.label" }
+      ],
+      "default": "s",
+      "label": "t:sections.all.section-padding.padding_top.label"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "options": [
+        { "value": "no-indent", "label": "t:sections.all.section-padding.options__1.label" },
+        { "value": "xs", "label": "t:sections.all.section-padding.options__2.label" },
+        { "value": "s", "label": "t:sections.all.section-padding.options__3.label" },
+        { "value": "m", "label": "t:sections.all.section-padding.options__4.label" },
+        { "value": "l", "label": "t:sections.all.section-padding.options__5.label" }
+      ],
+      "default": "s",
+      "label": "t:sections.all.section-padding.padding_bottom.label"
+    },
+    {
+                "type":"image_picker",
+                "id":"bg_image",
+                "label":"Left Part Background Image"
+            },
+
+  ],
+  "blocks": [
+    {
+      "type": "slide_item",
+      "name": "Slide & Title Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title Text"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image for this Slide"
+        },
+        {
+          "type": "richtext",
+          "id": "rte",
+          "label": "Slide Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "2-Column Sync Slider",
+      "blocks": [
+        {"type": "slide_item", "settings": {"title": "Phase 1: Discovery & Strategy"}},
+        {"type": "slide_item", "settings": {"title": "Phase 2: Development & Testing"}},
+        {"type": "slide_item", "settings": {"title": "Phase 3: Launch & Optimization"}}
+      ]
+    }
+  ]
+}
+{% endschema %}  

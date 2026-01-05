@@ -1,0 +1,67 @@
+{% comment %} 
+	{% render 'section-header' %}
+	{% render 'section-header' , blog_button : true %} - create button read all
+	{% render 'section-header' , button_icon : true %} - create button icon
+{% endcomment %}
+{%liquid 
+
+	if custom_settings
+		assign section_heading = section_heading
+		assign section_description = section_description
+		assign section_button_label = section_button_label
+		assign section_button_link = section_button_link
+		assign section_button_style = section_button_style
+		assign section_enable_arrow = section_enable_arrow
+	else
+		assign section_heading = section.settings.heading
+		assign section_description = section.settings.description
+		assign section_button_label = section.settings.button_label
+		assign section_button_link = section.settings.button_link
+		assign section_button_style = section.settings.button_style
+		assign section_enable_arrow = section.settings.button_arrow
+	endif
+%}
+{%- if section_heading != blank
+	or section_button_label != blank
+-%}
+	<div class="section-header__line">
+		<div class="container">
+			<div class="section-header__item">
+			
+				<div class="section-header__title__block">
+			<div class="section-header__title-item">
+				{%- if section_heading != blank -%}
+					<h2 class="section-header__title title--section">
+						{{ section_heading }}
+					</h2>
+				{% endif %}
+				{%- if section_description != blank -%}
+					<div class="section-header__desc richtext__content large-font">
+						{{ section_description }}
+					</div>
+				{% endif %}
+			</div>
+					{% if blog_button == true %}
+					{% render 'button',
+						layout: section,
+						blog_link: section.settings.blog.url
+					%}
+					{% elsif button_icon == true %}
+					{% render 'button',
+						layout: section,
+						simple: true,
+						icon : true
+					%}
+					{% else %}
+					{% render 'button',
+						btn_label: section_button_label,
+						btn_link: section_button_link,
+						btn_style: section_button_style,
+						enable_arrow: section_enable_arrow
+					%}
+				{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{%- endif -%}

@@ -1,0 +1,118 @@
+<div class="search-modal background" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}" id="search-modal">
+	<button class="search__close modal-close-button" aria-label="Close" onclick="this.parentElement.parentElement.open = false">{% render 'icon-close' %}</button>
+	<div class="search-modal__overlay color-inverse"></div>
+	<div class="search-modal__item">
+		<div class="search-modal__content">
+			{%- if settings.predictive_search_enabled -%}
+				<predictive-search class="search-modal__form" data-loading-text="{{ 'accessibility.loading' | t }}">
+			{%- endif -%}
+				<form action="{{ routes.search_url }}" method="get" role="search" class="search search-modal__form">
+					<div class="search__form-inner">
+						<div class="field">
+							<div class="container">
+								<div class="search__form__wrapper">
+									<input class="search__input field__input" 
+										id="Search-In-Modal" 
+										type="search" 
+										name="q" 
+										value="{{ search.terms | escape }}"
+										placeholder=" "
+										{%- if settings.predictive_search_enabled -%}
+											role="combobox"
+											aria-expanded="false"
+											aria-owns="predictive-search-results-list"
+											aria-controls="predictive-search-results-list"
+											aria-haspopup="listbox"
+											aria-autocomplete="list"
+											autocorrect="off"
+											autocomplete="off"
+											autocapitalize="off"
+											spellcheck="false"
+										{%- endif -%}
+									>
+									<label class="field__label" for="Search-In-Modal">{{ 'general.search.placeholder' | t }}</label>
+									<input type="hidden" name="options[prefix]" value="last">
+									<div class="search__buttons">
+										<button class="search-reset__button" aria-label="{{ 'general.search.reset' | t }}" type="reset">
+											{% render 'icon-close' %}
+										</button>
+										<button class="search__button" aria-label="{{ 'general.search.search' | t }}" type="submit">
+											{% render 'icon-search' %}
+										</button>
+									</div>
+								</div>
+							</div>
+							{%- if settings.predictive_search_enabled -%}
+								<div class="predictive-search__wrapper">
+									<div class="container">
+										<div class="predictive-search__wrapper-box">
+											<div class="predictive-search predictive-search--header" tabindex="-1" data-predictive-search>
+												<div class="predictive-search__loading-state">
+													{% render 'icon-spinner' %}
+												</div>
+											</div>
+											<span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+									</div>
+								</div>
+							</div>
+							{%- endif -%} 
+						</div>
+					</div>
+				</form>
+			{%- if settings.predictive_search_enabled -%}
+				</predictive-search>
+			{%- endif -%}
+			{%- if settings.search_collection_list != blank or settings.search_product_list != blank -%}
+				<div class="search__recomendation container card-link-small">
+						{%- if settings.search_collection_list != blank -%}
+							<div class="search__categories">
+								<div class="search__categories-wrapper">
+									{%- if settings.search_collections_label != blank -%}
+										<div class="search__subtitle search-collections__subtitle">{{ settings.search_collections_label }}</div>
+									{%- endif -%}
+									<ul class="search__categories-list list-unstyled" role="list">
+										{%- for collection in settings.search_collection_list -%}
+											<li class="search__categories-item">
+												<a class="h6 full-unstyled-link" {% if collection.all_products_count > 0 %} href="{{ collection.url }}"{% endif %}>
+													{{ collection.title }}
+												</a>
+											</li>
+										{%- endfor -%}
+									</ul>
+								</div>
+							</div>
+						{%- endif -%}
+						{%- if settings.search_product_list != blank -%}
+							<div class="search__promo-block">
+								{%- if settings.search_products_label != blank -%}
+									<div class="search__subtitle">{{ settings.search_products_label }}</div>
+								{%- endif -%}
+								<div class="search__items">
+									<div class="search__products">
+										<ul class="search__items-list featured-products__products-list--horizontal list-unstyled">
+											{%- for product in settings.search_product_list -%}
+												<li class="search__items-item featured-products__products-item--horizontal">
+													{% render 'product-card',
+														product_card_product: product,
+														media_size: settings.search_product_image_ratio,
+														media_fit: settings.search_product_image_fit,
+														show_secondary_image: settings.search_show_secondary_image,
+														show_vendor: settings.search_show_vendor,
+														show_collection_name: settings.search_show_collection_name,
+														show_desc: settings.search_show_desc,
+														section_id: section.id,
+														add_id: forloop.index,
+														show_sku: settings.search_show_sku
+													%}
+												</li>
+											{%- endfor -%}
+										</ul>
+									</div>
+								</div>
+							</div>
+						{%- endif -%}
+				</div>
+			{%- endif -%}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,557 @@
+{% style %}
+   .section2, .section3, .section5, .section6 {
+     display: flex;
+     flex-direction: column;
+   }
+
+  .section2 {
+  flex-direction: column-reverse;
+  }
+  
+   .section2 .left {
+    width: 100%;
+   }
+   .section2 .left img {
+     width: 100%;
+     /* height: 300px; */
+     vertical-align:top;
+   }
+
+   .section2 .right {
+     display: flex;
+     flex-direction: column;
+     background-color: #692C2A;
+     width: 100%;
+     color: #f5f0e8 !important;
+     padding: 30px;
+     gap: 10rem;
+   }
+
+   .section2 .right .menu {
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+     list-style: none;
+     gap: 1rem;
+     margin: 0;
+     padding: 0;
+     font-weight: bold;
+   }
+
+   .section2 .right .statement {
+     display: flex;
+     justify-content: flex-start;
+     margin-top: auto;
+     max-width: 400px;
+     text-align: left;
+     font-size: 1.5rem;
+   }
+
+  .section2 .right .statement p {
+     color: #f5f0e8 !important;
+   }
+
+    .section3 {
+
+    }
+
+   .section3 .left {
+     display: flex;
+     flex-direction: column;
+     background-color: #2a0700;
+     width: 100%;
+     color: #f5f0e8 !important;
+     padding: 30px;
+     gap: 10rem;
+   }
+
+   .section3 .left .menu {
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+     list-style: none;
+     gap: 1rem;
+     margin: 0;
+     padding: 0;
+     font-weight: bold;
+   }
+
+   .section3 .right {
+     width: 100%;
+   }
+
+   .section3 .right img {
+     width: 100%;
+     /* height: 300px; */
+     vertical-align:top;
+   }
+
+   .section3 .left .statement {
+     display: flex;
+     justify-content: flex-start;
+     margin-top: auto;
+     max-width: 400px;
+     text-align: left;
+     font-size: 1.5rem;
+   }
+
+  .section3 .left .statement p {
+     color: #f5f0e8 !important;
+   }
+
+  .section4 {
+    position: relative;
+  }
+
+  .section4 .title {
+    position: absolute;
+    color: white;
+    top: 30%;
+    left: 28%;
+    z-index: 999;
+  }
+
+  .section4 img {
+    height: 100%;
+    width: 100%;
+    vertical-align: top;
+  }
+
+    .section5 {
+
+    }
+   .section5 .left {
+     display: flex;
+     flex-direction: column;
+    background-color: #692C2A;
+     width: 100%;
+     color: #f5f0e8 !important;
+     padding: 30px;
+     gap: 10rem;
+   }
+
+   .section5 .left .menu {
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+     list-style: none;
+     gap: 1rem;
+     margin: 0;
+     padding: 0;
+     font-weight: bold;
+   }
+
+   .section5 .right {
+     width: 100%;
+   }
+
+   .section5 .right img {
+     width: 100%;
+     /* height: 300px; */
+     vertical-align:top;
+   }
+
+   .section5 .left .statement {
+     display: flex;
+     justify-content: flex-start;
+     margin-top: auto;
+     max-width: 400px;
+     text-align: left;
+     font-size: 1.5rem;
+   }
+
+  .section5 .left .statement p {
+     color: #f5f0e8 !important;
+   }
+
+  .section6 {
+    gap: 5rem;
+    padding: 40px;
+    background-color: #9e8580;
+  }
+
+  .section6 .left img {
+    width: 100%;
+  }
+
+  .section6 .right {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    gap: 2rem;
+  }
+
+  .section6 .right .nameTitle {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .section6 .right .name h2 {
+      color: #f5f0e8 !important;
+      margin: 0;
+  }
+
+  .section6 .right .title {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #e9e3df !important;
+  }
+
+  .section6 .right .about {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .section6 .right .about p {
+    color: #e9e3df !important;
+    margin: 0;
+  }
+  
+    .menu li:hover {
+    cursor: pointer;
+  }
+
+  .menu li.active {
+    text-decoration: underline;
+  }
+
+  .statement p {
+    display: none;
+    text-indent: 25px;
+  }
+
+  .statement p.active {
+    display: block;
+  }
+
+    .desktop {
+    display: none
+  }
+
+  .mobile {
+    display: block;
+  }
+
+  @media only screen and (min-width: 768px) {
+  .section2, .section3, .section5, .section6 {
+      flex-direction: row;
+    }
+  .section2 .left {
+    width: 700px;
+   }
+   .section2 .left img {
+     width: 700px;
+     height: 701px;
+     vertical-align:top;
+   }
+   .section2 .right {
+     width: 100%;
+     padding: 40px;
+   }
+    .section3 {
+      flex-direction: row;
+    }
+   .section3 .right {
+     width: 700px;
+   }
+
+   .section3 .right img {
+     width: 700px;
+     height: 701px;
+   }
+   .section3 .left {
+     display: flex;
+     flex-direction: column;
+     width: 67%;
+     color: #f5f0e8 !important;
+     padding: 40px;
+   }
+
+  .section4 {
+    width: 100vw;
+    height: 400px; /* Set your desired height */
+    overflow: hidden;
+    position: relative;
+  }
+
+  .section4 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Crops the image to fill the container without distortion */
+    display: block;
+  }
+    
+  .section4 .title {
+    position: absolute;
+    color: white;
+    top: 50%;
+    left: 45%;
+    z-index: 999;
+    margin: 0;
+    padding: 0;
+  }
+    .section5 {
+      flex-direction: row;
+    }
+   .section5 .left {
+     display: flex;
+     flex-direction: column;
+     width: 67%;
+     color: #f5f0e8 !important;
+     padding: 40px;
+   }
+   .section5 .right {
+     width: 700px;
+   }
+
+   .section5 .right img {
+     width: 700px;
+     height: 701px;
+     vertical-align:top;
+   }
+
+  .section6 {
+    gap: 10rem;
+    padding: 40px;
+    background-color: #9e8580;
+  }
+
+  .section6 .left img {
+    width: 800px;
+  }
+
+  .section6 .right {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    gap: 2rem;
+  }
+  .section6 .right .about {
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+  }
+    .header-top {
+      border: none;
+    }
+
+  .desktop {
+    display: block
+  }
+
+  .mobile {
+    display: none;
+  }
+
+  }
+
+{% endstyle %}
+
+<div class="section2">
+  <div class="left">
+    <img src="https://tryfleur.com/cdn/shop/files/2nd_image_1200px_1_by_1_de7c92e9-5e09-4f56-b0ca-ce7349c0f59d.png">
+  </div>
+  <div class="right">
+    <ul class="menu">
+      <li class="active">Our purpose</li>
+      <li>Our philosophy</li>
+      <li>Our approach</li>
+      <li>Our future</li>
+    </ul>
+    <div class="statement">
+      <p class="active">
+        Beauty comes from within, our mission is to draw it to the surface. We meticulously craft our products to restore and rejuvenate, utilizing modern science and timeless elegance, to bring out the best in you. 
+      </p>
+      <p>
+        There's a revolution happening in the beauty industry, where science is giving way to skin and eco-friendly solutions that push the boundaries of natural remedies, things that were not possible a few years ago, that is where Fleur flourishes.
+      </p>
+      <p>
+        Taking inspiration from nature, we use peptides in all our products, the building blocks of life. Nature has provided the blueprint, to unlock the power of the cell, to bring beauty back to its roots.
+      </p>
+      <p>
+        We're launching a series of ritual based peptide skin and haircare solutions for women, starting with our multi-peptide hair serum named Bloom. Our goal is to bring Fleur to you, online and in-store.
+      </p>
+    </div>
+  </div>
+</div>
+<div class="section3">
+  <div class="left">
+    <ul class="menu">
+      <li class="active">Quality</li>
+      <li>Simplicity</li>
+      <li>Inclusivity</li>
+    </ul>
+    <div class="statement">
+      <p class="active">
+        We exclusively use the highest quality peptides in our products, meticulously crafted in state-of-the-art labs that meet international safety and cleanliness standards.
+      </p>
+      <p>
+        We embrace the power of simplicity by using only the most essential, pure ingredients in our formulations. Our approach ensures that each product is effective and gentle, free from unnecessary additives or complexities.
+      </p>
+      <p>
+        Our products are designed with inclusivity in mind, catering to all skin, hair types, and tones with formulations that are universally effective and gentle. We believe that everyone deserves to experience the benefits of high-quality skincare, regardless of their unique needs or background.        
+      </p>
+    </div>
+  </div>
+  <div class="right">
+    <img src="https://tryfleur.com/cdn/shop/files/3rd_image_1200px_1_by_1.png">
+  </div>
+</div>
+<div class="section4 desktop">
+  <img src="https://tryfleur.com/cdn/shop/files/long-banner.png">
+  <div class="title">Our product standards.</div>
+</div>
+<div class="section5">
+  <div class="left">
+    <ul class="menu">
+      <li class="active">Sustainability</li>
+      <li>Responsibility</li>
+      <li>Transparency</li>
+    </ul>
+    <div class="statement">
+      <p class="active">
+        We are dedicated to sustainability, incorporating eco-friendly materials and energy-efficient practices throughout our operations. Our commitment to reducing our carbon footprint ensures that each product not only meets high quality standards but also contributes to a healthier planet.
+      </p>
+      <p>
+        We uphold the highest standards of ethical practices, ensuring fair labor conditions and equitable treatment throughout our supply chain. Our dedication to social responsibility extends to supporting local communities and contributing to meaningful charitable causes.
+      </p>
+      <p>
+        We prioritize transparency and authenticity by openly sharing the details of our sourcing, production processes, and product ingredients. Our commitment to honesty ensures that customers can trust in the integrity and quality of every product we offer.
+      </p>
+    </div>
+  </div>
+  <div class="right">
+    <img src="https://tryfleur.com/cdn/shop/files/4nd_image_1200px_1_by_1.png">
+  </div>
+</div>
+
+<script> 
+
+  // section 2
+  function handleSection2ItemClick(event) {
+    const section2MenuItems = document.querySelectorAll('.section2 .right .menu li')
+    
+    section2MenuItems.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    event.target.classList.add('active')
+
+    const indexOfMenuItem = Array.from(section2MenuItems).indexOf(event.target)    
+    const section2StatementItems = document.querySelectorAll('.section2 .statement p')
+
+    section2StatementItems.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    section2StatementItems[indexOfMenuItem].classList.add('active');
+    
+  }
+  
+  const section2MenuItems = document.querySelectorAll('.section2 .right .menu li')
+  section2MenuItems.forEach(item => {
+    item.addEventListener('click', handleSection2ItemClick)
+  })
+  
+  // section 3
+  function handleSection3ItemClick(event) {
+    const section3MenuItems = document.querySelectorAll('.section3 .left .menu li')
+    
+    section3MenuItems.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    event.target.classList.add('active')
+
+    const indexOfMenuItem = Array.from(section3MenuItems).indexOf(event.target)    
+    const section3StatementItems = document.querySelectorAll('.section3 .statement p')
+
+    section3StatementItems.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    section3StatementItems[indexOfMenuItem].classList.add('active');
+    
+  }
+  
+  const section3MenuItems = document.querySelectorAll('.section3 .left .menu li')
+  section3MenuItems.forEach(item => {
+    item.addEventListener('click', handleSection3ItemClick)
+  })
+
+
+  // section 5
+  function handleSection5ItemClick(event) {
+    const section5MenuItems = document.querySelectorAll('.section5 .left .menu li')
+    
+    section5MenuItems.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    event.target.classList.add('active')
+
+    const indexOfMenuItem = Array.from(section5MenuItems).indexOf(event.target)    
+    const section5StatementItems = document.querySelectorAll('.section5 .statement p')
+
+    section5StatementItems.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    section5StatementItems[indexOfMenuItem].classList.add('active');
+    
+  }
+  
+  const section5MenuItems = document.querySelectorAll('.section5 .left .menu li')
+  section5MenuItems.forEach(item => {
+    item.addEventListener('click', handleSection5ItemClick)
+  })
+
+  
+</script>
+<!--
+  <div class="section6">
+    <div class="left">
+      <img src="https://cdn.shopify.com/s/files/1/0640/5016/8003/files/Screenshot_2024-06-13_121035.png?v=1718305954">
+    </div>
+    <div class="right">
+      <div class="nameTitle">
+        <div class="name"><h2>Figgy Gashi</h2></div>
+        <div class="title">Founder / CEO</div>
+      </div>
+      <div class="about">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.
+        </p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.
+        </p>
+      </div>
+    </div>
+  </div>
+-->
+{% schema %}
+{
+  "name": "Company Section 2",
+  "tag": "section",
+  "settings": [],
+    "presets": [
+    {
+      "name": "Company Section 2",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

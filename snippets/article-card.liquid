@@ -1,0 +1,155 @@
+{% comment %}
+		Renders an article card for a given blog with settings to either show the image or not.
+
+		Accepts:
+		- blog: {Object} Blog object
+		- article: {Object} Article object
+		- show_image: {String} The setting either show the article image or not. If it's not included it will show the image by default
+		- show_date: {String} The setting either show the article date or not. If it's not included it will not show the image by default
+		- show_author: {String} The setting either show the article author or not. If it's not included it will not show the author by default
+
+		Usage:
+	{% render 'article-card' blog: blog, article: article, show_image: section.settings.show_image %}
+{% endcomment %}
+<article
+	class="article-card {{ card_type }}{% if card_type == 'overlay' %} color-inverse{% endif %}"
+	aria-labelledby="Article-{{ article.id }}"
+>
+	<div class="article-card__image-wrapper">
+		{% assign articleImage = article.image %}
+		{%- if show_image and articleImage != blank or placeholder -%}
+			<a
+				{% if placeholder == flase %}
+					href="{{ article.url }}"
+				{%- endif -%}
+				class="article-card__image {% if card_type == 'overlay' %} have-overlay{% endif %}"
+			>
+				{% if placeholder %}
+					{{ 'image' | placeholder_svg_tag }}
+				{% else %}
+					{% liquid
+						assign image_height = articleImage.width | divided_by: articleImage.aspect_ratio
+						assign image_width = articleImage.width
+					%}
+					{{
+						articleImage
+						| image_url: width: 1296
+						| image_tag:
+							loading: 'lazy',
+							width: image_width,
+							height: image_height,
+							sizes: '100vw, (min-width: 576px) 50vw, (min-width: 1200px) 33vw',
+							widths: '375, 550, 750, 1100, 1500'
+					}}
+				{% endif %}
+			</a>
+		{%- endif -%}
+		{%- if placeholder != true -%}
+			<div class="article-card__block">
+				{% if card_type == 'overlay' and show_date %}
+					<div class="article-card__date extra_small-font">
+						{{- article.published_at | time_tag: '%B %d, %Y' -}}
+					</div>
+				{% endif %}
+				{%- if show_tags -%}
+					<div class="article-card__tags">
+						{% for tag in article.tags %}
+							<a
+								class="badge full-unstyled-link"
+								href="{{ blog.url }}/tagged/{{ tag | handle }}"
+								title="{{ tag }}"
+							>
+								{{ tag }}
+							</a>
+						{% endfor %}
+					</div>
+				{%- endif -%}
+			</div>
+		{%- endif -%}
+	</div>
+	{%liquid 
+		if card_type == 'overlay'
+			if per_row < 4
+				assign title_size = 'h4'
+				assign padding_size = 'padding-small'
+			else
+				assign title_size = 'h6'
+				assign padding_size = 'padding-small'
+			endif
+		elsif slider_post
+			assign title_size = 'h5'
+		else
+		if per_row < 4
+			assign title_size = 'h6'
+		else
+			assign title_size = 'h7'
+		endif
+		endif
+	%}
+	<div class="article-card__text {{ padding_size }}">
+		<h2
+			class="article-card__title {{ title_size }}"
+			id="Article-{{ article.id }}"
+		>
+			<a href="{{ article.url }}" class="full-unstyled-link">
+				{% if placeholder %}
+					{{ 'blogs.article.title' | t }}
+				{% else %}
+					{{ article.title | escape }}
+				{% endif %}
+			</a>
+		</h2>
+		{%- if show_excerpt and article.excerpt_or_content.size > 0 -%}
+			<p class="article-card__excerpt">
+				{% if placeholder %}
+					{{ 'blogs.article.description' | t }}
+				{% else %}
+					{{ article.excerpt_or_content | strip_html | truncate: 70 }}
+				{% endif %}
+				{{ article.excerpt_or_content | strip_html | truncate: 70 }}
+			</p>
+		{%- endif -%}
+		<div class="article-card__info">
+			{%- if show_author -%}
+				<div class="article-card__author extra_small-font">
+					<span>{{ 'general.blog.author' | t }}</span>
+					{% if article.metafields.custom.author_image != blank %}
+						{% assign image = article.metafields.custom.author_image %}
+						{% assign image_height = image.width
+							| divided_by: image.aspect_ratio
+						%}
+						<div class="article-card__author-img">
+							{{
+								image
+								| image_url: width: 120
+								| image_tag:
+									loading: 'lazy',
+									height: image_height,
+									width: image.width,
+									sizes: '40px',
+									widths: '30, 60, 90, 120'
+							}}
+						</div>
+					{% endif %}
+					<span>
+						{% if placeholder %}
+							{{ 'blogs.article.author' | t }}
+						{% else %}
+							{{- article.author -}}
+						{% endif %}
+					</span>
+				</div>
+			{%- endif -%}
+			{%- if card_type == 'default' and show_date -%}
+				<span class="article-card__delimiter"></span>
+				<div class="article-card__date extra_small-font">
+					{% if placeholder %}
+						{{ 'today' | time_tag: '%B %d, %Y' }}
+						{% else %}
+						{{- article.published_at | time_tag: '%B %d, %Y' -}}
+						{% endif %}
+				</div>
+			{%- endif -%}
+		</div>
+	</div>
+</article>

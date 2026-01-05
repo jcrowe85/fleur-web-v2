@@ -1,0 +1,344 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+{{ 'section-featured-blog.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'blog-post.js' | asset_url }}" defer="defer"></script>
+<noscript>{{ 'component-card.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>
+	{{- 'component-article-card.css' | asset_url | stylesheet_tag -}}
+</noscript>
+
+{% style %}
+	{% render 'section-margin' %}
+{% endstyle %}
+
+{% liquid
+	assign slideshow_speed = section.settings.slideshow_speed
+	assign autoplay = section.settings.is_autoplay
+	assign stop_autoplay = section.settings.is_hover_stop_autoplay
+	assign slideshow_delay = section.settings.slideshow_delay
+%}
+
+<div
+	data-id="shopify-section-{{ section.id }}"
+	data-autoplay="{{ autoplay }}"
+	data-stop-autoplay="{{ stop_autoplay }}"
+	data-speed="{{ slideshow_speed }}"
+	data-delay="{{ slideshow_delay }}"
+	data-parallax="false"
+	data-effect="slide"
+	class="featured"
+
+>
+	{% render 'section-header' %}
+	<div class="container">
+		<div class="blog__box-slider_hover">
+		<div class="swiper">
+			{%- if section.settings.blog != blank
+				and section.settings.blog.articles_count > 0
+			-%}
+				<div
+					class="blog__posts swiper-wrapper articles-wrapper blog__posts--{{ section.settings.blog.articles_count }}-items"
+				>
+					{%- for article in section.settings.blog.articles -%}
+						<div class="blog__post article swiper-slide">
+							{% render 'article-card',
+								blog: section.settings.blog,
+								article: article,
+								show_image: section.settings.show_image,
+								show_tags: section.settings.show_tags,
+								show_date: section.settings.show_date,
+								show_author: section.settings.show_author,
+								show_excerpt: section.settings.show_excerpt,
+								card_type: section.settings.card_type,
+								slider_post: true,
+								per_row: 3
+							%}
+						</div>
+					{%- endfor -%}
+				</div>
+			{%- else -%}
+			<div
+				class="blog__posts swiper-wrapper articles-wrapper blog__posts--{{ section.settings.blog.articles_count }}-items"
+				role="list"
+			>
+					{%- for i in (1..4) -%}
+						<div class="blog__post article swiper-slide">
+							{% render 'article-card',
+								blog: section.settings.blog,
+								placeholder: true,
+								show_image: section.settings.show_image,
+								show_tags: section.settings.show_tags,
+								show_date: section.settings.show_date,
+								show_author: section.settings.show_author,
+								show_excerpt: section.settings.show_excerpt,
+								card_type: section.settings.card_type,
+								per_row: 3
+							%}
+						</div>
+					{% endfor %}
+			</div>
+		{% endif %}
+		</div>
+		{% if section.settings.show_arrows %}
+			<button class="swiper-button swiper-button-prev">
+				<span>{% render 'icon-arrow' %}</span>
+			</button>
+			<button class="swiper-button swiper-button-next">
+				<span>{% render 'icon-arrow' %}</span>
+			</button>
+			{% if section.settings.card_type == 'default' %}
+				{% assign section_id = section.id %}
+				<script>
+					(function () {
+						function changePosition() {
+							if(window.innerWidth < 1200) return;
+							const image = document.querySelectorAll(
+								`#shopify-section-{{ section_id }} .swiper .article-card__image img`
+							)[0];
+							if (image) {
+								image.addEventListener('load', function () {
+									const height = this.offsetHeight;
+									document.querySelectorAll(`#shopify-section-{{ section_id }} .swiper-button`)
+										.forEach((button) => {
+											button.style.top = height / 2 + 'px';
+										});
+								});
+							}
+						}
+						changePosition();
+						document.addEventListener('shopify:section:load', function () {
+							changePosition();
+						});
+						window.addEventListener('resize', function () {
+							changePosition();
+						});
+					})();
+				</script>
+			{% endif %}
+			<div class="swiper-pagination swiper-pagination-default"></div>
+		{% endif %}
+	</div>
+</div>
+</div>
+	{% schema %}
+	{
+		"name": "t:sections.featured-blog.name",
+		"tag": "section",
+		"class": "spaced-section section-blog-post",
+		"enabled_on": {
+			"templates": ["*"]
+		},
+		"settings": [
+			{
+				"type": "inline_richtext",
+				"id": "heading",
+				"default": "Heading",
+				"label": "t:sections.all.heading.label"
+			},
+			{
+				"type": "header",
+				"content": "t:sections.all.button.header.content"
+			},
+			{
+				"type": "text",
+				"id": "button_label",
+				"default": "Button label",
+				"label": "t:sections.all.button.label.label",
+				"info": "t:sections.all.button.label.info"
+			},
+			{
+				"type": "url",
+				"id": "button_link",
+				"label": "t:sections.all.button.link.label"
+			},
+			{
+				"type": "select",
+				"id": "button_style",
+				"options": [
+					{
+						"value": "primary",
+						"label": "t:sections.all.button.style.options__1.label"
+					},
+					{
+						"value": "secondary",
+						"label": "t:sections.all.button.style.options__2.label"
+					},
+					{
+						"value": "tertiary",
+						"label": "t:sections.all.button.style.options__3.label"
+					}
+				],
+				"default": "primary",
+				"label": "t:sections.all.button.style.label"
+			},
+			{
+				"type": "checkbox",
+				"id": "button_arrow",
+				"default": true,
+				"label": "t:sections.all.button.arrow.label"
+			},
+			{
+				"type": "blog",
+				"id": "blog",
+				"label": "t:sections.featured-blog.settings.blog.label"
+			},
+			{
+			"type": "select",
+			"id": "card_type",
+			"default": "default",
+			"label": "t:sections.all.article_card.card_type.label",
+			"options": [
+				{
+					"value": "default",
+					"label": "t:sections.all.article_card.card_type.options.option__1"
+				},
+				{
+					"value": "overlay",
+					"label": "t:sections.all.article_card.card_type.options.option__2"
+				}
+			]
+		},
+			{
+				"type": "checkbox",
+				"id": "show_image",
+				"default": true,
+				"label": "t:sections.featured-blog.settings.show_image.label",
+				"info": "t:sections.featured-blog.settings.show_image.info"
+			},
+			{
+				"type": "checkbox",
+				"id": "show_tags",
+				"default": true,
+				"label": "t:sections.main-blog.settings.show_tags.label"
+			},
+			{
+				"type": "checkbox",
+				"id": "show_date",
+				"default": true,
+				"label": "t:sections.featured-blog.settings.show_date.label"
+			},
+			{
+				"type": "checkbox",
+				"id": "show_author",
+				"default": true,
+				"label": "t:sections.featured-blog.settings.show_author.label"
+			},
+			{
+				"type": "checkbox",
+				"id": "show_excerpt",
+				"default": false,
+				"label": "t:sections.featured-blog.settings.show_excerpt.label"
+			},
+			{
+				"type": "header",
+				"content": "t:sections.all.slider_options.header.content"
+			},
+			{
+				"type": "checkbox",
+				"id": "is_autoplay",
+				"default": true,
+				"label": "t:sections.all.slider_options.slider_is_autoplay.label"
+			},
+			{
+				"type": "checkbox",
+				"id": "is_hover_stop_autoplay",
+				"default": true,
+				"label": "t:sections.all.slider_options.slider_hover_autoplay_stop.label"
+			},
+			{
+				"type": "checkbox",
+				"id": "show_arrows",
+				"default": true,
+				"label": "t:sections.all.slider_options.navigation.label"
+			},
+			{
+				"type": "range",
+				"id": "slideshow_speed",
+				"min": 0,
+				"max": 6,
+				"step": 0.1,
+				"default": 1.1,
+				"unit": "s",
+				"label": "t:sections.all.slider_options.speed.label"
+			},
+			{
+				"type": "range",
+				"id": "slideshow_delay",
+				"min": 0,
+				"max": 8,
+				"step": 0.1,
+				"default": 3,
+				"unit": "s",
+				"label": "t:sections.all.slider_options.delay.label"
+			},
+			{
+				"type": "header",
+				"content": "t:sections.all.section-margin.header.content"
+			},
+			{
+				"type": "select",
+				"id": "margin_top",
+				"options": [
+					{
+						"value": "no-indent",
+						"label": "t:sections.all.section-margin.options__1.label"
+					},
+					{
+						"value": "xs",
+						"label": "t:sections.all.section-margin.options__2.label"
+					},
+					{
+						"value": "s",
+						"label": "t:sections.all.section-margin.options__3.label"
+					},
+					{
+						"value": "m",
+						"label": "t:sections.all.section-margin.options__4.label"
+					},
+					{
+						"value": "l",
+						"label": "t:sections.all.section-margin.options__5.label"
+					}
+				],
+				"default": "s",
+				"label": "t:sections.all.section-margin.margin_top.label"
+			},
+			{
+				"type": "select",
+				"id": "margin_bottom",
+				"options": [
+					{
+						"value": "no-indent",
+						"label": "t:sections.all.section-margin.options__1.label"
+					},
+					{
+						"value": "xs",
+						"label": "t:sections.all.section-margin.options__2.label"
+					},
+					{
+						"value": "s",
+						"label": "t:sections.all.section-margin.options__3.label"
+					},
+					{
+						"value": "m",
+						"label": "t:sections.all.section-margin.options__4.label"
+					},
+					{
+						"value": "l",
+						"label": "t:sections.all.section-margin.options__5.label"
+					}
+				],
+				"default": "s",
+				"label": "t:sections.all.section-margin.margin_bottom.label"
+			}
+		],
+		"presets": [
+			{
+				"name": "t:sections.featured-blog.presets.name",
+				"settings": {
+					"blog": "News"
+				}
+			}
+		]
+	}
+	{% endschema %}

@@ -1,0 +1,464 @@
+{% comment %}
+    Renders a product card
+    Accepts:
+    - product_card_product: {Object} Product Liquid object (optional)
+    - media_size: {String} Size of the product image card. Values are "square" and "portrait". Default is "square" (optional)
+    - show_secondary_image: {Boolean} Show the secondary image on hover. Default: false (optional)
+    - show_vendor: {Boolean} Show the product vendor. Default: true
+    - show_desc: {Boolean} Show the product vendor. Default: false
+    - section_id: {String} The ID of the section that contains this card.
+    - show_sku: {Boolean} Show sku. Default: false
+    - custom_static_image: {Image} Static/primary image override (e.g. hero)
+    - hover_video: {Video} Shopify-hosted video (from `video` setting) used as hover media
+    - hover_video_hevc: {String} URL to HEVC (H.265) alpha video (e.g. Cloudinary) for Safari
+    - hover_video_webm: {String} URL to WebM (VP9 + alpha) video for Chrome/Firefox
+    - hover_video_fallback: {String} URL to fallback MP4 (no alpha) for older browsers
+{% endcomment %}
+
+{%- if settings.quickview_button_type != 'none' -%}
+  <link
+    rel="preload"
+    href="{{ 'section-main-product.css' | asset_url }}"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  >
+  <link
+    rel="stylesheet"
+    href="{{ 'component-deferred-media.css' | asset_url }}"
+    media="all"
+  >
+  <link
+    rel="preload"
+    href="{{ 'quick-add.css' | asset_url }}"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  >
+  {%- assign first_3d_model = product_card_product.media | where: 'media_type', 'model' | first -%}
+  {%- if first_3d_model -%}
+    {{ 'component-product-model.css' | asset_url | stylesheet_tag }}
+    <link
+      id="ModelViewerStyle"
+      rel="stylesheet"
+      href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
+      media="print"
+      onload="this.media='all'"
+    >
+    <link
+      id="ModelViewerOverride"
+      rel="stylesheet"
+      href="{{ 'component-model-viewer-ui.css' | asset_url }}"
+      media="print"
+      onload="this.media='all'"
+    >
+    <link
+      id="ModelViewerOverride"
+      rel="stylesheet"
+      href="{{ 'component-model-viewer-ui.css' | asset_url }}"
+      media="print"
+      onload="this.media='all'"
+    >
+  {%- endif -%}
+  {%- if first_3d_model -%}
+    <script type="application/json" id="ProductJSON-{{ product.id }}">
+      {{ product_card_product.media | where: 'media_type', 'model' | json }}
+    </script>
+    <script src="{{ 'product-model.js' | asset_url }}" defer></script>
+  {%- endif -%}
+{%- endif -%}
+
+{% liquid
+  case media_size
+    when 'landscape'
+      assign image_size = '70%'
+    when 'portrait'
+      assign image_size = '130%'
+    when 'square'
+      assign image_size = '100%'
+    else
+      assign image_size = '130%'
+  endcase
+
+  if media_fit == blank
+    assign imgae_fit = 'cover'
+  else
+    assign imgae_fit = media_fit
+  endif
+%}
+
+{%- assign product_form_id = 'quick-add-' | append: section_id | append: product_card_product.id -%}
+
+{%- comment -%}
+  Media selection logic:
+  - main_image:
+    - default: product_card_product.featured_media
+    - override: custom_static_image if provided
+  - hover:
+    - if hover_video_*(url) present -> use external video with <source> tags
+    - else if hover_video (Shopify video object) present -> use that
+    - else if show_secondary_image and product has 2nd media -> use that image
+{%- endcomment -%}
+{% liquid
+  assign main_image = product_card_product.featured_media
+  assign hover_image = nil
+  assign main_is_custom = false
+
+  if custom_static_image != blank
+    assign main_image = custom_static_image
+    assign main_is_custom = true
+  endif
+
+  if product_card_product.media[1] != null and show_secondary_image
+    assign hover_image = product_card_product.media[1]
+  endif
+
+  assign hevc_url = hover_video_hevc
+  assign webm_url = hover_video_webm
+  assign fallback_url = hover_video_fallback
+
+  assign has_hover_video = false
+  if hevc_url != blank or webm_url != blank or fallback_url != blank or hover_video
+    assign has_hover_video = true
+  endif
+%}
+
+<div
+  class="product-card card-wrapper js-color-swatches-wrapper quickview{%- if settings.quickview_hover -%}--hover{% endif %}"
+  data-product="{{ product_card_product.handle }}"
+>
+  <div class="floating-tags-list">
+    {% for tag in product_card_product.tags %}
+      <span class="product-tag tag-{{ tag }}">{{ tag }}</span>
+    {% endfor %}
+  </div>
+
+  <span class="visually-hidden">{{ product_card_product.title | escape }}</span>
+  <div class="product_card_product-top-details">
+    {% if product_card_product.metafields.custom.product_info_code != blank %}
+      <span class="special_code">{{ product_card_product.metafields.custom.product_info_code }}</span>
+    {% endif %}
+
+  {%- assign full_p = all_products[product_card_product.handle] | default: product_card_product -%}
+  {%- assign v = full_p.selected_or_first_available_variant -%}
+
+  <h3 class="card__title" style="font-weight: bold">
+    <a
+      class="unstyled-link"
+      href="{{ product_card_product.url | default: '#' }}"
+      title="{{ product_card_product.title | escape }}"
+    >
+      {%- if v.metafields.custom.card_title_short != blank -%}
+        {{ v.metafields.custom.card_title_short }}
+      {%- else -%}
+        {{ product_card_product.title | escape }}
+      {%- endif -%}
+    </a>
+
+    {% unless hide_product_reviews %}
+      <div class="jdgm-widget jdgm-preview-badge">
+        {{ product_card_product.metafields.judgeme.badge }}
+      </div>
+    {% endunless %}
+  </h3>
+
+  </div>
+
+  <div class="card card--product" tabindex="-1">
+    <a
+      href="{{ product_card_product.url | default: '#' }}"
+      class="media media--hover-effect js-color-swatches-link"
+      aria-label="{{ "accessibility.product_link" | t }}"
+      style="padding-bottom: {{ image_size }};"
+      {% if has_hover_video %}data-mobile-video="true"{% endif %}
+    >
+      {%- if main_image -%}
+        {%- if main_is_custom -%}
+          {%- capture style_primary -%}
+            object-fit: {{ imgae_fit }};
+          {%- endcapture -%}
+        {%- else -%}
+          {%- capture style_primary -%}
+            object-position: {{ main_image.presentation.focal_point }};
+            object-fit: {{ imgae_fit }};
+          {%- endcapture -%}
+        {%- endif -%}
+
+        {{
+          main_image
+          | image_url: width: 1920
+          | image_tag:
+            loading: 'lazy',
+            width: main_image.width,
+            height: image_height,
+            sizes: '(max-width: 576px) 100vw, (max-width: 1200px) 50vw, 100vw',
+            widths: '375, 550, 750, 1100, 1500, 1700, 1900',
+            class: 'motion-reduce media--first',
+            style: style_primary
+        }}
+
+        {%- comment -%}
+          Hover media priority:
+          1) External alpha video (Cloudinary/etc via URLs)
+          2) Shopify video object (hover_video)
+          3) Secondary image
+        {%- endcomment -%}
+        {% if hevc_url != blank or webm_url != blank or fallback_url != blank %}
+          <video
+            class="product-card__hover-video motion-reduce media--second"
+            playsinline
+            muted
+            loop
+            preload="metadata"
+            autoplay
+          >
+            {% if hevc_url != blank %}
+              <source src="{{ hevc_url }}" type="video/mp4; codecs=hvc1">
+            {% endif %}
+            {% if webm_url != blank %}
+              <source src="{{ webm_url }}" type="video/webm; codecs=vp9">
+            {% endif %}
+            {% if fallback_url != blank %}
+              <source src="{{ fallback_url }}" type="video/mp4">
+            {% endif %}
+          </video>
+        {% elsif hover_video %}
+          {{ hover_video
+            | video_tag:
+              class: 'product-card__hover-video motion-reduce media--second',
+              loop: true,
+              muted: true,
+              playsinline: true,
+              autoplay: true
+          }}
+        {% elsif hover_image %}
+          {%- capture style_hover -%}
+            object-position: {{ hover_image.presentation.focal_point }};
+            object-fit: {{ imgae_fit }};
+          {%- endcapture -%}
+          {{
+            hover_image
+            | image_url: width: 1920
+            | image_tag:
+              loading: 'lazy',
+              width: hover_image.width,
+              height: image_height,
+              sizes: '(max-width: 576px) 100vw, (max-width: 1200px) 50vw, 100vw',
+              widths: '375, 550, 750, 1100, 1500, 1700, 1900',
+              class: 'motion-reduce media--second',
+              style: style_hover
+          }}
+        {% endif %}
+      {%- else -%}
+        {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </a>
+
+    <div class="card__badge">
+      {%- if product_card_product.available == false -%}
+        <span
+          class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
+          aria-hidden="true"
+        >
+          {{- 'products.product.sold_out' | t -}}
+        </span>
+      {%- elsif product_card_product.compare_at_price > product_card_product.price
+        and product_card_product.available
+      -%}
+        <!--
+          <span
+            class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
+            aria-hidden="true"
+          >
+            {{- 'products.product.on_sale' | t -}}
+          </span>
+        -->
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="card-information">
+    <div class="card-information__wrapper">
+      {%- if show_sku and product_card_product.selected_or_first_available_variant.sku.size > 0 -%}
+        <p
+          class="card__sku subtitle no-js-hidden"
+          id="Sku-{{ section.id }}"
+          role="status"
+          {{ block.shopify_attributes }}
+        >
+          <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
+          {{- product_card_product.selected_or_first_available_variant.sku -}}
+        </p>
+      {%- endif -%}
+
+      {%- if show_vendor -%}
+        <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
+        {% if settings.enable_vendor_link %}
+          <a
+            href="{{ product_card_product.vendor | url_for_vendor }}"
+            class="unstyled-link caption-with-letter-spacing vendor-link subtitle"
+          >
+            {{ product_card_product.vendor }}
+          </a>
+        {% else %}
+          <div class="caption-with-letter-spacing subtitle">
+            {{ product_card_product.vendor }}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+      <div class="card-information-block">
+        {% unless hide_product_reviews %}
+          <div class="jdgm-widget jdgm-preview-badge">
+            {{ product_card_product.metafields.judgeme.badge }}
+          </div>
+        {% endunless %}
+
+        {% if product_card_product.metafields.custom.product_summary %}
+          <p style="font-weight: normal; margin-top: 6px; margin-bottom: 16px;" class="product_summary {% if hide_product_summary %}hide hidden{% endif %}">
+            {{ product_card_product.metafields.custom.product_summary }}
+          </p>
+        {% endif %}
+
+        <div class="quick-add no-js-hidden">
+          <a
+            href="{{ product_card_product.url | default: '#' }}"
+            class="card__link button button--{{ settings.quickview_button_style }} card__link--{{ settings.quickview_button_layout }} {%- if settings.show_on_mobile == false -%}mobile-hide{%- endif -%} card-focused{% if settings.quickview_button_style == 'link' %} button--primary{% endif %}"
+          >
+            <span class="card__quickview-text" style="font-weight: normal">
+              <p>Shop Now</p>
+              <span class="button-icon">
+                <svg class="icon icon-button-arrow" width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.97218 1L12.8333 6M12.8333 6L7.97218 11M12.8333 6L1.16663 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              {% if pro_hide_price_inner_btn %}
+                <span class="button-icon">
+                  <svg class="icon icon-button-arrow" width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.97218 1L12.8333 6M12.8333 6L7.97218 11M12.8333 6L1.16663 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </span>
+              {% endif %}
+            </span>
+          </a>
+        </div>
+
+{% unless pro_hide_price_inner_btn %}
+  {%- assign full_p = all_products[product_card_product.handle] | default: product_card_product -%}
+  {%- assign v = full_p.selected_or_first_available_variant -%}
+
+  {%- assign is_sub = full_p.metafields.custom.subscription_product.value -%}
+  {%- if is_sub == blank -%}
+    {%- assign is_sub = v.metafields.custom.subscription_product.value -%}
+  {%- endif -%}
+
+  {%- assign starting_price = full_p.price_min -%}
+
+  {% if is_sub == true %}
+    <p class="card__price card__price--subscription">
+      <span class="card__price-prefix">Starting at</span>
+      <span class="card__price-amount">{{ starting_price | money }}</span>
+      <span class="card__price-suffix">per month</span>
+    </p>
+  {% else %}
+    <p class="card__price card__price--onetime">
+      <span class="card__price-prefix">One-time purchase</span>
+      <span class="card__price-amount">{{ starting_price | money }}</span>
+    </p>
+  {% endif %}
+{% endunless %}
+
+      </div>
+
+      {%- if show_desc and product_card_product.description != blank -%}
+        {{ product_card_product.collections.title }}
+        <div class="card__description">
+          {{ product_card_product.description | strip_html | truncate: 120 }}
+        </div>
+      {%- endif -%}
+
+      {%- if show_collection_name -%}
+        {%- for collection in product_card_product.collections limit: 1 -%}
+          <a
+            href="{{ collection.url }}"
+            class="card__collection-title extra_small-font unstyled-link"
+          >
+            {{- collection.title | escape -}}
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- unless product_card_product.has_only_default_variant -%}
+        {% if show_color_swatch and settings.show_color_swatch %}
+          <div class="product-parameters no-js-hidden">
+            {%- for option in product_card_product.options_with_values -%}
+              {% liquid
+                assign color_trigger = settings.trigger_swatch | handle | strip
+                assign name_option = option.name | handle | strip
+              %}
+              {% if color_trigger == name_option %}
+                <div class="product-form__controls js-color-swatches">
+                  <div class="product-form__controls-group color--silwer">
+                    {% render 'product-variant-options',
+                      product: product_card_product,
+                      option: option,
+                      no_form_id: true
+                    %}
+                  </div>
+                </div>
+              {% endif %}
+            {%- endfor -%}
+          </div>
+        {% endif %}
+      {% endunless %}
+    </div>
+  </div>
+</div>
+
+{%- comment -%}
+  MOBILE BEHAVIOR:
+  If a hover video exists, show it by default on mobile (no hover).
+  Desktop hover behavior remains unchanged.
+{%- endcomment -%}
+<style>
+  @media (max-width: 989px) {
+    /* Only apply when we actually have a hover video to show */
+    .product-card a.media[data-mobile-video="true"] .media--first {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    .product-card a.media[data-mobile-video="true"] .media--second {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+    }
+
+    /* Ensure the video fills the media box like the image does */
+    .product-card a.media[data-mobile-video="true"] video.media--second,
+    .product-card a.media[data-mobile-video="true"] .product-card__hover-video.media--second {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  // iOS sometimes won't autoplay unless play() is called after a user gesture;
+  // but many cases work with muted+playsinline+autoplay.
+  // This gently nudges videos to play on mobile without affecting desktop hover.
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!window.matchMedia("(max-width: 989px)").matches) return;
+
+    document.querySelectorAll('.product-card a.media[data-mobile-video="true"] video').forEach((vid) => {
+      try {
+        vid.muted = true;
+        vid.playsInline = true;
+        const p = vid.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      } catch (e) {}
+    });
+  });
+</script>
+

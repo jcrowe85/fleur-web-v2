@@ -1,0 +1,100 @@
+{% comment %}
+  Renders an header mega menu.
+  
+  Accepts:
+  - links: {Array} Menu links (sub-links of the trigger link)
+  - block: {Object} Menu Block Object (The matching block with custom content settings)
+  - link: {Object} The main parent link object
+  
+  Note: This snippet contains two separate block rendering types:
+  - 'mega_menu_product': Renders nested sub-menus (if `links` exist) AND a product grid.
+  - 'mega_menu_only_collection': Renders a grid of collections.
+{% endcomment %}  
+{% liquid 
+    case block.type
+    when 'mega_menu_product'
+        # Prevent product mega menu link from navigating by default
+        assign menu_link = '##'
+        assign menu_link_class = 'cursor-default'
+    when 'mega_menu_only_collection'
+        # Allow collection mega menu link to navigate
+        assign menu_link = link.url
+        assign menu_link_class = ''
+    else
+        assign menu_link = '##'
+        assign menu_link_class = 'cursor-default'
+    endcase
+%}
+<div class="{% if block.type == 'mega_menu_product' %}product_list_mega_menu{% endif %} color-background-1">
+    <div class="container">
+        {% if block.type == 'mega_menu_product' %}
+            <div class="header-mega-menu__wrapper">
+                {% if block.settings.product_list != blank %}
+                    <div
+                        class="header-mega-menu__product-list card-link-small"
+                        id="menu__card-{{ block.id }}"
+                    >
+                        {% for product in block.settings.product_list %}
+                            <div class="header__product-card">
+                                {%
+                                    render 'product-card',
+                                    product_card_product: product,
+                                    media_size: block.settings.image_ratio,
+                                    media_fit: block.settings.image_fit,
+                                    show_secondary_image: block.settings.show_secondary_image,
+                                    show_vendor: block.settings.show_vendor,
+                                    show_collection_name: block.settings.show_collection_name,
+                                    show_desc: false,
+                                %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% elsif block.type == 'mega_menu_only_collection' %}
+            {% liquid
+                if block.settings.collection_list.count > 4
+                    assign per_row = 6
+                else
+                    assign per_row = 4
+                endif
+            %}
+            <div
+                class="mega_menu-collections"
+                id="menu__card-{{ block.id }}"
+                style="--collection-per-row : {{ per_row }}"
+            >
+                {% for collection in block.settings.collection_list %}
+                    {% liquid
+                        if block.settings.heading != blank and forloop.last and block.settings.collection_list.count == per_row
+                            break
+                        endif
+                    %}
+                        {%
+                            render 'collection-card',
+                            block_collection: collection,
+                            media_size: block.settings.image_ratio,
+                            url: collection.url,
+                            collection_title: collection.title,
+                            collection_desc: collection.description,
+                            collection_image: collection.image,
+                            show_collection_tags: block.settings.show_collection_tags,
+                            show_collection_desc: block.settings.show_collection_desc,
+                            card_type: block.settings.card_type,
+                            text_bg_opacity: block.settings.text_bg_opacity,
+                            per_row: per_row,
+                            menu_block_id: block.id,
+                        %}
+                {% endfor %}
+                {% if block.settings.heading != blank %}
+                    <div class="header-collection-banner background color-{{ block.settings.color_scheme }}">
+                        <h4 class="header-collection-banner__title {% if per_row > 4 %} h6{% endif %}">
+                            {{ block.settings.heading }}
+                        </h4>
+                        {% render 'button', layout: block %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,77 @@
+.product-banner-section .container .product-banner {
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.product-banner {
+  position: relative;
+}
+.product-banner .product-banner-image img,
+.product-banner .product-banner-image svg,
+.product-banner .product-banner-image video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  object-fit: cover;
+}
+.product-banner .product-banner-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--main-padding);
+  align-items: center;
+  flex-direction: column;
+}
+@media screen and (min-width: 990px) {
+  .product-banner .product-banner-wrapper {
+    flex-direction: unset;
+  }
+}
+.product-banner .product-banner-text {
+  z-index: 1;
+  max-width: 100%;
+  text-align: center;
+  margin: auto;
+}
+@media screen and (min-width: 990px) {
+  .product-banner .product-banner-text {
+    text-align: left;
+    max-width: 60rem;
+    margin: 0;
+  }
+}
+.product-banner .product-banner-text-vertical {
+  align-self: center;
+}
+.product-banner .product-banner__desc {
+  margin-top: 1rem;
+}
+@media screen and (min-width: 576px) {
+  .product-banner .product-banner__desc {
+    margin-top: 2.4rem;
+  }
+}
+.product-banner .product-banner-product {
+  max-width: 30rem;
+  width: 100%;
+}
+@media screen and (min-width: 1360px) {
+  .product-banner .product-banner-product {
+    max-width: 42rem;
+  }
+}
+.product-banner .product-banner-product .card-wrapper {
+  background-color: unset;
+}
+.product-banner .product-banner-product svg {
+  background-color: rgba(var(--color-foreground), 0.04);
+}
+.product-banner .product-banner__title {
+  margin: 0;
+}
+.product-banner .product-banner__button-wrapper {
+  margin-top: 2.4rem;
+}

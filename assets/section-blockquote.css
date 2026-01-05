@@ -1,0 +1,49 @@
+.blockquote {
+  overflow: hidden;
+}
+.blockquote__block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-direction: column;
+}
+@media (min-width: 750px) {
+  .blockquote__block {
+    flex-direction: unset;
+  }
+}
+.blockquote__text {
+  max-width: 105rem;
+  margin: 0;
+}
+.blockquote__person-box {
+  flex: none;
+  max-width: 35rem;
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  column-gap: 1.2rem;
+}
+.blockquote .blockquote__person-name + .blockquote__person-position {
+  margin-top: 0.5rem;
+}
+.blockquote__person-position {
+  font-weight: 500;
+  opacity: 0.7;
+}
+.blockquote__person-name {
+  margin: 0;
+}
+.blockquote__person-img {
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+}
+.blockquote__person-img img {
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

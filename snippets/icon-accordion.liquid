@@ -1,0 +1,291 @@
+{% liquid
+	case size
+		when 'small'
+			assign icon_size = 33
+		when 'medium'
+			assign icon_size = 66
+		when 'large'
+			assign icon_size = 88
+		else
+			assign icon_size = 66
+	endcase
+%}
+{% if custom_icon != blank or custom_icon_dark != blank %}
+	{% if custom_icon != blank %}
+		{% assign icon_height = icon_size | divided_by: custom_icon.aspect_ratio %}
+		{{
+			custom_icon
+			| image_url: width: 3840
+			| image_tag:
+				loading: 'lazy',
+				width: icon_size,
+				height: icon_height,
+				sizes: '100vw (min-width: 767px) 50vw',
+				widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+				style: 'object-fit: cover',
+				class: 'header__heading-logo header__logo-light'
+		}}
+	{% endif %}
+	{% if custom_icon_dark != blank %}
+		{% assign icon_height = icon_size | divided_by: custom_icon_dark.aspect_ratio %}
+		{{
+			custom_icon_dark
+			| image_url: width: 3840
+			| image_tag:
+				loading: 'lazy',
+				width: icon_size,
+				height: icon_height,
+				style: 'object-fit: cover',
+				sizes: '100vw (min-width: 767px) 50vw',
+				widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+				class: 'header__heading-logo header__heading-logo--overlay'
+		}}
+	{% endif %}
+{% elsif icon != 'none' %}
+	<svg
+		class="icon icon-accordion color-foreground-{{ settings.icon }} icon-{{ size }}"
+		aria-hidden="true"
+		focusable="false"
+		role="presentation"
+		viewBox="0 0 66 66"
+		xmlns="http://www.w3.org/2000/svg"
+		width="{{ icon_size }}"
+		height="{{ icon_size }}"
+	>
+		{%- case icon -%}
+			{%- when 'icon_1' -%}
+				<g clip-path="url(#clip0_458_2748)">
+					<circle cx="16" cy="16" r="16" fill="currentColor"/>
+					<circle cx="16" cy="50" r="16" fill="currentColor"/>
+					<circle cx="50" cy="16" r="16" fill="currentColor"/>
+					<circle cx="50" cy="50" r="16" fill="currentColor"/>
+				</g>
+					<defs>
+					<clipPath id="clip0_458_2748">
+					<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+					</defs>
+			{%- when 'icon_2' -%}
+				<g clip-path="url(#clip0_458_2754)">
+					<path d="M66 33C66 14.7746 51.6731 -1.2525e-06 34 -2.79753e-06L34 66C51.6731 66 66 51.2254 66 33Z" fill="currentColor"/>
+					<path d="M32 34C14.3269 34 -6.26248e-07 48.3269 -1.39876e-06 66L32 66L32 34Z" fill="currentColor"/>
+				</g>
+					<defs>
+					<clipPath id="clip0_458_2754">
+					<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+					</defs>
+			{%- when 'icon_3' -%}
+					<g clip-path="url(#clip0_458_2770)">
+						<path d="M34 33C34 51.2254 48.3269 66 66 66V0C48.3269 0 34 14.7746 34 33Z" fill="currentColor"/>
+						<path d="M32 33C32 14.7746 17.6731 -1.2525e-06 5.7699e-06 -2.79753e-06L0 66C17.6731 66 32 51.2254 32 33Z" fill="currentColor"/>
+						</g>
+						<defs>
+						<clipPath id="clip0_458_2770">
+						<rect width="66" height="66" fill="currentColor"/>
+						</clipPath>
+						</defs>
+			{%- when 'icon_4' -%}
+						<g clip-path="url(#clip0_458_2762)">
+							<path d="M0 33C0 51.2254 14.3269 66 32 66L32 0C14.3269 0 0 14.7746 0 33Z" fill="currentColor"/>
+							<circle cx="50" cy="16" r="16" fill="currentColor"/>
+							<path d="M66 66C66 48.3269 51.6731 34 34 34L34 66L66 66Z" fill="currentColor"/>
+							</g>
+							<defs>
+							<clipPath id="clip0_458_2762">
+							<rect width="66" height="66" fill="currentColor"/>
+							</clipPath>
+							</defs>
+			{%- when 'icon_5' -%}
+							<g clip-path="url(#clip0_458_2684)">
+								<path d="M33 -1.44248e-06C14.7746 -2.23913e-06 -6.26248e-07 14.3269 -1.39876e-06 32L66 32C66 14.3269 51.2254 -6.45818e-07 33 -1.44248e-06Z" fill="currentColor"/>
+								<circle cx="32.9999" cy="50" r="16" fill="currentColor"/>
+								</g>
+								<defs>
+								<clipPath id="clip0_458_2684">
+								<rect width="66" height="66" fill="currentColor"/>
+								</clipPath>
+								</defs>
+			{%- when 'icon_6' -%}
+								<g clip-path="url(#clip0_458_2680)">
+									<path d="M33 34C14.7746 34 -6.26248e-07 48.3269 -1.39876e-06 66L66 66C66 48.3269 51.2254 34 33 34Z" fill="currentColor"/>
+									<path d="M33 -1.44248e-06C14.7746 -2.23913e-06 -6.26248e-07 14.3269 -1.39876e-06 32L66 32C66 14.3269 51.2254 -6.45818e-07 33 -1.44248e-06Z" fill="currentColor"/>
+									</g>
+									<defs>
+									<clipPath id="clip0_458_2680">
+									<rect width="66" height="66" fill="currentColor"/>
+									</clipPath>
+									</defs>
+			{%- when 'icon_7' -%}
+									<g clip-path="url(#clip0_458_2647)">
+										<path d="M33 32C51.2254 32 66 17.6731 66 -2.88495e-06L2.91188e-05 0C2.98913e-05 17.6731 14.7746 32 33 32Z" fill="currentColor"/>
+										<path d="M33 66C51.2254 66 66 51.6731 66 34L2.91188e-05 34C2.98913e-05 51.6731 14.7746 66 33 66Z" fill="currentColor"/>
+										</g>
+										<defs>
+										<clipPath id="clip0_458_2647">
+										<rect width="66" height="66" fill="currentColor"/>
+										</clipPath>
+										</defs>
+			{%- when 'icon_8' -%}
+										<g clip-path="url(#clip0_458_2660)">
+											<path d="M66 33C66 14.7746 51.6731 -1.2525e-06 34 -2.79753e-06L34 66C51.6731 66 66 51.2254 66 33Z" fill="currentColor"/>
+											<path d="M32 33C32 14.7746 17.6731 -1.2525e-06 5.7699e-06 -2.79753e-06L0 66C17.6731 66 32 51.2254 32 33Z" fill="currentColor"/>
+											</g>
+											<defs>
+											<clipPath id="clip0_458_2660">
+											<rect width="66" height="66" fill="currentColor"/>
+											</clipPath>
+											</defs>
+			{%- when 'icon_9' -%}
+											<circle cx="33" cy="9" r="9" fill="currentColor"/>
+												<path d="M33 66C46.2548 66 57 56.1503 57 44L9 44C9 56.1503 19.7452 66 33 66Z" fill="currentColor"/>
+												<path d="M33 42C46.2548 42 57 32.1503 57 20L9 20C9 32.1503 19.7452 42 33 42Z" fill="currentColor"/>
+
+			{%- when 'icon_10' -%}
+												<g clip-path="url(#clip0_458_2694)">
+													<path d="M32 32C32 14.3269 17.6731 -1.2525e-06 2.79753e-06 -2.79753e-06L0 32L32 32Z" fill="currentColor"/>
+													<circle cx="50" cy="16" r="16" fill="currentColor"/>
+													<path d="M33 66C51.2254 66 66 51.6731 66 34L-1.39876e-06 34C-6.26248e-07 51.6731 14.7746 66 33 66Z" fill="currentColor"/>
+													</g>
+													<defs>
+													<clipPath id="clip0_458_2694">
+													<rect width="66" height="66" fill="currentColor"/>
+													</clipPath>
+													</defs>
+
+			{%- when 'icon_11' -%}
+				<g clip-path="url(#clip0_458_2700)">
+					<path d="M32 0C14.3269 2.1075e-07 1.70846e-07 14.3269 3.81596e-07 32L32 32L32 0Z" fill="currentColor"/>
+					<circle cx="50" cy="16" r="16" fill="currentColor"/>
+					<path d="M33 66C51.2254 66 66 51.6731 66 34L-1.39876e-06 34C-6.26248e-07 51.6731 14.7746 66 33 66Z" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2700">
+					<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_12' -%}
+				<g clip-path="url(#clip0_458_2711)">
+					<path d="M32 0C14.3269 -7.72516e-07 -6.26248e-07 14.3269 -1.39876e-06 32L32 32L32 0Z" fill="currentColor"/>
+					<path d="M34 66C51.6731 66 66 51.6731 66 34L34 34L34 66Z" fill="currentColor"/>
+					<circle cx="16" cy="50" r="16" fill="currentColor"/>
+					<circle cx="50" cy="16" r="16" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2711">
+						<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_13' -%}
+				<g clip-path="url(#clip0_458_2719)">
+					<path d="M0 34C9.83266e-07 51.6731 14.3269 66 32 66L32 34L0 34Z" fill="currentColor"/>
+					<path d="M32 0C14.3269 -7.72516e-07 -6.26248e-07 14.3269 -1.39876e-06 32L32 32L32 0Z" fill="currentColor"/>
+					<path d="M34 66C51.6731 66 66 51.6731 66 34L34 34L34 66Z" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2719">
+						<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_14' -%}
+				<g clip-path="url(#clip0_458_2727)">
+					<path d="M66 33C66 14.7746 51.6731 1.2525e-06 34 2.79753e-06L34 66C51.6731 66 66 51.2254 66 33Z" fill="currentColor"/>
+					<path d="M0 33C0 51.2254 14.3269 66 32 66L32 0C14.3269 0 0 14.7746 0 33Z" fill="currentColor"/>
+					</g>
+					<defs>
+					<clipPath id="clip0_458_2727">
+					<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+					</defs>
+			{%- when 'icon_15' -%}
+				<g clip-path="url(#clip0_458_2731)">
+					<circle cx="50" cy="50" r="16" fill="currentColor"/>
+					<path d="M66 32C66 14.3269 51.6731 1.2525e-06 34 2.79753e-06L34 32L66 32Z" fill="currentColor"/>
+					<path d="M0 33C0 51.2254 14.3269 66 32 66L32 0C14.3269 0 0 14.7746 0 33Z" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2731">
+						<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_16' -%}
+				<g clip-path="url(#clip0_458_2739)">
+					<path d="M0 33C0 51.2254 14.3269 66 32 66L32 0C14.3269 0 0 14.7746 0 33Z" fill="currentColor"/>
+					<circle cx="50" cy="16" r="16" fill="currentColor"/>
+					<path d="M34 34C34 51.6731 48.3269 66 66 66L66 34L34 34Z" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2739">
+						<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_17' -%}
+				<g clip-path="url(#clip0_458_2790)">
+					<path d="M0 34C9.83266e-07 51.6731 14.3269 66 32 66L32 34L0 34Z" fill="currentColor"/>
+					<path d="M32 0C14.3269 -7.72516e-07 -6.26248e-07 14.3269 -1.39876e-06 32L32 32L32 0Z" fill="currentColor"/>
+					<path d="M66 66C66 48.3269 51.6731 34 34 34L34 66L66 66Z" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2790">
+						<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_18' -%}
+				<g clip-path="url(#clip0_458_2795)">
+					<path d="M32 0C14.3269 2.1075e-07 1.70846e-07 14.3269 3.81596e-07 32L32 32L32 0Z" fill="currentColor"/>
+					<path d="M0 66C17.6731 66 32 51.6731 32 34L-1.39876e-06 34L0 66Z" fill="currentColor"/>
+					<circle cx="50" cy="16" r="16" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_458_2795">
+						<rect width="66" height="66" fill="currentColor"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_19' -%}
+				<path d="M33 66C51.2254 66 66 51.6731 66 34L3.81596e-07 34C1.70846e-07 51.6731 14.7746 66 33 66Z" fill="currentColor"/>
+				<circle cx="33" cy="16" r="16" fill="currentColor"/>
+			{%- when 'icon_20' -%}
+				<path d="M33 32C51.2254 32 66 17.6731 66 7.87042e-07L3.81596e-07 0C1.70846e-07 17.6731 14.7746 32 33 32Z" fill="currentColor"/>
+				<path d="M33 34C14.7746 34 -6.26248e-07 48.3269 -1.39876e-06 66L66 66C66 48.3269 51.2254 34 33 34Z" fill="currentColor"/>
+			{%- when 'icon_21' -%}
+				<g clip-path="url(#clip0_3903_4349)">
+					<path d="M66 33C66 14.7746 51.6731 -1.2525e-06 34 -2.79753e-06L34 66C51.6731 66 66 51.2254 66 33Z" fill="currentColor"/>
+					<path d="M32 34C14.3269 34 -6.26248e-07 48.3269 -1.39876e-06 66L32 66L32 34Z" fill="currentColor"/>
+				</g>
+				<defs>
+					<clipPath id="clip0_3903_4349">
+						<rect width="66" height="66" fill="white"/>
+					</clipPath>
+				</defs>
+			{%- when 'icon_22' -%}
+				<path d="M66 33C66 14.7746 51.6731 -1.2525e-06 34 -2.79753e-06L34 66C51.6731 66 66 51.2254 66 33Z" fill="currentColor"/>
+				<path d="M32 0C14.3269 -7.72516e-07 -6.26248e-07 14.3269 -1.39876e-06 32L32 32L32 0Z" fill="currentColor"/>
+			{%- when 'icon_23' -%}
+				<path d="M34 66C51.6731 66 66 51.6731 66 34L34 34L34 66Z" fill="currentColor"/>
+				<path d="M66 0C48.3269 2.1075e-07 34 14.3269 34 32L66 32L66 0Z" fill="currentColor"/>
+				<path d="M0 34C0 51.6731 14.3269 66 32 66L32 34L0 34Z" fill="currentColor"/>
+				<path d="M32 32C32 14.3269 17.6731 1.2525e-06 -2.79753e-06 2.79753e-06L0 32L32 32Z" fill="currentColor"/>
+			{%- when 'icon_24' -%}
+				<path d="M34 66C51.6731 66 66 51.6731 66 34L34 34L34 66Z" fill="currentColor"/>
+				<path d="M34 32C51.6731 32 66 17.6731 66 -1.39876e-06L34 0L34 32Z" fill="currentColor"/>
+				<path d="M0 66C17.6731 66 32 51.6731 32 34L-1.39876e-06 34L0 66Z" fill="currentColor"/>
+				<path d="M0 32C17.6731 32 32 17.6731 32 -1.39876e-06L-1.39876e-06 0L0 32Z" fill="currentColor"/>
+			{%- when 'icon_25' -%}
+				<circle cx="16" cy="50" r="16" fill="currentColor"/>
+				<circle cx="50" cy="50" r="16" fill="currentColor"/>
+				<path d="M66 32C66 14.3269 51.6731 1.2525e-06 34 2.79753e-06L34 32L66 32Z" fill="currentColor"/>
+				<path d="M0 0C9.83266e-07 17.6731 14.3269 32 32 32L32 -1.78036e-06L0 0Z" fill="currentColor"/>
+			{%- when 'icon_26' -%}
+					<g clip-path="url(#clip0_3903_4371)">
+						<path d="M0 33C0 51.2254 14.3269 66 32 66L32 0C14.3269 0 0 14.7746 0 33Z" fill="currentColor"/>
+						<circle cx="50" cy="16" r="16" fill="currentColor"/>
+						<path d="M66 66C66 48.3269 51.6731 34 34 34L34 66L66 66Z" fill="currentColor"/>
+					</g>
+					<defs>
+						<clipPath id="clip0_3903_4371">
+							<rect width="66" height="66" fill="white"/>
+						</clipPath>
+					</defs>
+		{%- endcase -%}
+	</svg>
+{%- endif -%}

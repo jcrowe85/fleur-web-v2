@@ -1,0 +1,35 @@
+/* thin font-weight */
+/* @font-face {
+  font-family: "Neue Haas Unica";
+  src: url(//tryfleur.com/cdn/shop/files/NeueHaasUnica-Thin.woff2?v=92658958805682372) format('woff2');
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+} */
+
+/* light font-weight */
+@font-face {
+  font-family: "Neue Haas Unica";
+  src: url(//tryfleur.com/cdn/shop/files/NeueHaasUnica-Light_1.woff2?v=2000428390823908743) format('woff2');
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+}
+
+/* regular font-weight */
+@font-face {
+  font-family: "Neue Haas Unica";
+  src: url(//tryfleur.com/cdn/shop/files/NeueHaasUnica-Regular.woff2?v=534260348921433339) format('woff2');
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+}
+
+/* medium font-weight */
+@font-face {
+  font-family: "Neue Haas Unica";
+  src: url(//tryfleur.com/cdn/shop/files/NeueHaasUnica-Medium.woff2?v=10582943131349519294) format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}

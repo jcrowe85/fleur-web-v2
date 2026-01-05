@@ -1,0 +1,337 @@
+{{ 'people-also-purchased.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+
+{% style %}
+  {% render 'section-margin' %}
+{% endstyle %}
+
+{% liquid
+  assign section_id = 'shopify-section-' | append: section.id
+  assign section_collection = section.settings.collection
+  if section_collection != blank
+    assign product_list = section_collection.products
+    assign section_button_label = 'collection.collection_button_label_name' | t | append: ' ' | append: section_collection.title
+  else
+    assign product_list = section.settings.product_list
+  endif
+  
+  assign slideshow_speed = section.settings.slideshow_speed
+  assign slideshow_delay = section.settings.slideshow_delay
+  assign autoplay = section.settings.autoplay
+  assign stop_autoplay = section.settings.stop_autoplay
+  assign show_arrows = section.settings.show_arrows
+
+  assign media_size = section.settings.image_ratio
+  assign media_fit = section.settings.image_fit
+  assign show_secondary_image = section.settings.show_secondary_image
+  assign show_vendor = section.settings.show_vendor
+  assign show_desc = section.settings.show_desc
+  assign show_color_swatch = section.settings.show_color_swatch
+  assign show_collection_name = section.settings.show_collection_name
+  assign show_sku = section.settings.show_sku    
+%}
+
+<div class="popular-products" id="{{ section_id }}">
+  {% if section_collection != blank %}
+    {% render 'section-header',
+      custom_settings: true,
+      section_heading: section_collection.title
+    %}
+  {% else %}
+    {% render 'section-header' %}
+  {% endif %}
+
+  <div
+    class="products-slider-people-also color-{{ section.settings.color_scheme }} background"
+  >
+    <div class="products-slider__container container"> 
+      <div class="products-slider__wrapper">
+        <div class="products-slider__swiper swiper">
+          <div class="products-slider__swiper-wrapper swiper-wrapper">
+            {% for product in product_list %}
+              <div
+                data-type="{{ product.type }}"
+                class="products-slider__slide swiper-slide color-{{ section.settings.color_scheme_inner }} background"
+              >
+                {% render 'product-card-second', 
+                  product_card_product: product,
+                  media_size: media_size,
+                  media_fit: media_fit,
+                  show_secondary_image: show_secondary_image,
+                  show_vendor: show_vendor,
+                  show_desc: show_desc,
+                  show_color_swatch: show_color_swatch,
+                  show_collection_name: show_collection_name,
+                  section_id: section_id,
+                  show_sku: show_sku
+                %}
+              </div>   
+            {% endfor %}
+          </div>
+        </div>
+
+        {% comment %} {% if show_arrows %}
+          <button class="swiper-button swiper-button-prev swiper-button-prev-{{ section.id }} swiper-button-disabled">
+            <span>{% render 'icon-arrow' %}</span>
+          </button>
+          <button class="swiper-button swiper-button-next swiper-button-next-{{ section.id }}">
+            <span>{% render 'icon-arrow' %}</span>
+          </button>
+          <div class="swiper-pagination swiper-pagination-default swiper-pagination-{{ section.id }}"></div>
+        {% endif %} {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const swiperElement = document.querySelector('#{{ section_id }} .products-slider__swiper');
+    
+    if (typeof Swiper !== 'undefined' && swiperElement) {
+      const swiperOptions = {
+        loop: false,
+        arrows: false,
+        spaceBetween: 20,
+        slidesPerView: 1.5,
+        breakpoints: {
+          768: { 
+            slidesPerView: 2.5,
+            spaceBetween: 20
+          },
+          1200: { 
+            slidesPerView: 3,
+            spaceBetween: 25
+          } 
+        },
+      };
+       
+      new Swiper(swiperElement, swiperOptions);
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "People Also Purchased",
+  "tag": "section",
+  "class": "people-also-purchased-section",
+  "enabled_on": {
+    "templates": ["*"]
+  },
+  "settings": [
+    {
+			"type": "color_scheme",
+			"id": "color_scheme_inner",
+			"label": "Block Color Scheme"
+		},
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.all.collection.label",
+      "info": "t:sections.popular-products.settings.collection.info"
+    },
+    {
+      "type": "product_list",
+      "id": "product_list",
+      "limit": 12,
+      "label": "t:sections.all.product_card.product_list.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Heading",
+      "label": "t:sections.all.heading.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.slider_options.header.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "default": true,
+      "label": "t:sections.all.slider_options.slider_is_autoplay.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "stop_autoplay",
+      "default": true,
+      "label": "t:sections.all.slider_options.slider_hover_autoplay_stop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "default": true,
+      "label": "t:sections.all.slider_options.navigation.label"
+    },
+    {
+      "type": "range",
+      "id": "slideshow_speed",
+      "min": 0,
+      "max": 6,
+      "step": 0.1,
+      "default": 1.1,
+      "unit": "s",
+      "label": "t:sections.all.slider_options.speed.label"
+    },
+    {
+      "type": "range",
+      "id": "slideshow_delay",
+      "min": 0,
+      "max": 8,
+      "step": 0.1,
+      "default": 3,
+      "unit": "s",
+      "label": "t:sections.all.slider_options.delay.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.product_card.header.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "landscape",
+          "label": "t:sections.all.image.ratio.options__1.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.all.image.ratio.options__2.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.all.image.ratio.options__3.label"
+        }
+      ],
+      "default": "portrait",
+      "label": "t:sections.all.image.ratio.label"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "t:sections.all.image.fit.label",
+      "default": "cover",
+      "options": [
+        {
+          "value": "contain",
+          "label": "t:sections.all.image.fit.options__1.label"
+        },
+        {
+          "value": "cover",
+          "label": "t:sections.all.image.fit.options__2.label"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_name",
+      "default": true,
+      "label": "t:sections.all.product_card.show_colection_name.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": true,
+      "label": "t:sections.all.product_card.show_secondary_image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "default": false,
+      "label": "t:sections.all.sku.show_sku"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.all.product_card.show_vendor.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_swatch",
+      "default": false,
+      "label": "t:sections.all.product_card.show_color.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_desc",
+      "default": false,
+      "label": "t:sections.all.product_card.show_description.label"
+    },
+    {
+      "type": "url",
+      "id": "custom_product_link",
+      "label": "Custom Product Link"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section-margin.header.content"
+    },
+    {
+      "type": "select",
+      "id": "margin_top",
+      "options": [
+        {
+          "value": "no-indent",
+          "label": "t:sections.all.section-margin.options__1.label"
+        },
+        {
+          "value": "xs",
+          "label": "t:sections.all.section-margin.options__2.label"
+        },
+        {
+          "value": "s",
+          "label": "t:sections.all.section-margin.options__3.label"
+        },
+        {
+          "value": "m",
+          "label": "t:sections.all.section-margin.options__4.label"
+        },
+        {
+          "value": "l",
+          "label": "t:sections.all.section-margin.options__5.label"
+        }
+      ],
+      "default": "xs",
+      "label": "t:sections.all.section-margin.margin_top.label"
+    },
+    {
+      "type": "select",
+      "id": "margin_bottom",
+      "options": [
+        {
+          "value": "no-indent",
+          "label": "t:sections.all.section-margin.options__1.label"
+        },
+        {
+          "value": "xs",
+          "label": "t:sections.all.section-margin.options__2.label"
+        },
+        {
+          "value": "s",
+          "label": "t:sections.all.section-margin.options__3.label"
+        },
+        {
+          "value": "m",
+          "label": "t:sections.all.section-margin.options__4.label"
+        },
+        {
+          "value": "l",
+          "label": "t:sections.all.section-margin.options__5.label"
+        }
+      ],
+      "default": "xs",
+      "label": "t:sections.all.section-margin.margin_bottom.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "People Also Purchased"
+    }
+  ]
+}
+{% endschema %}

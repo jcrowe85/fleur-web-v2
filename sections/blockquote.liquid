@@ -1,0 +1,215 @@
+{{ 'section-blockquote.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+	{% render 'section-padding' %}
+	{% render 'section-margin' %}
+{%- endstyle -%}
+
+<div class="blockquote section-{{ section.id }}-padding color-{{ section.settings.color_scheme }} background">
+	<div class="container">
+		<div class="blockquote__block">
+			{%- if section.settings.heading != blank -%}
+				<h3 class="blockquote__text">
+					{{ section.settings.heading }}
+				</h3>
+			{%- endif -%}
+			<div class="blockquote__person-box">
+				{%- if section.settings.author_image != blank -%}
+					<div class="blockquote__person-img">
+						{{
+							section.settings.author_image
+							| image_url: width: 120
+							| image_tag:
+								loading: 'lazy',
+								sizes: '(min-width: 270px) 50vw, 100vw',
+								widths: '30, 60, 90, 120, 240'
+						}}
+					</div>
+				{%- endif -%}
+				<div class="blockquote__person-info">
+					{%- if section.settings.author_name != blank -%}
+						<h6 class="blockquote__person-name large-font">
+							{{ section.settings.author_name }}
+						</h6>
+					{%- endif -%}
+					{%- if section.settings.author_position != blank -%}
+						<div class="blockquote__person-position small-font">
+							{{ section.settings.author_position }}
+						</div>
+					{%- endif -%}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "t:sections.blockquote.name",
+	"tag": "section",
+	"class": "spaced-section blockquote-section",
+	"enabled_on": {
+		"templates": ["*"]
+	},
+	"settings": [
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-3",
+			"label": "t:sections.all.color_scheme.label"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "heading",
+			"default": "Heading",
+			"label": "t:sections.all.heading.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.author.header.content"
+		},
+		{
+			"type": "image_picker",
+			"id": "author_image",
+			"label": "t:sections.all.author.author_image.label"
+		},
+		{
+			"type": "text",
+			"id": "author_position",
+			"default": "Author position",
+			"label": "t:sections.all.author.author_position.label"
+		},
+		{
+			"type": "text",
+			"id": "author_name",
+			"default": "Author name",
+			"label": "t:sections.all.author.author_name.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-padding.header.content"
+		},
+		{
+			"type": "select",
+			"id": "padding_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "m",
+			"label": "t:sections.all.section-padding.padding_top.label"
+		},
+		{
+			"type": "select",
+			"id": "padding_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "m",
+			"label": "t:sections.all.section-padding.padding_bottom.label"
+		}
+	],
+	"presets": [
+		{
+			"name": "t:sections.blockquote.name"
+		}
+	]
+}
+{% endschema %}

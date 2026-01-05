@@ -1,0 +1,55 @@
+.products-grid {
+  margin: 0;
+}
+
+.product-card { background: #45663c; padding: 40px; }
+.products-grid-section .section-header__title-item { display: flex; gap: 30px;}
+.products-grid-section .section-header__title__block { display: grid; grid-template-columns: 1fr 1fr;}
+.products-grid-section .button-description-wrap { display: grid; gap: 30px; grid-template-columns: 0.8fr auto; }
+.products-grid-section .section-header__line .section-header__title { margin: 0; max-width: 525px; }
+.products-grid-section .section-header__desc.richtext__content {font-size: 16px; margin: 0;}
+.products-grid-section .section-header__title__block { display: grid; grid-template-columns: 1fr 1fr; align-items: end;}
+.products-grid-section .button-description-wrap a svg {max-width:10px; width:10px;}
+.products-grid-section .button-description-wrap a { justify-content: flex-end; text-align: end; display: flex; align-items: center; height: fit-content; margin: auto 0 0 0; gap: 4px; text-underline-offset: 6px; }
+
+.products-grid-section .collection-product-list {display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:15px;}
+.products-grid-section .collection-product-list .collection-product-card { max-width: 100%; width: 100% !important; }
+.product-card.card-wrapper .button.button--primary.card__link--hover:hover { background-color: var(--color-button-secondary-hover); }
+.product-card.card-wrapper .button.button--primary.card__link--hover:hover { background: rgba(var(--color-button-hover)); color:rgba(var(--color-button-text-hover));}
+.product-card.card-wrapper .button.button--primary.card__link--hover:hover span p { color: rgba(var(--color-button-text-hover)); }
+.product-card.card-wrapper .button.button--primary.card__link--hover:hover path {stroke: rgba(var(--color-button-text-hover)); }
+.products-grid-section li.collection-product-card .floating-tags-list {  transition: transform 0.3s;} 
+.products-grid-section li.collection-product-card.active .floating-tags-list { transform: translate(0, -19px);  transition: transform 0.3s;} 
+li.collection-product-card.active .button.button--primary.card__link--hover:not(:hover) { background: rgba(var(--color-button-hover)); color: rgba(var(--color-button-text-hover)); }
+li.collection-product-card.active .button.button--primary.card__link--hover span p {color: rgba(var(--color-button-text-hover));}
+li.collection-product-card.active .button.button--primary.card__link--hover .button-icon {opacity: 1; width: 12px; transform: translate(4px); margin-left: 5px; position: relative;}
+li.collection-product-card.active .button.button--primary.card__link--hover .button-icon path {stroke: rgba(var(--color-button-text-hover));}
+
+
+@media(min-width:1200px){
+  .collection-product-list .collection-product-card {overflow:visible;}
+  .collection-product-list li.collection-product-card.active .product_card_product-top-details {    transition: transform 0.3s;transform: translate(0, -20px);}
+  .collection-product-list li.collection-product-card.active .card-information-block {  transition: transform 0.3s;  transform: translate(0, 20px);} 
+  .collection-product-list li.collection-product-card.active video { transform:scale(1.25); transition: transform 0.3s;}
+  .collection-product-list li.collection-product-card::before  { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scaleY(0.9); width: 100%; height: calc(100% + 40px); transform-origin: center center; transition: transform 0.3s; background-color:#812221; border-radius: 20px; }
+  .collection-product-list li.collection-product-card.active:before { transition: transform 0.3s;transform: translate(-50%, -50%) scaleY(1);}
+  .collection-product-list { padding: 40px 0; }
+}
+@media(min-width:990px){
+  .products-grid-section .mobile-show-only-btn {display:none;}
+  .products-grid-section .section-header__desc.richtext__content { max-width: 540px;}
+}
+
+@media(max-width:989px){
+  .products-grid-section .collection-product-list {display:grid; grid-template-columns:1fr 1fr;}
+  .products-grid-section .button-description-wrap.mobile-show-only-btn { display: grid; gap: 30px; grid-template-columns: 1fr; margin-top: 20px; }
+  .products-grid-section .button-description-wrap {grid-template-columns: 1fr;} 
+  .products-grid-section .section-header__title__block {grid-template-columns: 1fr; align-items: end; }
+  .products-grid-section .section-header__title__block a {display:none;}
+}
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+{{ 'how-to-use.css' | asset_url | stylesheet_tag }}
+
+<div class="how-to-use">
+    <div class="container">
+        <div class="header">
+            <h2>how to use</h2>
+        </div>
+        <div class="infinity-circles">
+            {% comment %} <img
+                src="https://tryfleur.com/cdn/shop/files/Circles-Overlay.png?v=1725993239&width=5000"
+                width="100%"
+                height="100%"
+              > {% endcomment %}
+            <div class="circles">
+                <div>
+                    <p>Step 1</p>
+                    <p>Use once daily, morning or night. Shake well before use.</p>
+                </div>
+                <div>
+                    <p>Step 2</p>
+                    <p>Apply 1 ml of scalp serum directly to dry or towel-dried scalp wherever results are desired.</p>
+                </div>
+                <div>
+                    <p>Step 3</p>
+                    <p>Massage into your scalp and let it soak in. A slight tingling sensation may occur.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "How to Use",
+    "tag": "section",
+    "class": "howToUse spaced-section",
+    "settings": [],
+    "presets": [
+      {
+        "name": "How to Use",
+        "category": "Custom"
+      }
+    ]
+  }
+{% endschema %}

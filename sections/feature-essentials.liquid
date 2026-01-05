@@ -1,0 +1,377 @@
+{{ 'feature-essentials.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+	.section-{{ section.id }}-padding {
+	{% if section.settings.padding_top == 'no-indent' %}
+		padding-top: 0;
+	{% else %}
+		padding-top: 3.2rem;
+	{% endif %}
+
+	{% if section.settings.padding_bottom == 'no-indent' %}
+		padding-bottom: 0;
+	{% else %}
+		padding-bottom: 3.2rem;
+	{% endif %}
+}
+
+@media screen and (min-width: 990px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+@media screen and (min-width: 1200px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 8rem;
+		{% elsif section.settings.padding_top == 'm' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 8rem;
+		{% elsif section.settings.padding_bottom == 'm' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+@media screen and (min-width: 1560px) { 
+	.section-{{ section.id }}-padding {
+		{% if section.settings.padding_top == 'no-indent' %}
+			padding-top: 0;
+		{% elsif section.settings.padding_top == 'l' %}
+			padding-top: 16rem;
+		{% elsif section.settings.padding_top == 'm' %}
+			padding-top: 8rem;
+		{% elsif section.settings.padding_top == 's' %}
+			padding-top: 4rem;
+		{% else %}
+			padding-top: 3.2rem;
+		{% endif %}
+
+		{% if section.settings.padding_bottom == 'no-indent' %}
+			padding-bottom: 0;
+		{% elsif section.settings.padding_bottom == 'l' %}
+			padding-bottom: 16rem;
+		{% elsif section.settings.padding_bottom == 'm' %}
+			padding-bottom: 8rem;
+		{% elsif section.settings.padding_bottom == 's' %}
+			padding-bottom: 4rem;
+		{% else %}
+			padding-bottom: 3.2rem;
+		{% endif %}
+	}
+}
+
+{%- endstyle -%}
+{% style %}
+ .product-badge {background-color: {{ section.settings.badge_bg_color }}; color: {{ section.settings.badge_text_color }};}
+
+{% endstyle %}
+
+<section class="essentials-section color-{{ section.settings.color_scheme }} background section-{{ section.id }}-padding">
+  {% comment %} <div class="shopify-section spaced-section" id="shopify-section-{{ section.id }}"> {% endcomment %}
+    <div class="container">
+    <div class="row-wrap">
+      
+      <div class="content-column">
+        {% if section.settings.badge_text != blank %}
+          <span class="product-badge">{{ section.settings.badge_text | escape }}</span>
+        {% endif %}
+        
+        <h2 class="essentials-headline h1">{{ section.settings.headline | escape }}</h2>
+        
+        <div class="essentials-body">{{ section.settings.body_text }}</div>
+        
+        {% if section.settings.button_link != blank %}
+          <a href="{{ section.settings.button_link }}" class="cta-button button button--primary button--primary-size">
+            {{ section.settings.button_text | default: "Shop Now" | escape }} 
+            <span class="button-icon">
+              <svg class="icon icon-button-arrow" width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.97218 1L12.8333 6M12.8333 6L7.97218 11M12.8333 6L1.16663 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="image-column">
+        {% if section.settings.main_product_image != blank %}
+          <div class="main-product-image">
+            <img src="{{ section.settings.main_product_image | image_url:width:'1000px' }}" width="" height="" alt="{{ section.settings.main_product_image.alt }}" loading="lazy">
+          </div>
+        {% else %}
+          <div class="main-product-image" style="background-color: #e5e7eb; min-height: 400px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+            <p style="color: #6b7280; font-size: 0.875rem;">Main Product Image Placeholder</p>
+          </div>
+        {% endif %}
+
+        <div class="sub-images-grid">
+          {% for i in (1..3) %}
+            {% capture sub_image_setting %}sub_image_{{ i }}{% endcapture %}
+            {% if section.settings[sub_image_setting] != blank %}
+              <div class="sub-image-item">
+                <img src="{{ section.settings[sub_image_setting] | image_url:width:'500px' }}" width="" height="" alt="{{ section.settings[sub_image_setting].alt }}" loading="lazy"> 
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      </div>
+    {% comment %} </div> {% endcomment %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Essentials",
+  "tag": "section",
+  "class": "daily-essentials-feature",
+  "settings": [
+   {
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"default": "background-2",
+			"label": "t:sections.all.color_scheme.label"
+		},
+    {
+      "type": "header",
+      "content": "Badge (Top Label)"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Bundle + Save 25%"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge Background Color",
+      "default": "#a3e635"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge Text Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Daily essentials for nutrition and digestive health."
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body Text",
+      "default": "<p>Clinically proven daily probiotic and new daily multivitamin that help cover nutrient gaps, reduce bloating, and promote healthy regularity.*</p>"
+    },
+    {
+      "type": "header",
+      "content": "Call To Action Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Daily Essentials Duo"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#224924"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_product_image",
+      "label": "Main Product Shot (Large)"
+    },
+    {
+      "type": "image_picker",
+      "id": "sub_image_1", 
+      "label": "Small Image 1 (Left)"
+    },
+    {
+      "type": "image_picker",
+      "id": "sub_image_2",
+      "label": "Small Image 2 (Center)"
+    },
+    {
+      "type": "image_picker",
+      "id": "sub_image_3",
+      "label": "Small Image 3 (Right)"
+    },
+    {
+			"type": "header",
+			"content": "t:sections.all.section-margin.header.content"
+		},
+		{
+			"type": "select",
+			"id": "margin_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "no-indent",
+			"label": "t:sections.all.section-margin.margin_top.label"
+		},
+		{
+			"type": "select",
+			"id": "margin_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-margin.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-margin.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-margin.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-margin.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-margin.options__5.label"
+				}
+			],
+			"default": "no-indent",
+			"label": "t:sections.all.section-margin.margin_bottom.label"
+		},
+		{
+			"type": "header",
+			"content": "t:sections.all.section-padding.header.content"
+		},
+		{
+			"type": "select",
+			"id": "padding_top",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-padding.padding_top.label"
+		},
+		{
+			"type": "select",
+			"id": "padding_bottom",
+			"options": [
+				{
+					"value": "no-indent",
+					"label": "t:sections.all.section-padding.options__1.label"
+				},
+				{
+					"value": "xs",
+					"label": "t:sections.all.section-padding.options__2.label"
+				},
+				{
+					"value": "s",
+					"label": "t:sections.all.section-padding.options__3.label"
+				},
+				{
+					"value": "m",
+					"label": "t:sections.all.section-padding.options__4.label"
+				},
+				{
+					"value": "l",
+					"label": "t:sections.all.section-padding.options__5.label"
+				}
+			],
+			"default": "s",
+			"label": "t:sections.all.section-padding.padding_bottom.label"
+		}
+  ],
+  "presets": [
+    {
+      "name": "Feature Essentials"
+    }
+  ]
+}
+{% endschema %}

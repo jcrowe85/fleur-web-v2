@@ -1,0 +1,155 @@
+.story-carousel-container img { object-fit: contain; }
+.story-carousel-container img { object-fit: contain; height: 100%; }
+.section-stories-carousel .swiper-slide { padding: 0; }
+.section-stories-carousel .aspect-w-16 { height: 100%; position: relative; }
+
+.section-stories-carousel .simole-image-slide { border-radius: 20px; overflow: hidden;}
+.section-stories-carousel .swiper-slide { padding: 0; height: auto; }
+.section-stories-carousel .images-block-wrap { display: flex; flex-direction: column; gap: 20px; }
+.section-stories-carousel video, .section-stories-carousel img { width: 100%; height: 100%; display: block; border-radius: 20px; object-fit:contain; }
+.section-stories-carousel .aspect-w-16 { height: 100%; }
+.section-stories-carousel button.video-play-btn-symbol { border: gainsboro; background: rgba(0, 0, 0, 0.3); position: absolute; right: 10px; top: 10px; z-index: 1; border-radius: 50px; width: 50px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.section-stories-carousel video { cursor: pointer; }
+ 
+.section-stories-carousel .video-block-slide {position: relative;}
+.section-stories-carousel .video-play-btn-symbol { background: rgba(255, 255, 255, 0.85); border: none; border-radius: 50%; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+.section-stories-carousel .video-block-slide video { width: 100%; height: 100%; object-fit: cover; }
+
+.section-stories-carousel .video-play-btn-symbol { position: relative;overflow: hidden;}
+.section-stories-carousel span.pause-icon-svg {display:none; }
+.section-stories-carousel .video-playing span.play-icon-svg { display: none; }
+.section-stories-carousel .video-poster-overlay { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: absolute; z-index: 2; cursor: pointer; }
+.section-stories-carousel .video-playing span.pause-icon-svg { display: block; }
+.section-stories-carousel .container .section-header__line {
+  text-align: center;
+  padding: 0;
+}
+
+.section-stories-carousel .container .section-header__line h2.heading-sections {
+    font-family: Neue Haas Unica W1G;
+    font-weight: 200;
+    line-height: 105%;
+    letter-spacing: -.3px;
+    text-align: center;
+}
+
+.section-stories-carousel .container .rte {
+    font-family: Neue Haas Unica W1G;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 120%;
+    letter-spacing: -.3px;
+    text-align: center;
+    max-width: 590px;
+    margin: 0 auto;
+}
+
+@media(min-width:750px){
+    .section-stories-carousel .circular-image-wrapper { max-width: 430px; }
+    .section-stories-carousel .story-card { max-width: 270px; } 
+    .section-stories-carousel .quote_with_image-slide {max-width:322px;}
+}
+
+@media (min-width: 768px) {
+  .stories-section-bg {
+    padding: 60px 0px !important;
+  }
+  .stories-section-bg .container {
+    margin-bottom: 70px;
+  }
+  .stories-section-bg .container .section-header__line .heading-sections{
+    text-align: center;
+    font-family: Neue Haas Unica W1G;
+    line-height: 105%;
+    letter-spacing: -.3px;
+    text-align: center;
+  }
+
+  /* .stories-section-bg .container .section-header__line .rte{
+    font-family: Neue Haas Unica W1G;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 120%;
+    letter-spacing: -.3px;
+    text-align: center;
+    max-width: 590px;
+    margin: 0 auto;
+  } */
+
+}
+
+@media only screen and (max-width: 989px) {
+  .stories-section-bg .container {
+    margin-bottom: 40px !important;
+  }
+  .stories-section-bg {
+    padding: 30px 0px !important;
+  }
+}
+
+@media(max-width:749px){
+    
+  /* Start flush left, keep right inset so you see a peek */
+  .story-carousel-container {
+    padding-left: 0 !important;
+    padding-right: 20px !important;
+  }
+
+  /* Make sure wrapper doesn't try to center */
+  .story-carousel-container .swiper-wrapper {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 749px) {
+  /* ONE size for every slide/card */
+  :root {
+    --story-slide-w: 280px;  /* tweak */
+    --story-slide-h: 430px;  /* tweak */
+  }
+
+  /* 1) Every slide same width */
+  .section-stories-carousel .story-carousel-container .swiper-slide {
+    width: var(--story-slide-w) !important;
+    max-width: var(--story-slide-w) !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 2) Every card same height */
+  .section-stories-carousel .story-card,
+  .section-stories-carousel .story-card-fixed-height,
+  .section-stories-carousel .video-block-slide,
+  .section-stories-carousel .simole-image-slide,
+  .section-stories-carousel .quote_with_image-slide,
+  .section-stories-carousel .circular-image-wrapper {
+    /* height: var(--story-slide-h) !important;
+    max-height: var(--story-slide-h) !important;
+    overflow: hidden !important; */
+  }
+
+  /* 3) Circular stays circular BUT same box size */
+  .section-stories-carousel .circular-image-wrapper {
+    border-radius: 50% !important;
+  }
+
+  /* 4) Kill aspect-ratio layouts that make videos short/wide */
+  .section-stories-carousel .aspect-w-16,
+  .section-stories-carousel .aspect-h-9 {
+    height: 100% !important;
+    width: 100% !important;
+    position: relative !important;
+  }
+
+  /* 5) Media fills box uniformly */
+  .section-stories-carousel video,
+ {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;   /* use contain if you want no crop */
+    aspect-ratio: auto !important;  /* overrides your 2/1 rule */
+    display: block !important;
+    border-radius: inherit !important;
+  }
+}
+

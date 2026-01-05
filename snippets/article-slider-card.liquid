@@ -1,0 +1,102 @@
+<article
+	class="slideshow-swiper__slide swiper-slide"
+	id="article-{{ article.id }}"
+>
+	<div class="slideshow-slide">
+		<div class="container">
+			{% if article.image != blank %}
+				<div class="article-slider__img slideshow-slide__img have-overlay">
+					{% assign image = article.image %}
+					{% assign image_height = image.width
+						| divided_by: image.aspect_ratio
+					%}
+					{{
+						image
+						| image_url: width: 3840
+						| image_tag:
+							loading: 'lazy',
+							width: image.width,
+							height: image_height,
+							sizes: '100vw',
+							widths: '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+					}}
+				</div>
+			{% endif %}
+			<div
+				class="article-slider__main slideshow-slide__text"
+				style="{{ section_style }}"
+			>
+				<div class="article-slider__header">
+					{%- if show_author -%}
+						<div class="article-card__author">
+							<span>{{ 'general.blog.author' | t }}</span>
+							{% if article.metafields.custom.author_image != blank %}
+								{% assign image = article.metafields.custom.author_image %}
+								{% assign image_height = image.width
+									| divided_by: image.aspect_ratio
+								%}
+								<div class="article-card__author-img">
+									{{
+										image
+										| image_url: width: 120
+										| image_tag:
+											loading: 'lazy',
+											height: image_height,
+											width: image.width,
+											sizes: '48px',
+											widths: '30, 60, 90, 120'
+									}}
+								</div>
+							{% endif %}
+							<span>{{- article.author -}}</span>
+						</div>
+					{%- endif -%}
+					<div class="article-slider__header-item">
+						{%- if show_date -%}
+							<div class="article-card__date">
+								{{- article.published_at | time_tag: '%B %d, %Y' -}}
+							</div>
+						{%- endif -%}
+						{%- if show_tags and article.tags.size > 0 -%}
+							<div class="article-card__tags">
+								{% for tag in article.tags %}
+									<a
+										class="badge full-unstyled-link"
+										href="{{ blog.url }}/tagged/{{ tag | handle }}"
+										title="{{ tag }}"
+									>
+										{{ tag }}
+									</a>
+								{% endfor %}
+							</div>
+						{%- endif -%}
+					</div>
+				</div>
+				<h2
+					class="article-slider__main-title slideshow-slide__title"
+					data-swiper-parallax="-600"
+				>
+					<a href="{{ article.url }}">{{ article.title | escape }}</a>
+				</h2>
+				<p
+					class="article-slider__main-desc slideshow-slide__desc"
+					data-swiper-parallax="-500"
+				>
+					{{ article.excerpt_or_content | strip_html | truncate: 70 }}
+				</p>
+				{% assign btn_label = 'blogs.article.read_article' | t %}
+				<div
+					class="article-slider__button slideshow-slide__button"
+					data-swiper-parallax="-400"
+				>
+					{% render 'button',
+						btn_label: btn_label,
+						btn_style: btn_style,
+						btn_link: article.url,
+						enable_arrow: enable_arrow
+					%}
+				</div>
+			</div>
+		</div>
+	</div>
+</article>

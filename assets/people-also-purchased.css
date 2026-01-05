@@ -1,0 +1,64 @@
+.people-also-purchased-section { position: relative; } 
+.people-also-purchased-section .collection-popular-card--placeholder { margin-right: 2.4rem; }
+.people-also-purchased-section .product-parameters { margin-bottom: 0; } 
+.people-also-purchased-section .card__title { font-weight: 600; } 
+.people-also-purchased-section .collection-product-card { width: calc(100% - 2.4rem);} 
+.people-also-purchased-section .section-header__title__block { justify-content: center !important; }
+.people-also-purchased-section .section-header__title-item { width: 100%; }
+.people-also-purchased-section .section-header__line .section-header__title { margin: 0; text-align: center; }
+
+@media screen and (min-width:576px) { 
+    .people-also-purchased-section .collection-product-card { width: calc(50% - 2.4rem); } 
+}
+
+@media (min-width: 768px) {
+    .people-also-purchased-section {
+        padding: 60px 0px !important;
+    }
+    .people-also-purchased-section .popular-products .section-header__line .section-header__title {
+        text-align: center;
+        font-family: Neue Haas Unica W1G;
+        line-height: 105%;
+        letter-spacing: -.3px;
+        text-align: center;
+    }
+}
+
+@media screen and (min-width:990px) { 
+    .people-also-purchased-section .collection-product-card { width: calc(25% - 2.4rem); }
+}
+
+.no-js .popular-products .popular-products__swiper { display: flex; gap: 2.4rem; } 
+.no-js .popular-products .collection-product-card { flex: 0 0 25%; max-width: 25%;}  
+
+    
+.people-also-purchased-section .card__link.button:hover { background: rgba(var(--color-button-hover)); color: rgba(var(--color-button-text-hover)); }
+.people-also-purchased-section .card__link.button { min-height:62px;border-radius:17px;}
+.people-also-purchased-section .product_card_product-top-details {display:none;}
+.people-also-purchased-section .card-information__wrapper {position:absolute; bottom:22px; max-width:calc(100% - 44px); left: 50%; transform: translate(-50%, 0px); width: 100%; text-align: left; }
+.people-also-purchased-section .jdgm-widget.jdgm-preview-badge {display:none  !important;}
+.people-also-purchased-section .caption-with-letter-spacing.subtitle {display:none;}
+.people-also-purchased-section .price {display:none;}
+.people-also-purchased-section .card-information { padding: 0; }
+.people-also-purchased-section p.product_summary { font-family: Neue Haas Unica W1G; font-weight: 500; font-size: 24px; line-height: 120%; letter-spacing: -0.3px; }
+.people-also-purchased-section .card-wrapper .media {padding-bottom:120% !important;}
+.people-also-purchased-section .card-wrapper:after { position: absolute; left: 0; top: 0; width: 100%; height: 100%; content: ""; background-color: #000; opacity: 0.3; }
+.people-also-purchased-section .products-slider__slide { border-radius: 16px; overflow: hidden; }
+.people-also-purchased-section .product__short-description { font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 20px; line-height: 120%; letter-spacing: 0; margin-bottom: 18px; text-overflow: ellipsis; width: 100%; overflow: hidden; white-space: normal; display: -webkit-box; -webkit-line-clamp: 4; text-overflow: ellipsis; -webkit-box-orient: vertical; }
+.people-also-purchased-section a.full-overlay-link { position: absolute; display: block !important; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; }
+
+
+@media(max-width:1199px){
+    .people-also-purchased-section p.product_summary {font-size:20px; line-height:130%;}
+    .people-also-purchased-section .card__link.button {min-height:46px;}
+    .people-also-purchased-section .card-wrapper .media {padding-bottom:120%!important;}
+    .people-also-purchased-section .product__short-description {font-size: 16px; line-height: 120%; letter-spacing: 0; margin-bottom: 18px;}
+
+}
+@media(max-width:749px){
+    .people-also-purchased-section .card-wrapper .media {padding-bottom:151%!important;}
+    .products-slider__container.container { padding-right: 0; }
+        .people-also-purchased-section {
+        padding: 30px 0px !important;
+    }
+}
