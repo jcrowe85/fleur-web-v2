@@ -10,7 +10,7 @@
  {
     "sections": {
       "main": {
-        "type": "derma-stamp",
+        "type": "longform-product",
         "blocks": {
           "title": {
             "type": "title",
