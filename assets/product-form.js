@@ -79,14 +79,39 @@ if (!customElements.get('product-form')) {
 
           if (!this.error) publish(PUB_SUB_EVENTS.cartUpdate, {source: 'product-form', productVariantId: formData.get('id')});
           this.error = false;
-          const quickAddModal = this.closest('quick-add-modal');
-          if (quickAddModal) {
-            document.body.addEventListener('modalClosed', () => {
-              setTimeout(() => { this.cart.renderContents(response) });
-            }, { once: true });
-            quickAddModal.hide(true);
+          
+          // If response doesn't have sections, fetch them
+          const renderCartDrawer = (sectionsData) => {
+            const quickAddModal = this.closest('quick-add-modal');
+            if (quickAddModal) {
+              document.body.addEventListener('modalClosed', () => {
+                setTimeout(() => { this.cart.renderContents(sectionsData) });
+              }, { once: true });
+              quickAddModal.hide(true);
+            } else {
+              this.cart.renderContents(sectionsData);
+            }
+          };
+
+          if (response.sections) {
+            renderCartDrawer(response);
+          } else if (this.cart) {
+            // Fetch sections separately
+            const sections = this.cart.getSectionsToRender().map((section) => section.id);
+            const sectionsUrl = `/?sections=${sections.join(',')}`;
+            fetch(sectionsUrl)
+              .then((sectionsRes) => sectionsRes.text())
+              .then((sectionsHtml) => {
+                const sectionsData = JSON.parse(sectionsHtml);
+                renderCartDrawer({ sections: sectionsData });
+              })
+              .catch((e) => {
+                console.error('Error fetching cart sections:', e);
+                // Fallback: try to render with empty sections
+                renderCartDrawer(response);
+              });
           } else {
-            this.cart.renderContents(response);
+            renderCartDrawer(response);
           }
         })
         .catch((e) => {
