@@ -16,7 +16,10 @@
 .header__product-card .product-card .card.card--product { width: 75px; border-radius: 20px; overflow: hidden; max-height: 75px; }
 .header__product-card .product-card .card.card--product img {object-fit:contain!important; transform:none !important;}
 .header__product-card .product-card a { color: #fff!important; font-size: 16px!important; text-transform: capitalize; opacity: 1; text-align: left;}
-.header-mega-menu__product-list {display: grid; grid-template-columns: 1fr; gap: 0px;}
+.header-mega-menu__product-list {display: grid; grid-template-columns: 1fr; gap: 16px;}
+@media(max-width:768px){
+    .header-mega-menu__product-list {display: grid; grid-template-columns: 1fr; gap: 0px;}
+}
 .header__product-card .product-card .media {padding-bottom: 100% !important;}
 .header__product-card .product-card { display: flex; gap: 16px; flex-direction: row-reverse; justify-content: left; padding: 0; background-color: transparent; align-items: center; }
 .header__product-card h3.card__title { margin-bottom: 0 !important;}
