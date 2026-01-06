@@ -2479,8 +2479,8 @@ align-items: center;
 .product-section .product-form__submit {width: auto; border-radius: 16px; font-family: Neue Haas Unica W1G; font-weight: 500; font-size: 20px; line-height: 120%; letter-spacing: 0; }
 .product-section .double_media, .product-section .before_after { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .product-section .double_media img { display:block; width:100%;}
-.product-section .double_media img:nth-child(1) { border-radius: 0 0 0 20px;}
-.product-section .double_media img:nth-child(2) { border-radius: 0 0 20px 0;}
+.product__media-list-wrapper:nth-child(10) .product-section .double_media img:nth-child(1) { border-radius: 0 0 0 20px;}
+.product__media-list-wrapper:nth-child(10) .product-section .double_media img:nth-child(2) { border-radius: 0 0 20px 0;}
 @media screen and (max-width: 749px) {
 
 }
