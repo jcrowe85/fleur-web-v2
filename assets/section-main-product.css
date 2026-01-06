@@ -2487,10 +2487,10 @@ align-items: center;
 }
 @media screen and (max-width: 749px) {
   .double_media:nth-of-type(9) img:nth-child(1) {
-    border-radius: 0;
+    border-radius: 0 !important;
   }
   .double_media:nth-of-type(9) img:nth-child(2) {
-    border-radius: 0 0 20px 20px;
+    border-radius: 0 0 20px 20px !important;
   }
 }
 .product-section .before-after-media-wrep { position: relative; }
