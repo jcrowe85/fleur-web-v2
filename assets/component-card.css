@@ -541,7 +541,7 @@
         margin: 10px 0 20px;
     }
     .product-card.card-wrapper {
-        background: #812221;
+        /* background: #812221; */
         /* padding: 50px 16px 20px; */
         border-radius: 12px;
         padding: 1rem 0;
