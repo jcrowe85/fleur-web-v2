@@ -27,6 +27,7 @@
   display: flex;
   justify-content: flex-end;
   transition: visibility var(--duration-default) ease;
+  visibility: hidden;
 }
 .drawer.active {
   visibility: visible;
@@ -293,6 +294,15 @@
   bottom: 0;
   left: 0;
   background: rgba(var(--color-overlay), 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-default) ease, visibility var(--duration-default) ease;
+  pointer-events: none;
+}
+.drawer.active .cart-drawer__overlay {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 .cart-drawer__overlay:empty {
   display: block;
