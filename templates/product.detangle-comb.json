@@ -54,27 +54,6 @@
             "text_10": ""
           }
         },
-        "about_p4Vrqx": {
-          "type": "about",
-          "settings": {
-            "about_heading": "{{ product.metafields.custom.accordian_1_title.value }}",
-            "about_heading_content": "{{ product.metafields.custom.accordian_1_content | metafield_tag }}"
-          }
-        },
-        "about": {
-          "type": "about",
-          "settings": {
-            "about_heading": "{{ product.metafields.custom.accordian_2_title.value }}",
-            "about_heading_content": "{{ product.metafields.custom.accordian_2_content | metafield_tag }}<p>{{ product.metafields.custom.ingredients_list_link.value }}</p>"
-          }
-        },
-        "about_hiQyrd": {
-          "type": "about",
-          "settings": {
-            "about_heading": "{{ product.metafields.custom.accordian_3_title.value }}",
-            "about_heading_content": "{{ product.metafields.custom.accordian_3_content | metafield_tag }}"
-          }
-        },
         "double_media_4qXHrx": {
           "type": "double_media",
           "settings": {
@@ -157,9 +136,6 @@
         "variant_picker",
         "buy_buttons",
         "benefits_list_CxgTgq",
-        "about_p4Vrqx",
-        "about",
-        "about_hiQyrd",
         "double_media_4qXHrx",
         "grid_video_image_slider_9tNQed",
         "before_after_RgDDCC",
