@@ -2482,8 +2482,7 @@ align-items: center;
 .product-section .double_media img:nth-child(1) { border-radius: 0 0 0 20px;}
 .product-section .double_media img:nth-child(2) { border-radius: 0 0 20px 0;}
 @media screen and (max-width: 749px) {
-  .product-section .double_media img:nth-child(1) { border-radius: 0 0 0 0 !important}
-  .product-section .double_media img:nth-child(2) { border-radius: 0 0 20px 20px !important}
+
 }
 .product-section .before-after-media-wrep { position: relative; }
 .product-section .before-after-media-wrep p { position: absolute; left: 15px; bottom: 23px; background-color: #fff; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 18px; line-height: 120%; letter-spacing: -0.3px; padding: 6px 28px; margin: 0; }
