@@ -2486,10 +2486,10 @@ align-items: center;
   border-radius: 0 0 20px 0;
 }
 @media screen and (max-width: 749px) {
-  .double_media:nth-of-type(9) img:nth-child(1) {
+  .double_media:nth-of-type(9) img:nth-child(1), .double_media:nth-of-type(9) img:nth-child(2)  {
     border-radius: 0 !important;
   }
-  .double_media:nth-of-type(9) img:nth-child(2) {
+  .media-item-2 picture img{
     border-radius: 0 0 20px 20px !important;
   }
 }
