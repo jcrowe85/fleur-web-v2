@@ -68,8 +68,8 @@
           "settings": {
             "show_undermedia": true,
             "bg_image": "shopify://shop_images/Frame_4.png",
-            "left_image": "shopify://shop_images/Screenshot_2026-01-05_at_5.41.39_PM.png",
-            "video_loop": "shopify://files/videos/derma-demo.mp4",
+            "left_image": "shopify://shop_images/comb-demo-static.png",
+            "video_loop": "shopify://files/videos/Video_Of_Brushing_Hair.mp4",
             "video_full": "shopify://files/videos/xvpbmya74drmr0cvj41b89mrw4_result_.mp4",
             "text_color": "#ffffff",
             "footer_text": "Struggling with thinning",
