@@ -75,8 +75,8 @@
           "settings": {
             "product": "bloom-peptide-hair-serum-3-bottle",
             "static_image": "shopify://shop_images/Serum-turntable-v2-RGBA.png",
-            "hover_video_hevc_desktop": "https://res.cloudinary.com/doqtf1nm5/video/upload/v1766358534/Serum_turntable_v2_RGBA_trimmed_aklnio.mov",
-            "hover_video_webm_desktop": "https://res.cloudinary.com/doqtf1nm5/video/upload/v1764805165/serum-turntable-alpha_ewzq6j.webm",
+            "hover_video_hevc_desktop": "https://cdn.shopify.com/videos/c/o/v/0ecc69aad5ff431691cb6a88747b3cfc.mp4",
+            "hover_video_webm_desktop": "https://cdn.shopify.com/videos/c/o/v/bec45374f9f248259814561039b5cde3.webm",
             "hover_video_mp4_desktop": "",
             "hover_video_hevc_mobile": "https://cdn.shopify.com/videos/c/o/v/d6f1ad7d54a447ea8557b3c2400c42b8.mov",
             "hover_video_webm_mobile": "https://cdn.shopify.com/videos/c/o/v/5464335758ba4d6ab1db216c35974a39.webm",
