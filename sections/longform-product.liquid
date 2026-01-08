@@ -512,8 +512,8 @@
                                       and sp_alloc.selling_plan.price_adjustments
                                       and sp_alloc.selling_plan.price_adjustments.size > 0
                                     -%}
-                                      {%- assign first_payment = variant.price -%}
-                                      {%- assign subscription_price = sp_alloc.selling_plan.price_adjustments[0].value -%}
+                                      {%- assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value -%}
+                                      {%- assign subscription_price = variant.price -%}
                                       {%- assign interval_count = sp_alloc.selling_plan.interval_count -%}
                                       {%- assign interval = sp_alloc.selling_plan.interval -%}
                                       {%- if interval == 'month' -%}
