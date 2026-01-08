@@ -515,10 +515,17 @@
                                       {%- assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value -%}
                                       {%- assign subscription_price = variant.price -%}
                                       {%- comment -%} Try multiple ways to get interval_count from Appstle {%- endcomment -%}
-                                      {%- if sp_alloc.selling_plan.recurring_deliveries.first.interval_count != blank -%}
+                                      {%- assign interval_count = null -%}
+                                      {%- comment -%} Try from recurring_deliveries first {%- endcomment -%}
+                                      {%- if sp_alloc.selling_plan.recurring_deliveries != blank and sp_alloc.selling_plan.recurring_deliveries.first.interval_count != blank -%}
                                         {%- assign interval_count = sp_alloc.selling_plan.recurring_deliveries.first.interval_count -%}
+                                      {%- comment -%} Try from selling_plan directly {%- endcomment -%}
                                       {%- elsif sp_alloc.selling_plan.interval_count != blank -%}
                                         {%- assign interval_count = sp_alloc.selling_plan.interval_count -%}
+                                      {%- comment -%} Try from selling plan group {%- endcomment -%}
+                                      {%- elsif product.selling_plan_groups.first.selling_plans.first.interval_count != blank -%}
+                                        {%- assign interval_count = product.selling_plan_groups.first.selling_plans.first.interval_count -%}
+                                      {%- comment -%} Fallback to quantity from variant title {%- endcomment -%}
                                       {%- else -%}
                                         {%- assign interval_count = quantity -%}
                                       {%- endif -%}
