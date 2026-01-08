@@ -514,7 +514,14 @@
                                     -%}
                                       {%- assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value -%}
                                       {%- assign subscription_price = variant.price -%}
-                                      {%- assign interval_count = sp_alloc.selling_plan.interval_count -%}
+                                      {%- comment -%} Try multiple ways to get interval_count from Appstle {%- endcomment -%}
+                                      {%- if sp_alloc.selling_plan.recurring_deliveries.first.interval_count != blank -%}
+                                        {%- assign interval_count = sp_alloc.selling_plan.recurring_deliveries.first.interval_count -%}
+                                      {%- elsif sp_alloc.selling_plan.interval_count != blank -%}
+                                        {%- assign interval_count = sp_alloc.selling_plan.interval_count -%}
+                                      {%- else -%}
+                                        {%- assign interval_count = quantity -%}
+                                      {%- endif -%}
                                       First payment {{ first_payment | money }}, then {{ subscription_price | money }} every {{ interval_count }} months
                                     {%- else -%}
                                       {% if quantity contains 1 %}
