@@ -462,77 +462,30 @@
   {% comment %} testing if github update is working {% endcomment %}
   <div class="variant-container">
 
-    {% if is_subscription_product and product.selling_plan_groups != empty %}
-      {%- comment -%} ✅ Subscription-enabled UI (guarded) {%- endcomment -%}
-      {% for variant in product.variants %}
-        <div class="variant-card {% if forloop.first %}active{% endif %}" data-variant-id="{{ variant.id }}" data-title="{{ variant.title }}" data-index="{{ forloop.index  }}">
-          {% assign quantity = variant.title | split: " " | last %}
-
-          <p class="cstm_checkbox"></p>
-          <div class="middle_content">
-              <div class="variant_title_and_discount">                                        
-                  {% if quantity contains 1 %}
-                      <div class="title">Monthly Delivery</div>
-                  {% else %}
-                      <div class="title">{{quantity}}-Month Delivery</div>
-                  {% endif %}
-
-                  {% if variant.metafields.custom.new_style_box_save_text.value != blank %}
-                      <div class="save_val">
-                          {{ variant.metafields.custom.new_style_box_save_text.value }}
-                      </div>
-                  {% endif %}
-              </div>
-              <div class="sub_text">
-                  {% if quantity contains 1 %}
-                    a {{quantity}}-month supply each month
-                  {% else %}
-                    a {{quantity}}-month supply delivered every {{quantity}} months
-                  {% endif %}
-              </div>
-              <div class="all_common_text">
-                  free shipping. pause or cancel anytime.
-              </div>
+    {%- comment -%} ✅ One-time purchase UI for all variants {%- endcomment -%}
+    {% for variant in product.variants %}
+      <div class="variant-card {% if variant.id == product.selected_or_first_available_variant.id %}active{% elsif forloop.first %}active{% endif %}" data-variant-id="{{ variant.id }}" data-title="{{ variant.title }}" data-index="{{ forloop.index  }}">
+        <p class="cstm_checkbox"></p>
+        <div class="middle_content">
+          <div class="variant_title_and_discount">
+            <div class="title">One-Time Purchase</div>
           </div>
-          <div class="right_price_part">
-              <div class="pro_prices">
-                  {%- assign sp_alloc = variant.selling_plan_allocations | first -%}
-                  {%- if sp_alloc and sp_alloc.selling_plan and sp_alloc.selling_plan.price_adjustments and sp_alloc.selling_plan.price_adjustments.size > 0 -%}
-                    <div class="discounted_price">{{ sp_alloc.selling_plan.price_adjustments[0].value | money }}</div>
-                  {%- else -%}
-                    <div class="discounted_price">{{ variant.price | money }}</div>
-                  {%- endif -%}
-                  <div class="original_price compare_at_price">{{ variant.compare_at_price | money }}</div>
-              </div>
-          </div>
-        </div>
-      {% endfor %}
-    {% else %}
-      {%- comment -%} ✅ One-time-only UI (same classes) {%- endcomment -%}
-      {% for variant in product.variants %}
-        <div class="variant-card {% if variant.id == product.selected_or_first_available_variant.id %}active{% elsif forloop.first %}active{% endif %}" data-variant-id="{{ variant.id }}" data-title="{{ variant.title }}" data-index="{{ forloop.index  }}">
-          <p class="cstm_checkbox"></p>
-          <div class="middle_content">
-            <div class="variant_title_and_discount">
-              <div class="title">One-Time Purchase</div>
-            </div>
 
-            {% if variant.metafields.custom.box_bottom_label.value != blank %}
+          {% if variant.metafields.custom.box_bottom_label.value != blank %}
 {% else %}
 {% endif %}
-          </div>
+        </div>
 
-          <div class="right_price_part">
-            <div class="pro_prices">
-              <div class="discounted_price">{{ variant.price | money }}</div>
-              {% if variant.compare_at_price > variant.price %}
-                <div class="original_price compare_at_price">{{ variant.compare_at_price | money }}</div>
-              {% endif %}
-            </div>
+        <div class="right_price_part">
+          <div class="pro_prices">
+            <div class="discounted_price">{{ variant.price | money }}</div>
+            {% if variant.compare_at_price > variant.price %}
+              <div class="original_price compare_at_price">{{ variant.compare_at_price | money }}</div>
+            {% endif %}
           </div>
         </div>
-      {% endfor %}
-    {% endif %}
+      </div>
+    {% endfor %}
 
   </div>
 </div>
