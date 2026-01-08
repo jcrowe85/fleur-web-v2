@@ -1531,7 +1531,9 @@ if(pro_submit_btn_onetime){
   });
 }
 
-//buy once
+//buy once - DISABLED: Now handled in longform-product.liquid with event delegation for all variants
+// This original code only worked for the first variant because querySelector only gets the first element
+/*
 var pro_buy_once_btn = document.querySelector(".template-product-longform .product-form .one_time_puchase.buy_once");
 if(pro_buy_once_btn){
 	pro_buy_once_btn.addEventListener('click',function(event){
@@ -1612,6 +1614,7 @@ if(pro_buy_once_btn){
             })
 	});
 }
+*/
 
 //custom variant card click
   document.addEventListener('click', function(event) {
