@@ -686,20 +686,16 @@
                             <a href="javascript:void(0)">Buy Once for {{ variant.price | money }} {% if block.settings.buy_once_extra_text != blank %}{{block.settings.buy_once_extra_text}}{% endif %}</a>
                           </div>
                         {% endif %}
-                      {% endfor %}     {% endcomment %}{% if is_subscription_product %}
+                      {% endfor %}     {% endcomment %}
+                      {% if is_subscription_product %}
 
                       {% for variant in product.variants %}
                         <div class="one_time_puchase buy_once {% unless product.selected_or_first_available_variant.id == variant.id %}hidden{% endunless %}" data-var-id="{{ variant.id }}" data-title="{{ variant.title }}">
-                          <a href="javascript:void(0)">Buy Once for {{ variant.price | money }} {% if block.settings.buy_once_extra_text != blank %}{{ block.settings.buy_once_extra_text }}{% endif %}</a>
+                          <a href="javascript:void(0)">Buy Once for {{ variant.price | money }}{% if block.settings.buy_once_extra_text != blank %} {{ block.settings.buy_once_extra_text }}{% endif %}</a>
                         </div>
-                      {% endfor %}   
+                      {% endfor %}
 
-{% endif %}</a>
-                          </div>
-                        {% endif %}
-                      {% endfor %}   
-                      
-{% endif %}
+                      {% endif %}
 {% if block.settings.below_extra_text != block %}
                         <div class="below_atc_text">
                           {{ block.settings.below_extra_text }}
