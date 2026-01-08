@@ -761,6 +761,8 @@
     section.querySelectorAll('.one_time_puchase.buy_once a').forEach(a => {
       a.addEventListener('click', async (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
 
         const variantId = parseInt(idInput.value, 10);
         if (!variantId) return;
@@ -822,7 +824,7 @@
           // fallback: submit form normally (last resort)
           try { form.submit(); } catch (e2) {}
         }
-      });
+      }, true);
     });
 
     // Keep the Buy Once line synced any time the variant id changes (Appstle/theme JS).
