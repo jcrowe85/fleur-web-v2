@@ -691,7 +691,9 @@
 
                       {% for variant in product.variants %}
                         <div class="one_time_puchase buy_once {% unless product.selected_or_first_available_variant.id == variant.id %}hidden{% endunless %}" data-var-id="{{ variant.id }}" data-title="{{ variant.title }}">
-                          <a href="javascript:void(0)">Buy Once for {{ variant.price | money }}{% if block.settings.buy_once_extra_text != blank %} {{ block.settings.buy_once_extra_text }}{% endif %}</a>
+                          <button type="button" class="buy-once-btn">
+                            Buy Once for {{ variant.price | money }}{% if block.settings.buy_once_extra_text != blank %} {{ block.settings.buy_once_extra_text }}{% endif %}
+                          </button>
                         </div>
                       {% endfor %}
 
@@ -702,7 +704,67 @@
                         </div>
                       {% endif %}
                     {%- endform -%}
-
+                    <script>
+                      (function(){
+                        const section = document.getElementById('MainProduct-{{ section.id }}') || document;
+                        const form = section.querySelector('form[action="/cart/add"]');
+                        if (!form) return;
+                      
+                        function openCartFallback() {
+                          // Dawn drawer if present
+                          const drawer = document.querySelector('cart-drawer');
+                          if (drawer && typeof drawer.open === 'function') {
+                            drawer.open();
+                            return;
+                          }
+                          // common event some themes listen for
+                          document.dispatchEvent(new CustomEvent('cart:refresh'));
+                          // hard fallback
+                          window.location.href = '/cart';
+                        }
+                      
+                        async function addOneTimeToCart(variantId, qty) {
+                          const res = await fetch('/cart/add.js', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify({ id: Number(variantId), quantity: Number(qty || 1) })
+                          });
+                          if (!res.ok) throw new Error('cart/add.js failed');
+                          return res.json();
+                        }
+                      
+                        // CAPTURE phase so we beat Appstle + delegated handlers
+                        section.addEventListener('click', async function(e){
+                          const btn = e.target.closest('.one_time_puchase .buy-once-btn');
+                          if (!btn) return;
+                      
+                          // stop Appstle / theme from also submitting subscription
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.stopImmediatePropagation();
+                      
+                          // find currently shown one-time row (not hidden)
+                          const activeRow = section.querySelector('.one_time_puchase:not(.hidden)[data-var-id]');
+                          if (!activeRow) return;
+                      
+                          const variantId = activeRow.getAttribute('data-var-id');
+                      
+                          // quantity
+                          const qtyInput = form.querySelector('input[name="quantity"]');
+                          const qty = qtyInput ? qtyInput.value : 1;
+                      
+                          try {
+                            await addOneTimeToCart(variantId, qty);
+                            openCartFallback();
+                          } catch (err) {
+                            console.error(err);
+                            // last resort
+                            window.location.href = '/cart';
+                          }
+                        }, true);
+                      })();
+                      </script>
+                      
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
