@@ -740,6 +740,7 @@
                             class="one_time_puchase buy_once {% unless product.selected_or_first_available_variant.id == variant.id %}hidden{% endunless %}"
                             data-var-id="{{ variant.id }}"
                             data-title="{{ variant.title }}"
+                            style="cursor: pointer;"
                           >
                             <a href="javascript:void(0)" class="buy-once-link" data-buy-once="true"
                               >Buy Once for {{ variant.price | money -}}
@@ -781,59 +782,96 @@
                             // This ensures we intercept before any other handlers (including Appstle)
                             section.addEventListener('click', function(event) {
                               try {
-                                // Check if click is on a "Buy Once" link or its container
-                                // Use more flexible selector to catch clicks anywhere in the Buy Once area
+                                console.log('Click detected in section, target:', event.target);
+                                
+                                // Check if click is on a "Buy Once" link first
                                 let link = event.target.closest('.buy-once-link');
-                                let buyOnceContainer = event.target.closest('.one_time_puchase.buy_once');
+                                let buyOnceContainer = null;
                                 
-                                // If clicked directly on container, find the link inside
-                                if (buyOnceContainer && !link) {
-                                  link = buyOnceContainer.querySelector('.buy-once-link');
-                                }
-                                
-                                // If clicked on link, find its container
-                                if (link && !buyOnceContainer) {
+                                if (link) {
+                                  // Found link, get its container
                                   buyOnceContainer = link.closest('.one_time_puchase.buy_once');
+                                  console.log('Found via link, container:', buyOnceContainer);
+                                } else {
+                                  // Check if clicked directly on container
+                                  buyOnceContainer = event.target.closest('.one_time_puchase.buy_once');
+                                  console.log('Found via container:', buyOnceContainer);
+                                  
+                                  // If still not found, check all containers and see which one should handle this click
+                                  // This handles cases where the container is hidden (display: none)
+                                  if (!buyOnceContainer) {
+                                    const allContainers = section.querySelectorAll('.one_time_puchase.buy_once');
+                                    console.log('Checking all containers:', allContainers.length);
+                                    
+                                    // Try to find container by checking if click target is a child of any container
+                                    for (let container of allContainers) {
+                                      if (container.contains(event.target)) {
+                                        buyOnceContainer = container;
+                                        console.log('Found container via contains check:', buyOnceContainer);
+                                        break;
+                                      }
+                                    }
+                                  }
                                 }
                                 
-                                // Must have both link and container
-                                if (!link || !buyOnceContainer) return;
-
                                 // CRITICAL: Prevent default FIRST to stop any scroll behavior
                                 event.preventDefault();
                                 event.stopPropagation();
                                 event.stopImmediatePropagation();
 
-                                console.log('=== Buy Once Click Handler ===');
-                                console.log('Link element:', link);
-                                console.log('Container element:', buyOnceContainer);
-                                console.log('Is container hidden?', buyOnceContainer.classList.contains('hidden'));
+                                // If we didn't find a container via click detection, get it from the currently selected variant
+                                if (!buyOnceContainer) {
+                                  // Get the currently active variant card
+                                  const variantBox = section.querySelector('.custom-variant-box');
+                                  const activeVariantCard = variantBox ? variantBox.querySelector('.variant-card.active') : null;
+                                  
+                                  if (activeVariantCard) {
+                                    const activeVariantId = activeVariantCard.getAttribute('data-variant-id');
+                                    console.log('No container found via click, using active variant:', activeVariantId);
+                                    
+                                    // Find the "Buy Once" container that matches this variant ID
+                                    const allContainers = section.querySelectorAll('.one_time_puchase.buy_once');
+                                    for (let container of allContainers) {
+                                      if (container.getAttribute('data-var-id') === activeVariantId) {
+                                        buyOnceContainer = container;
+                                        console.log('Found matching container for active variant:', buyOnceContainer);
+                                        break;
+                                      }
+                                    }
+                                  }
+                                  
+                                  // Final fallback: use the visible one
+                                  if (!buyOnceContainer) {
+                                    buyOnceContainer = section.querySelector('.one_time_puchase.buy_once:not(.hidden)');
+                                    console.log('Using visible container as fallback:', buyOnceContainer);
+                                  }
+                                }
+
+                                // Must have container
+                                if (!buyOnceContainer) {
+                                  console.error('No Buy Once container found at all!');
+                                  return;
+                                }
+
+                                console.log('=== Buy Once Click Detected ===');
+                                console.log('Container:', buyOnceContainer);
+                                console.log('Is hidden?', buyOnceContainer.classList.contains('hidden'));
                                 console.log('Variant ID:', buyOnceContainer.getAttribute('data-var-id'));
                                 console.log('Variant title:', buyOnceContainer.getAttribute('data-title'));
                                 console.log('Event target:', event.target);
-                                console.log('Event currentTarget:', event.currentTarget);
-                                
-                                // If container is hidden, temporarily make it visible for the click
-                                // This ensures the click handler can work properly
-                                const wasHidden = buyOnceContainer.classList.contains('hidden');
-                                if (wasHidden) {
-                                  console.log('Container was hidden, temporarily showing for click handling');
-                                  buyOnceContainer.classList.remove('hidden');
-                                  buyOnceContainer.style.display = '';
-                                }
 
-                              // Get variant ID directly from the container's data attribute
-                              // This matches the original global.js approach exactly
-                              const main_pro_id = actualContainer.getAttribute('data-var-id');
-                              const main_pro_title = actualContainer.getAttribute('data-title');
+                                // Get variant ID directly from the container's data attribute
+                                // This matches the original global.js approach exactly
+                                const main_pro_id = buyOnceContainer.getAttribute('data-var-id');
+                                const main_pro_title = buyOnceContainer.getAttribute('data-title');
 
                               if (!main_pro_id) {
                                 console.error('Could not determine variant ID for one-time purchase');
-                                console.error('Container:', actualContainer);
+                                console.error('Container:', buyOnceContainer);
                                 console.error('Container attributes:', {
-                                  'data-var-id': actualContainer.getAttribute('data-var-id'),
-                                  'data-title': actualContainer.getAttribute('data-title'),
-                                  classes: actualContainer.className
+                                  'data-var-id': buyOnceContainer.getAttribute('data-var-id'),
+                                  'data-title': buyOnceContainer.getAttribute('data-title'),
+                                  classes: buyOnceContainer.className
                                 });
                                 return;
                               }
