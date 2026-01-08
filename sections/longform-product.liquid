@@ -515,35 +515,7 @@
                                       {%- assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value -%}
                                       {%- assign subscription_price = variant.price -%}
                                       {%- assign interval_count = sp_alloc.selling_plan.interval_count -%}
-                                      {%- assign interval = sp_alloc.selling_plan.interval -%}
-                                      {%- if interval == 'month' -%}
-                                        {%- if interval_count == 1 -%}
-                                          {%- assign interval_text = 'month' -%}
-                                        {%- else -%}
-                                          {%- assign interval_text = interval_count | append: ' months' -%}
-                                        {%- endif -%}
-                                      {%- elsif interval == 'day' -%}
-                                        {%- if interval_count == 1 -%}
-                                          {%- assign interval_text = 'day' -%}
-                                        {%- else -%}
-                                          {%- assign interval_text = interval_count | append: ' days' -%}
-                                        {%- endif -%}
-                                      {%- elsif interval == 'week' -%}
-                                        {%- if interval_count == 1 -%}
-                                          {%- assign interval_text = 'week' -%}
-                                        {%- else -%}
-                                          {%- assign interval_text = interval_count | append: ' weeks' -%}
-                                        {%- endif -%}
-                                      {%- elsif interval == 'year' -%}
-                                        {%- if interval_count == 1 -%}
-                                          {%- assign interval_text = 'year' -%}
-                                        {%- else -%}
-                                          {%- assign interval_text = interval_count | append: ' years' -%}
-                                        {%- endif -%}
-                                      {%- else -%}
-                                        {%- assign interval_text = interval_count | append: ' ' | append: interval -%}
-                                      {%- endif -%}
-                                      First payment {{ first_payment | money }}, then {{ subscription_price | money }} every {{ interval_text }}
+                                      First payment {{ first_payment | money }}, then {{ subscription_price | money }} every {{ interval_count }} months
                                     {%- else -%}
                                       {% if quantity contains 1 %}
                                         a {{ quantity }}-month supply each month
