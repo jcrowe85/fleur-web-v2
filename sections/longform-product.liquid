@@ -785,50 +785,46 @@
                               return idInput ? idInput.value : null;
                             }
 
-                            // Function to attach click handler to a "Buy Once" link
-                            function attachBuyOnceHandler(container) {
-                              debugger; // DEBUG: Check if function is called
-                              const link = container.querySelector('.buy-once-link');
-                              if (!link) {
-                                console.warn('attachBuyOnceHandler: No link found in container', container);
+                            // Use event delegation on the section to handle clicks
+                            // This works even if links are replaced by other scripts
+                            section.addEventListener('click', async function(event) {
+                              // Check if click is on a "Buy Once" link or container
+                              const clickedLink = event.target.closest('.buy-once-link');
+                              const clickedContainer = event.target.closest('.one_time_puchase.buy_once');
+                              
+                              // Must be clicking on either the link or its container
+                              if (!clickedLink && !clickedContainer) {
+                                return; // Not a Buy Once click, ignore
+                              }
+                              
+                              // Get the container (either directly clicked or parent of clicked link)
+                              const buyOnceContainer = clickedContainer || clickedLink.closest('.one_time_puchase.buy_once');
+                              if (!buyOnceContainer) {
+                                console.error('❌ Could not find container for Buy Once click');
                                 return;
                               }
                               
-                              const variantId = container.getAttribute('data-var-id');
-                              console.log('🔧 attachBuyOnceHandler: Attaching handler to variant', variantId, 'Container:', container);
+                              // Check if container is hidden
+                              if (buyOnceContainer.classList.contains('hidden')) {
+                                console.warn('⚠️ Clicked on hidden container, but processing anyway');
+                                // Still process it - the container might be hidden but we want to add the variant
+                              }
                               
-                              // Remove any existing handler to avoid duplicates
-                              const newLink = link.cloneNode(true);
-                              link.parentNode.replaceChild(newLink, link);
+                              // Prevent default behavior
+                              event.preventDefault();
+                              event.stopPropagation();
+                              event.stopImmediatePropagation();
                               
-                              // Attach handler directly to the link
-                              newLink.addEventListener('click', async function(event) {
-                                debugger; // DEBUG: Check if click handler fires
-                                console.log('🖱️ CLICK HANDLER FIRED for variant:', variantId);
-                                console.log('Event target:', event.target);
-                                console.log('Link element:', newLink);
-                                console.log('Container:', container);
-                                
-                                event.preventDefault();
-                                event.stopPropagation();
-                                event.stopImmediatePropagation();
-                                
-                                const buyOnceContainer = newLink.closest('.one_time_puchase.buy_once');
-                                if (!buyOnceContainer) {
-                                  console.error('❌ Could not find container for Buy Once link');
-                                  debugger;
-                                  return;
-                                }
-                                
-                                const main_pro_id = buyOnceContainer.getAttribute('data-var-id');
-                                const main_pro_title = buyOnceContainer.getAttribute('data-title');
-                                
-                                console.log('=== Buy Once Click Detected ===');
-                                console.log('Container:', buyOnceContainer);
-                                console.log('Variant ID:', main_pro_id);
-                                console.log('Variant title:', main_pro_title);
-                                console.log('Is hidden?', buyOnceContainer.classList.contains('hidden'));
-                                debugger; // DEBUG: Verify variant ID is correct
+                              const main_pro_id = buyOnceContainer.getAttribute('data-var-id');
+                              const main_pro_title = buyOnceContainer.getAttribute('data-title');
+                              
+                              console.log('🖱️ === Buy Once Click Detected ===');
+                              console.log('Container:', buyOnceContainer);
+                              console.log('Variant ID:', main_pro_id);
+                              console.log('Variant title:', main_pro_title);
+                              console.log('Is hidden?', buyOnceContainer.classList.contains('hidden'));
+                              console.log('Event target:', event.target);
+                              debugger; // DEBUG: Verify variant ID is correct
 
                               if (!main_pro_id) {
                                 console.error('Could not determine variant ID for one-time purchase');
@@ -1041,7 +1037,7 @@
                             console.log('✅ Finished attaching handlers to', allBuyOnceContainers.length, 'containers');
                             debugger; // DEBUG: Check initial attachment
 
-                            // Update visibility function - also reattach handlers when visibility changes
+                            // Update visibility function
                             function updateBuyOnceVisibility(selectedVariantId) {
                               debugger; // DEBUG: Check if visibility update is called
                               console.log('👁️ updateBuyOnceVisibility called for variant:', selectedVariantId);
@@ -1056,8 +1052,7 @@
                                 if (shouldShow) {
                                   container.classList.remove('hidden');
                                   console.log('  ✅ Showing container for variant', linkVariantId);
-                                  // Reattach handler when link becomes visible
-                                  attachBuyOnceHandler(container);
+                                  // No need to reattach handler - event delegation handles all clicks
                                 } else {
                                   container.classList.add('hidden');
                                   console.log('  ❌ Hiding container for variant', linkVariantId);
