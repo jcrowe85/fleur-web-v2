@@ -536,7 +536,7 @@
 
   </div>
 </div>
-                        {% if is_subscription_product %}
+                        {% if is_subscription_product or product.selling_plan_groups != empty %}
 <div class="free_gift-wrapp">
                         {% if product.metafields.custom.free_gift_headline.value != blank %}
                         <h3>
@@ -688,24 +688,14 @@
                         {% endif %}
                       {% endfor %}     {% endcomment %}
                       {% if is_subscription_product %}
-  <div class="one_time_puchase buy_once" id="BuyOnceLine-{{ section.id }}">
-    <a href="javascript:void(0)" id="BuyOnceBtn-{{ section.id }}">
-      Buy Once for <span id="BuyOncePrice-{{ section.id }}"></span>
-      {% if block.settings.buy_once_extra_text != blank %}
-        {{ block.settings.buy_once_extra_text }}
-      {% endif %}
-    </a>
-  </div>
 
-  <script>
-    window.__BUY_ONCE_PRICE_MAP__ = window.__BUY_ONCE_PRICE_MAP__ || {};
-    window.__BUY_ONCE_PRICE_MAP__[{{ section.id | json }}] = {
-      {% for v in product.variants %}
-        {{ v.id | json }}: {{ v.price | money | json }}{% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    };
-  </script>
-{% endif %}
+                      {% for variant in product.variants %}
+                        <div class="one_time_puchase buy_once {% unless product.selected_or_first_available_variant.id == variant.id %}hidden{% endunless %}" data-var-id="{{ variant.id }}" data-title="{{ variant.title }}">
+                          <a href="javascript:void(0)">Buy Once for {{ variant.price | money }}{% if block.settings.buy_once_extra_text != blank %} {{ block.settings.buy_once_extra_text }}{% endif %}</a>
+                        </div>
+                      {% endfor %}
+
+                      {% endif %}
 {% if block.settings.below_extra_text != block %}
                         <div class="below_atc_text">
                           {{ block.settings.below_extra_text }}
@@ -713,173 +703,99 @@
                       {% endif %}
                     {%- endform -%}
 
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const section = document.getElementById('MainProduct-{{ section.id }}');
     if (!section) return;
 
-    const box = section.querySelector('.custom-variant-box');
-    if (!box) return;
-
-    const cards = Array.from(box.querySelectorAll('.variant-card'));
-    if (!cards.length) return;
-
     const form = section.querySelector('form[action^="/cart/add"]');
-    const idInput = form ? form.querySelector('input[name="id"]') : null;
-    if (!idInput) return;
+    const idInput = form?.querySelector('input[name="id"]');
+    const box = section.querySelector('.custom-variant-box');
+    if (!form || !idInput || !box) return;
 
     const isSub = box.getAttribute('data-subscription-product') === 'true';
+    const cards = Array.from(box.querySelectorAll('.variant-card'));
 
-    const setActiveUI = (card) => {
+    const syncBuyOnceLine = () => {
+      const selectedId = String(idInput.value || '');
+      const rows = Array.from(section.querySelectorAll('.one_time_puchase[data-var-id]'));
+      if (!rows.length) return;
+
+      rows.forEach(r => r.classList.add('hidden'));
+      const active = rows.find(r => String(r.getAttribute('data-var-id')) === selectedId);
+      if (active) active.classList.remove('hidden');
+    };
+
+    // For NON-subscription product pages, your custom variant cards control variant selection.
+    if (!isSub && cards.length) {
+      let activeCard = cards.find(c => c.classList.contains('active')) || cards[0];
       cards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-    };
+      activeCard.classList.add('active');
 
-    // On load: set active card based on current variant id input
-    const currentId = String(idInput.value || '');
-    const currentCard = cards.find(c => String(c.getAttribute('data-variant-id')) === currentId);
-    if (currentCard) setActiveUI(currentCard);
+      const vid = activeCard.getAttribute('data-variant-id');
+      if (vid) idInput.value = vid;
 
-    // Helper: for subscription products, let Appstle drive selection by "clicking" its option
-    const clickMatchingAppstleOption = (variantId, indexStr) => {
-      const wrapper = section.querySelector('.appstle_subscription_wrapper');
-      if (!wrapper) return false;
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          cards.forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
 
-      // 1) Prefer matching by data-variant-id if present
-      let opt = wrapper.querySelector('.appstle_subscription_wrapper_option[data-variant-id="' + CSS.escape(String(variantId)) + '"]');
+          const nextId = card.getAttribute('data-variant-id');
+          if (nextId) idInput.value = nextId;
 
-      // 2) Fallback: match by index (your cards have data-index)
-      if (!opt && indexStr) {
-        const idx = Math.max(0, parseInt(indexStr, 10) - 1);
-        const all = Array.from(wrapper.querySelectorAll('.appstle_subscription_wrapper_option'));
-        opt = all[idx] || null;
+          // Let any downstream listeners run, then sync
+          setTimeout(syncBuyOnceLine, 0);
+        });
+      });
+    } else {
+      // Subscription pages: DO NOT touch idInput; Appstle controls it.
+      if (cards.length) {
+        cards.forEach(card => {
+          card.addEventListener('click', () => setTimeout(syncBuyOnceLine, 0));
+        });
       }
+    }
 
-      if (!opt) return false;
+    // Clicking "Buy Once" should add ONE-TIME (no selling_plan) using your existing ATC behavior.
+    section.querySelectorAll('.one_time_puchase.buy_once a').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
 
-      // Click the most reliable target inside the option
-      const clickTarget =
-        opt.querySelector('input[type="radio"], input[type="checkbox"], label, button') || opt;
-
-      clickTarget.click();
-      return true;
-    };
-
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        setActiveUI(card);
-
-        const vid = card.getAttribute('data-variant-id');
-        const idx = card.getAttribute('data-index');
-
-        if (isSub) {
-          // IMPORTANT: Do NOT set idInput.value for subscription products.
-          // Appstle must manage variant + selling_plan internally.
-          clickMatchingAppstleOption(vid, idx);
-          // Appstle updates input[name="id"] async; let other listeners (incl. Buy Once price sync) catch up.
-          setTimeout(() => {}, 0);
-        } else {
-          if (vid) {
-            idInput.value = vid;
-            // trigger downstream variant listeners in theme
-            idInput.dispatchEvent(new Event('change', { bubbles: true }));
-          }
+        let sp = form.querySelector('input[name="selling_plan"]');
+        if (!sp) {
+          sp = document.createElement('input');
+          sp.type = 'hidden';
+          sp.name = 'selling_plan';
+          form.appendChild(sp);
         }
+        sp.value = '';
+
+        // submit via the existing button so cart open logic stays consistent
+        const btn = section.querySelector('#ProductSubmitButton-{{ section.id }}') ||
+                    form.querySelector('button[type="submit"][name="add"]') ||
+                    form.querySelector('button[type="submit"]');
+        if (btn) btn.click();
+        else form.submit();
       });
     });
-  });
-</script>
 
-
-<script>
-(function () {
-  const sectionId = {{ section.id | json }};
-  const priceMap = (window.__BUY_ONCE_PRICE_MAP__ && window.__BUY_ONCE_PRICE_MAP__[sectionId]) || {};
-
-  function getRoot() {
-    return document.getElementById('MainProduct-{{ section.id }}') || document;
-  }
-
-  function getVariantIdInput(root) {
-    return root.querySelector('form[action^="/cart/add"] input[name="id"]') || root.querySelector('input[name="id"]');
-  }
-
-  function ensureSellingPlanInput(root) {
-    const form = root.querySelector('form[action^="/cart/add"]');
-    if (!form) return null;
-
-    let sp = form.querySelector('input[name="selling_plan"]');
-    if (!sp) {
-      sp = document.createElement('input');
-      sp.type = 'hidden';
-      sp.name = 'selling_plan';
-      sp.value = '';
-      form.appendChild(sp);
-    }
-    return sp;
-  }
-
-  function syncBuyOncePrice() {
-    const root = getRoot();
-    const idInput = getVariantIdInput(root);
-    const priceEl = document.getElementById('BuyOncePrice-{{ section.id }}');
-    if (!idInput || !priceEl) return;
-
-    const vid = String(idInput.value || '');
-    priceEl.textContent = priceMap[vid] || '';
-  }
-
-  function bindBuyOnceClick() {
-    const root = getRoot();
-    const btn = document.getElementById('BuyOnceBtn-{{ section.id }}');
-    if (!btn) return;
-
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-
-      // Force one-time by clearing selling_plan
-      const sp = ensureSellingPlanInput(root);
-      if (sp) sp.value = '';
-
-      // Trigger the theme/app's normal Add to Cart behavior
-      const atc =
-        root.querySelector('form[action^="/cart/add"] button[type="submit"][name="add"]') ||
-        root.querySelector('form[action^="/cart/add"] button[type="submit"]') ||
-        root.querySelector('.product-form__submit');
-
-      if (atc) atc.click();
-    });
-  }
-
-  function bindObservers() {
-    const root = getRoot();
-    const idInput = getVariantIdInput(root);
-    if (!idInput) return;
-
-    // If an app/theme updates the input attribute value
-    const obs = new MutationObserver(syncBuyOncePrice);
+    // Keep the Buy Once line synced any time the variant id changes (Appstle/theme JS).
+    const obs = new MutationObserver(() => syncBuyOnceLine());
     obs.observe(idInput, { attributes: true, attributeFilter: ['value'] });
 
-    // If an app/theme updates only the property value, keep a tiny fallback poll
+    // Some scripts change .value without updating the attribute.
     let last = idInput.value;
     setInterval(() => {
       if (idInput.value !== last) {
         last = idInput.value;
-        syncBuyOncePrice();
+        syncBuyOnceLine();
       }
     }, 200);
 
-    // After clicks/changes that may update variant, resync
-    root.addEventListener('click', () => setTimeout(syncBuyOncePrice, 0));
-    root.addEventListener('change', () => setTimeout(syncBuyOncePrice, 0));
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    syncBuyOncePrice();
-    bindBuyOnceClick();
-    bindObservers();
+    // Initial sync
+    syncBuyOnceLine();
   });
-})();
 </script>
                  
                   </product-form>
@@ -2424,7 +2340,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              // Fallback removed: do not overwrite variantIdInput (Appstle/theme controls variant selection)
+              variantIdInput.value = '44138306273459'; // Your base product's variant ID
               console.log('Restored to default variant ID');
             }
           });
@@ -2539,7 +2455,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              // Fallback removed: do not overwrite variantIdInput (Appstle/theme controls variant selection)
+              variantIdInput.value = '44138306273459'; // Your base product's variant ID
               console.log('Restored to default variant ID');
             }
           });
@@ -2655,7 +2571,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              // Fallback removed: do not overwrite variantIdInput (Appstle/theme controls variant selection)
+              variantIdInput.value = '44138306273459'; // Your base product's variant ID
               console.log('Restored to default variant ID');
             }
           });
