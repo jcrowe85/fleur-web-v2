@@ -714,23 +714,49 @@
     const box = section.querySelector('.custom-variant-box');
     if (!form || !idInput || !box) return;
 
-    const isSub = box.getAttribute('data-subscription-product') === 'true';
-    if (isSub) return;
-
     const cards = Array.from(box.querySelectorAll('.variant-card'));
     if (!cards.length) return;
 
-    let active = cards.find(c => c.classList.contains('active')) || cards[0];
-    active.classList.add('active');
-    idInput.value = active.getAttribute('data-variant-id');
+    // Show ONLY the "Buy Once" line that matches the currently selected variant
+    const updateBuyOnce = () => {
+      const selectedId = String(idInput.value || '');
+      const rows = Array.from(section.querySelectorAll('.one_time_puchase[data-var-id]'));
+      if (!rows.length) return;
 
+      rows.forEach(r => r.classList.add('hidden'));
+      const activeRow = rows.find(r => String(r.getAttribute('data-var-id')) === selectedId);
+      if (activeRow) activeRow.classList.remove('hidden');
+    };
+
+    // Keep variant cards in sync with the hidden variant input
+    const setActiveCard = (card) => {
+      cards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+
+      const vid = card.getAttribute('data-variant-id');
+      if (vid) {
+        idInput.value = vid;
+        updateBuyOnce();
+      }
+    };
+
+    // Initialize: prefer the current input value, else existing .active, else first card
+    const currentId = String(idInput.value || '');
+    const byId = currentId ? cards.find(c => String(c.getAttribute('data-variant-id')) === currentId) : null;
+    const byActive = cards.find(c => c.classList.contains('active'));
+    setActiveCard(byId || byActive || cards[0]);
+
+    // Click behavior for both subscription + one-time variant cards
     cards.forEach(card => {
-      card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        idInput.value = card.getAttribute('data-variant-id');
-      });
+      card.addEventListener('click', () => setActiveCard(card));
     });
+
+    // If any other scripts (e.g., Appstle) change the hidden variant id, keep Buy Once synced.
+    const observer = new MutationObserver(() => updateBuyOnce());
+    observer.observe(idInput, { attributes: true, attributeFilter: ['value'] });
+
+    // Run once after everything settles
+    setTimeout(updateBuyOnce, 0);
   });
 </script>
                  
