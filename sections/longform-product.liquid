@@ -871,7 +871,7 @@
 
                                 // CRITICAL: Remove any hidden selling_plan inputs from the form
                                 // Appstle might add these, and they could be included in the request
-                                const form = section.querySelector('form[action="/cart/add"]');
+                                // Reuse the form variable declared above
                                 const hiddenSellingPlanInputs = form ? form.querySelectorAll('input[name="selling_plan"], input[name*="selling"], input[type="hidden"][value*="selling"]') : [];
                                 hiddenSellingPlanInputs.forEach(input => {
                                   console.log('Found hidden selling_plan input, temporarily disabling:', input);
