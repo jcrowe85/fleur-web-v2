@@ -777,223 +777,102 @@
                               return idInput ? idInput.value : null;
                             }
 
-                            // Capture-phase click handler so Appstle/theme handlers can't "win" after us.
-                            document.addEventListener(
-                              'click',
-                              async function (e) {
-                                const link = e.target.closest(
-                                  `#${sectionId} .one_time_puchase.buy_once .buy-once-link`
-                                );
-                                if (!link) return;
+                            // Handle "Buy Once" clicks - matching the original global.js approach
+                            // Attach listeners to each "Buy Once" button individually so each gets the correct variant ID
+                            const buyOnceButtons = section.querySelectorAll('.one_time_puchase.buy_once');
+                            buyOnceButtons.forEach((buyOnceBtn) => {
+                              // Skip if already has listener (prevent duplicates)
+                              if (buyOnceBtn.dataset.listenerAdded === 'true') return;
+                              buyOnceBtn.dataset.listenerAdded = 'true';
 
-                                e.preventDefault();
-                                e.stopPropagation();
-                                e.stopImmediatePropagation();
+                              buyOnceBtn.addEventListener('click', function(event) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                event.stopImmediatePropagation();
 
-                                // Get variant ID from the currently active variant card
-                                // This ensures we're using the same variant that's selected for subscription
-                                // but adding it as a one-time purchase (without selling_plan)
-                                const variantBox = section.querySelector('.custom-variant-box');
-                                const activeVariantCard = variantBox ? variantBox.querySelector('.variant-card.active') : null;
-                                let variantId = null;
+                                // Get variant ID directly from the clicked button's data attribute
+                                // This matches the original global.js approach exactly
+                                const main_pro_id = buyOnceBtn.getAttribute('data-var-id');
+                                const main_pro_title = buyOnceBtn.getAttribute('data-title');
 
-                                if (activeVariantCard) {
-                                  variantId = activeVariantCard.getAttribute('data-variant-id');
-                                  console.log('Got variant ID from active variant card:', variantId);
-                                }
-
-                                // Fallback: get from visible "Buy Once" container
-                                if (!variantId) {
-                                  const visibleBuyOnce = section.querySelector('.one_time_puchase.buy_once:not(.hidden)');
-                                  variantId = visibleBuyOnce ? visibleBuyOnce.getAttribute('data-var-id') : null;
-                                  console.log('Got variant ID from visible Buy Once container:', variantId);
-                                }
-
-                                // Fallback: get from clicked "Buy Once" container
-                                if (!variantId) {
-                                  const buyOnceContainer = link.closest('.one_time_puchase.buy_once');
-                                  variantId = buyOnceContainer ? buyOnceContainer.getAttribute('data-var-id') : null;
-                                  console.log('Got variant ID from clicked Buy Once container:', variantId);
-                                }
-
-                                // Last fallback: get from form input
-                                if (!variantId) {
-                                  variantId = getCurrentVariantId();
-                                  console.log('Got variant ID from form input:', variantId);
-                                }
-
-                                if (!variantId) {
+                                if (!main_pro_id) {
                                   console.error('Could not determine variant ID for one-time purchase');
-                                  alert('Unable to determine product variant. Please try selecting a variant first.');
                                   return;
                                 }
 
-                                // Convert to string to ensure it's a valid variant ID
-                                variantId = String(variantId).trim();
-                                console.log('Final variant ID for one-time purchase:', variantId);
+                                console.log('One-time purchase: Adding variant', main_pro_id, 'from button data-var-id');
 
+                                // Use FormData approach like the original global.js
+                                const formData = new FormData();
+                                formData.set('id', main_pro_id);
+                                
+                                // Get quantity from form
                                 const form = section.querySelector('form[action="/cart/add"]');
                                 const qtyInput = form ? form.querySelector('input[name="quantity"]') : null;
                                 const qty = Math.max(1, parseInt(qtyInput ? qtyInput.value : '1', 10) || 1);
+                                
+                                // Note: We're NOT adding selling_plan to FormData, which ensures one-time purchase
 
-                                try {
-                                  // CRITICAL: Ensure we're NOT including any selling_plan parameter
-                                  // This bypasses Appstle completely by using /cart/add.js directly
-                                  // The payload must ONLY contain id and quantity - NO selling_plan field at all
-                                  const payload = {
-                                    id: variantId,
-                                    quantity: qty
-                                  };
-                                  
-                                  // Double-check: ensure selling_plan is completely absent (not null, not undefined, not empty string)
-                                  delete payload.selling_plan;
+                                // Add sections for cart drawer update (matching original)
+                                const cartDrawer = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+                                if (cartDrawer && typeof cartDrawer.getSectionsToRender === 'function') {
+                                  formData.append('sections', cartDrawer.getSectionsToRender().map((section) => section.id));
+                                  formData.append('sections_url', window.location.pathname);
+                                }
 
-                                  // Ensure variant ID is a string (Shopify expects string or number)
-                                  payload.id = String(payload.id);
+                                // Use fetch with FormData (matching original approach)
+                                fetch('/cart/add.js', {
+                                  method: 'POST',
+                                  headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                    // Don't set Content-Type - browser will set it with boundary for FormData
+                                  },
+                                  body: formData
+                                })
 
-                                  console.log('One-time purchase: Adding variant', payload.id, 'without selling_plan. Payload:', payload);
-
-                                  // Make the request with explicit headers to prevent any middleware interference
-                                  const res = await fetch('/cart/add.js', {
-                                    method: 'POST',
-                                    headers: { 
-                                      'Content-Type': 'application/json', 
-                                      'Accept': 'application/json',
-                                      'X-Requested-With': 'XMLHttpRequest'
-                                    },
-                                    credentials: 'same-origin',
-                                    body: JSON.stringify(payload),
-                                  });
-
-                                  if (!res.ok) {
-                                    const errorData = await res.json().catch(() => ({}));
-                                    console.error('Cart add error:', errorData);
-                                    throw new Error(errorData.description || 'cart/add.js failed');
+                                .then(response => {
+                                  if (!response.ok) {
+                                    return response.json().then(err => {
+                                      throw new Error(err.description || 'cart/add.js failed');
+                                    });
                                   }
-
-                                  const result = await res.json();
-                                  console.log('One-time purchase API response:', result);
-
-                                  // Verify the result doesn't have a selling_plan and check variant ID
-                                  let itemKey = null;
-                                  let needsFix = false;
+                                  return response.json();
+                                })
+                                .then(result => {
+                                  console.log('One-time purchase success:', result);
+                                  
+                                  // Verify the result
                                   if (result.items && result.items.length > 0) {
                                     const addedItem = result.items[result.items.length - 1];
-                                    itemKey = addedItem.key;
+                                    console.log('Added item:', addedItem);
                                     
-                                    console.log('=== VERIFICATION ===');
-                                    console.log('Variant ID we requested:', variantId);
-                                    console.log('Variant ID that was added:', addedItem.variant_id);
-                                    console.log('Full added item:', addedItem);
-                                    
-                                    if (String(addedItem.variant_id) !== String(variantId)) {
-                                      console.error('❌ ERROR: Wrong variant ID was added!');
-                                      console.error('Expected:', variantId, 'Got:', addedItem.variant_id);
-                                      alert('Warning: A different variant was added to cart. Expected: ' + variantId + ', Got: ' + addedItem.variant_id);
+                                    if (String(addedItem.variant_id) !== String(main_pro_id)) {
+                                      console.error('❌ Wrong variant ID! Expected:', main_pro_id, 'Got:', addedItem.variant_id);
                                     } else {
-                                      console.log('✓ Variant ID matches');
+                                      console.log('✓ Correct variant ID');
                                     }
                                     
                                     if (addedItem.selling_plan) {
-                                      console.error('❌ ERROR: Item was added with selling_plan despite our request!', addedItem.selling_plan);
-                                      console.error('Attempting to fix by removing selling_plan...');
-                                      needsFix = true;
+                                      console.error('❌ Item has selling_plan!', addedItem.selling_plan);
                                     } else {
-                                      console.log('✓ Confirmed: Item added without selling_plan');
-                                    }
-                                    console.log('===================');
-                                  }
-
-                                  // If Appstle added a selling_plan, try to fix it
-                                  if (needsFix && itemKey) {
-                                    try {
-                                      // Fetch current cart to get the exact item
-                                      const cartRes = await fetch('/cart.js');
-                                      if (cartRes.ok) {
-                                        const cart = await cartRes.json();
-                                        const problemItem = cart.items.find(item => item.key === itemKey);
-                                        
-                                        if (problemItem && problemItem.selling_plan) {
-                                          console.log('Found item with selling_plan, attempting to change it...');
-                                          
-                                          // Use cart/change.js to update the item without selling_plan
-                                          const changeRes = await fetch('/cart/change.js', {
-                                            method: 'POST',
-                                            headers: { 
-                                              'Content-Type': 'application/json', 
-                                              'Accept': 'application/json'
-                                            },
-                                            body: JSON.stringify({
-                                              id: itemKey,
-                                              quantity: problemItem.quantity,
-                                              properties: problemItem.properties || {}
-                                              // Explicitly NOT including selling_plan
-                                            }),
-                                          });
-                                          
-                                          if (changeRes.ok) {
-                                            const changeResult = await changeRes.json();
-                                            console.log('Successfully changed item:', changeResult);
-                                            
-                                            // If that didn't work, try removing and re-adding
-                                            if (changeResult.items && changeResult.items.some(item => item.selling_plan)) {
-                                              console.log('Change didn\'t work, trying remove and re-add...');
-                                              
-                                              // Remove the item
-                                              await fetch('/cart/change.js', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                                                body: JSON.stringify({ id: itemKey, quantity: 0 }),
-                                              });
-                                              
-                                              // Small delay
-                                              await new Promise(resolve => setTimeout(resolve, 200));
-                                              
-                                              // Re-add without selling_plan
-                                              const reAddRes = await fetch('/cart/add.js', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                                                body: JSON.stringify({ id: variantId, quantity: qty }),
-                                              });
-                                              
-                                              if (reAddRes.ok) {
-                                                console.log('Successfully re-added item without selling_plan');
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    } catch (fixErr) {
-                                      console.error('Error trying to fix selling_plan:', fixErr);
+                                      console.log('✓ No selling_plan - one-time purchase confirmed');
                                     }
                                   }
 
-                                  // Small delay to ensure cart is updated before opening drawer
-                                  await new Promise(resolve => setTimeout(resolve, 100));
-
-                                  // Open cart drawer if available, otherwise fall back to /cart
-                                  const drawer = document.querySelector('cart-drawer');
-                                  if (drawer && typeof drawer.open === 'function') {
-                                    drawer.open();
-                                    return;
+                                  // Open cart drawer if available (matching original)
+                                  if (cartDrawer && typeof cartDrawer.open === 'function') {
+                                    cartDrawer.open();
+                                  } else {
+                                    // Fallback: redirect to cart
+                                    window.location.href = '/cart';
                                   }
-
-                                  // Dispatch cart update events for theme compatibility
-                                  // Note: These events might trigger Appstle handlers, but the item is already added
-                                  document.dispatchEvent(new CustomEvent('cart:refresh'));
-                                  document.dispatchEvent(new CustomEvent('cart:updated'));
-
-                                  // Fallback: redirect to cart page
-                                  window.location.href = '/cart';
-                                } catch (err) {
+                                })
+                                .catch(err => {
                                   console.error('One-time purchase failed:', err);
-                                  alert('Failed to add item to cart. Please try again.');
-                                  // Still redirect to cart on error so user can see what happened
                                   window.location.href = '/cart';
-                                }
-                              },
-                              true // Use capture phase to intercept before Appstle
-                            );
+                                });
+                              });
+                            });
 
                             // Listen for variant changes to update "Buy Once" visibility
                             // Watch for changes to the variant input field
