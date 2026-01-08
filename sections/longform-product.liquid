@@ -715,50 +715,52 @@
     if (!form || !idInput || !box) return;
 
     const cards = Array.from(box.querySelectorAll('.variant-card'));
-    if (!cards.length) return;
+    const isSub = box.getAttribute('data-subscription-product') === 'true';
 
-    // Show ONLY the "Buy Once" line that matches the currently selected variant
+    // Show ONLY the "Buy Once" line that matches the currently selected variant id
     const updateBuyOnce = () => {
       const selectedId = String(idInput.value || '');
       const rows = Array.from(section.querySelectorAll('.one_time_puchase[data-var-id]'));
       if (!rows.length) return;
 
       rows.forEach(r => r.classList.add('hidden'));
+
       const activeRow = rows.find(r => String(r.getAttribute('data-var-id')) === selectedId);
       if (activeRow) activeRow.classList.remove('hidden');
     };
 
-    // Keep variant cards in sync with the hidden variant input
-    const setActiveCard = (card) => {
-      cards.forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-
-      const vid = card.getAttribute('data-variant-id');
-      if (vid) {
-        idInput.value = vid;
-        updateBuyOnce();
-      }
-    };
-
-    // Initialize: prefer the current input value, else existing .active, else first card
-    const currentId = String(idInput.value || '');
-    const byId = currentId ? cards.find(c => String(c.getAttribute('data-variant-id')) === currentId) : null;
-    const byActive = cards.find(c => c.classList.contains('active'));
-    setActiveCard(byId || byActive || cards[0]);
-
-    // Click behavior for both subscription + one-time variant cards
-    cards.forEach(card => {
-      card.addEventListener('click', () => setActiveCard(card));
-    });
-
-    // If any other scripts (e.g., Appstle) change the hidden variant id, keep Buy Once synced.
+    // Always keep Buy Once synced (even when Appstle controls variant selection)
     const observer = new MutationObserver(() => updateBuyOnce());
     observer.observe(idInput, { attributes: true, attributeFilter: ['value'] });
 
-    // Run once after everything settles
-    setTimeout(updateBuyOnce, 0);
+    // If NOT subscription, this theme controls variant-card selection itself
+    if (!isSub && cards.length) {
+      let active = cards.find(c => c.classList.contains('active')) || cards[0];
+      active.classList.add('active');
+      idInput.value = active.getAttribute('data-variant-id');
+      updateBuyOnce();
+
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          cards.forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          idInput.value = card.getAttribute('data-variant-id');
+          updateBuyOnce();
+        });
+      });
+    } else {
+      // Subscription product: let Appstle own card clicks and selling_plan wiring.
+      // We only refresh Buy Once AFTER Appstle updates the variant id.
+      if (cards.length) {
+        cards.forEach(card => {
+          card.addEventListener('click', () => setTimeout(updateBuyOnce, 0));
+        });
+      }
+      setTimeout(updateBuyOnce, 0);
+    }
   });
 </script>
+
                  
                   </product-form>
                 </div>
