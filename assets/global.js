@@ -1359,14 +1359,28 @@ customElements.define("product-model", ProductModel);
 
    setTimeout(function(){
     var ij = 1;
-  if( document.querySelectorAll('.custom-variant-box .variant-card').length > 0 ){
-      document.querySelectorAll('.custom-variant-box .variant-card').forEach(ninput => {
-        if (ij === 2) {
-        ninput.click();
+    var variantCards = document.querySelectorAll('.custom-variant-box .variant-card');
+    var variantCount = variantCards.length;
+    
+    if( variantCount > 0 ){
+      // Determine which variant to select based on page type
+      var targetIndex;
+      
+      if (variantCount === 1) {
+        // Single variant page (3-unit or 6-unit page) - select the first (and only) variant
+        targetIndex = 1;
+      } else {
+        // Multiple variants page (single unit page) - select the second variant (3-month option)
+        targetIndex = 2;
       }
-      ij++;
-    });
-  }
+      
+      variantCards.forEach(ninput => {
+        if (ij === targetIndex) {
+          ninput.click();
+        }
+        ij++;
+      });
+    }
     
   },300);
 
