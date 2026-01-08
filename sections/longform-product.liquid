@@ -512,21 +512,29 @@
                                       and sp_alloc.selling_plan.price_adjustments
                                       and sp_alloc.selling_plan.price_adjustments.size > 0
                                     -%}
+                                      {%- comment -%} Get first payment from price_adjustments[0] (offer discount price) {%- endcomment -%}
                                       {%- assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value -%}
                                       {%- comment -%} Get subsequent payment price from Appstle "change discount to" fixed price {%- endcomment -%}
+                                      {%- comment -%} This is the price adjustment that applies after the first payment (order_count > 1) {%- endcomment -%}
                                       {%- assign subscription_price = null -%}
-                                      {%- comment -%} Try fixed_price property first (Appstle specific) {%- endcomment -%}
-                                      {%- if sp_alloc.selling_plan.fixed_price != blank -%}
-                                        {%- assign subscription_price = sp_alloc.selling_plan.fixed_price -%}
-                                      {%- comment -%} Try price property on selling plan {%- endcomment -%}
-                                      {%- elsif sp_alloc.selling_plan.price != blank -%}
-                                        {%- assign subscription_price = sp_alloc.selling_plan.price -%}
-                                      {%- comment -%} Try price_adjustments value (fixed amount discount) {%- endcomment -%}
-                                      {%- elsif sp_alloc.selling_plan.price_adjustments[0].value != blank -%}
-                                        {%- assign subscription_price = sp_alloc.selling_plan.price_adjustments[0].value -%}
-                                      {%- comment -%} Fallback to variant price if nothing else works {%- endcomment -%}
-                                      {%- else -%}
-                                        {%- assign subscription_price = variant.price -%}
+                                      {%- for price_adj in sp_alloc.selling_plan.price_adjustments -%}
+                                        {%- if price_adj.order_count != blank and price_adj.order_count > 1 -%}
+                                          {%- assign subscription_price = price_adj.value -%}
+                                          {%- break -%}
+                                        {%- endif -%}
+                                      {%- endfor -%}
+                                      {%- comment -%} If no price adjustment found with order_count > 1, try other methods {%- endcomment -%}
+                                      {%- if subscription_price == null -%}
+                                        {%- comment -%} Try fixed_price property (Appstle specific) {%- endcomment -%}
+                                        {%- if sp_alloc.selling_plan.fixed_price != blank -%}
+                                          {%- assign subscription_price = sp_alloc.selling_plan.fixed_price -%}
+                                        {%- comment -%} Try price property on selling plan {%- endcomment -%}
+                                        {%- elsif sp_alloc.selling_plan.price != blank -%}
+                                          {%- assign subscription_price = sp_alloc.selling_plan.price -%}
+                                        {%- comment -%} Fallback to variant price if nothing else works {%- endcomment -%}
+                                        {%- else -%}
+                                          {%- assign subscription_price = variant.price -%}
+                                        {%- endif -%}
                                       {%- endif -%}
                                       {%- comment -%} Try multiple ways to get interval_count from Appstle {%- endcomment -%}
                                       {%- assign interval_count = null -%}
