@@ -741,7 +741,7 @@
                             data-var-id="{{ variant.id }}"
                             data-title="{{ variant.title }}"
                           >
-                            <a href="#" class="buy-once-link" data-buy-once="true"
+                            <a href="javascript:void(0)" class="buy-once-link" data-buy-once="true"
                               >Buy Once for {{ variant.price | money -}}
                               {%- if block.settings.buy_once_extra_text != blank %}
                                 {{ block.settings.buy_once_extra_text -}}
@@ -777,23 +777,28 @@
                               return idInput ? idInput.value : null;
                             }
 
-                            // Handle "Buy Once" clicks - matching the original global.js approach
-                            // Attach listeners to each "Buy Once" button individually so each gets the correct variant ID
-                            const buyOnceButtons = section.querySelectorAll('.one_time_puchase.buy_once');
-                            buyOnceButtons.forEach((buyOnceBtn) => {
-                              // Skip if already has listener (prevent duplicates)
-                              if (buyOnceBtn.dataset.listenerAdded === 'true') return;
-                              buyOnceBtn.dataset.listenerAdded = 'true';
+                            // Handle "Buy Once" clicks using event delegation
+                            // This works even when links are hidden/shown dynamically
+                            section.addEventListener('click', function(event) {
+                              // Check if click is on a "Buy Once" link
+                              const link = event.target.closest('.one_time_puchase.buy_once .buy-once-link');
+                              if (!link) return;
 
-                              buyOnceBtn.addEventListener('click', function(event) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                event.stopImmediatePropagation();
+                              event.preventDefault();
+                              event.stopPropagation();
+                              event.stopImmediatePropagation();
 
-                                // Get variant ID directly from the clicked button's data attribute
-                                // This matches the original global.js approach exactly
-                                const main_pro_id = buyOnceBtn.getAttribute('data-var-id');
-                                const main_pro_title = buyOnceBtn.getAttribute('data-title');
+                              // Get variant ID from the parent container's data attribute
+                              const buyOnceContainer = link.closest('.one_time_puchase.buy_once');
+                              if (!buyOnceContainer) {
+                                console.error('Could not find Buy Once container');
+                                return;
+                              }
+
+                              // Get variant ID directly from the container's data attribute
+                              // This matches the original global.js approach exactly
+                              const main_pro_id = buyOnceContainer.getAttribute('data-var-id');
+                              const main_pro_title = buyOnceContainer.getAttribute('data-title');
 
                                 if (!main_pro_id) {
                                   console.error('Could not determine variant ID for one-time purchase');
@@ -871,7 +876,6 @@
                                   }
                                   return response.json();
                                 })
-                                .then(response => response.json())
                                 .then(response => {
                                   console.log('One-time purchase success:', response);
                                   
@@ -923,9 +927,9 @@
                                 })
                                 .catch(err => {
                                   console.error('One-time purchase failed:', err);
-                                  window.location.href = '/cart';
+                                  alert('Failed to add item to cart: ' + err.message);
+                                  // Don't redirect on error - let user stay on page
                                 });
-                              });
                             });
 
                             // Listen for variant changes to update "Buy Once" visibility
