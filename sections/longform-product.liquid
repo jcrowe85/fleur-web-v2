@@ -802,32 +802,65 @@
 
                                 console.log('One-time purchase: Adding variant', main_pro_id, 'from button data-var-id');
 
-                                // Use FormData approach like the original global.js
-                                const formData = new FormData();
-                                formData.set('id', main_pro_id);
-                                
                                 // Get quantity from form
                                 const form = section.querySelector('form[action="/cart/add"]');
                                 const qtyInput = form ? form.querySelector('input[name="quantity"]') : null;
                                 const qty = Math.max(1, parseInt(qtyInput ? qtyInput.value : '1', 10) || 1);
-                                
-                                // Note: We're NOT adding selling_plan to FormData, which ensures one-time purchase
 
-                                // Add sections for cart drawer update (matching original)
-                                const cartDrawer = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
-                                if (cartDrawer && typeof cartDrawer.getSectionsToRender === 'function') {
-                                  formData.append('sections', cartDrawer.getSectionsToRender().map((section) => section.id));
-                                  formData.append('sections_url', window.location.pathname);
+                                // CRITICAL: Temporarily uncheck any subscription option in Appstle widget
+                                // This prevents Appstle from adding a selling_plan
+                                const subs_widget = document.querySelector('.appstle_sub_widget');
+                                let checkedSubscriptionInput = null;
+                                if (subs_widget) {
+                                  // Find and uncheck any checked subscription radio button
+                                  checkedSubscriptionInput = subs_widget.querySelector('input[type="radio"]:checked');
+                                  if (checkedSubscriptionInput) {
+                                    checkedSubscriptionInput.checked = false;
+                                    console.log('Unchecked subscription option to ensure one-time purchase');
+                                  }
+                                  
+                                  // Also check the one-time purchase option if it exists
+                                  const oneTimeInput = subs_widget.querySelector('.appstle_subscription_wrapper_option:not(.appstle_include_dropdown) input[type="radio"]');
+                                  if (oneTimeInput) {
+                                    oneTimeInput.checked = true;
+                                    console.log('Checked one-time purchase option');
+                                  }
                                 }
 
-                                // Use fetch with FormData (matching original approach)
+                                // CRITICAL: Remove any hidden selling_plan inputs from the form
+                                // Appstle might add these, and they could be included in the request
+                                const form = section.querySelector('form[action="/cart/add"]');
+                                const hiddenSellingPlanInputs = form ? form.querySelectorAll('input[name="selling_plan"], input[name*="selling"], input[type="hidden"][value*="selling"]') : [];
+                                hiddenSellingPlanInputs.forEach(input => {
+                                  console.log('Found hidden selling_plan input, temporarily disabling:', input);
+                                  input.disabled = true;
+                                  input.style.display = 'none';
+                                });
+
+                                // Build items array matching original global.js approach
+                                const new_arr = [];
+                                new_arr.push({ id: main_pro_id, quantity: qty });
+                                
+                                // Get sections for cart drawer update
+                                const cartDrawer = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+                                const sections = ['cart-drawer', 'cart-icon-bubble'];
+                                
+                                // Build payload - CRITICAL: NO selling_plan field
+                                const payload = {
+                                  items: new_arr,
+                                  sections: sections
+                                };
+                                
+                                console.log('Payload (no selling_plan):', payload);
+
+                                // Use JSON approach matching original global.js
                                 fetch('/cart/add.js', {
                                   method: 'POST',
                                   headers: {
+                                    'Content-Type': 'application/json',
                                     'X-Requested-With': 'XMLHttpRequest'
-                                    // Don't set Content-Type - browser will set it with boundary for FormData
                                   },
-                                  body: formData
+                                  body: JSON.stringify(payload)
                                 })
 
                                 .then(response => {
@@ -838,30 +871,51 @@
                                   }
                                   return response.json();
                                 })
-                                .then(result => {
-                                  console.log('One-time purchase success:', result);
+                                .then(response => response.json())
+                                .then(response => {
+                                  console.log('One-time purchase success:', response);
                                   
                                   // Verify the result
-                                  if (result.items && result.items.length > 0) {
-                                    const addedItem = result.items[result.items.length - 1];
-                                    console.log('Added item:', addedItem);
+                                  if (response.items && response.items.length > 0) {
+                                    const addedItem = response.items[response.items.length - 1];
+                                    console.log('=== VERIFICATION ===');
+                                    console.log('Variant ID requested:', main_pro_id);
+                                    console.log('Variant ID added:', addedItem.variant_id);
+                                    console.log('Full added item:', addedItem);
                                     
                                     if (String(addedItem.variant_id) !== String(main_pro_id)) {
                                       console.error('❌ Wrong variant ID! Expected:', main_pro_id, 'Got:', addedItem.variant_id);
+                                      alert('Warning: Wrong variant added. Expected: ' + main_pro_id + ', Got: ' + addedItem.variant_id);
                                     } else {
                                       console.log('✓ Correct variant ID');
                                     }
                                     
                                     if (addedItem.selling_plan) {
                                       console.error('❌ Item has selling_plan!', addedItem.selling_plan);
+                                      alert('Warning: Item was added as subscription. Please check your cart.');
                                     } else {
                                       console.log('✓ No selling_plan - one-time purchase confirmed');
                                     }
+                                    console.log('===================');
                                   }
 
-                                  // Open cart drawer if available (matching original)
-                                  if (cartDrawer && typeof cartDrawer.open === 'function') {
-                                    cartDrawer.open();
+                                  // Ensure one-time purchase option is selected in Appstle widget
+                                  if (subs_widget) {
+                                    const oneTimeInput = subs_widget.querySelector('.appstle_subscription_wrapper_option:not(.appstle_include_dropdown) input[type="radio"]');
+                                    if (oneTimeInput) {
+                                      oneTimeInput.checked = true;
+                                    }
+                                  }
+
+                                  // Update cart drawer (matching original)
+                                  if (cartDrawer) {
+                                    cartDrawer.classList.remove('is-empty');
+                                    if (typeof cartDrawer.renderContents === 'function') {
+                                      cartDrawer.renderContents(response);
+                                    }
+                                    if (typeof cartDrawer.open === 'function') {
+                                      cartDrawer.open();
+                                    }
                                   } else {
                                     // Fallback: redirect to cart
                                     window.location.href = '/cart';
