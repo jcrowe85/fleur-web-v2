@@ -714,53 +714,25 @@
     const box = section.querySelector('.custom-variant-box');
     if (!form || !idInput || !box) return;
 
-    const cards = Array.from(box.querySelectorAll('.variant-card'));
     const isSub = box.getAttribute('data-subscription-product') === 'true';
+    if (isSub) return;
 
-    // Show ONLY the "Buy Once" line that matches the currently selected variant id
-    const updateBuyOnce = () => {
-      const selectedId = String(idInput.value || '');
-      const rows = Array.from(section.querySelectorAll('.one_time_puchase[data-var-id]'));
-      if (!rows.length) return;
+    const cards = Array.from(box.querySelectorAll('.variant-card'));
+    if (!cards.length) return;
 
-      rows.forEach(r => r.classList.add('hidden'));
+    let active = cards.find(c => c.classList.contains('active')) || cards[0];
+    active.classList.add('active');
+    idInput.value = active.getAttribute('data-variant-id');
 
-      const activeRow = rows.find(r => String(r.getAttribute('data-var-id')) === selectedId);
-      if (activeRow) activeRow.classList.remove('hidden');
-    };
-
-    // Always keep Buy Once synced (even when Appstle controls variant selection)
-    const observer = new MutationObserver(() => updateBuyOnce());
-    observer.observe(idInput, { attributes: true, attributeFilter: ['value'] });
-
-    // If NOT subscription, this theme controls variant-card selection itself
-    if (!isSub && cards.length) {
-      let active = cards.find(c => c.classList.contains('active')) || cards[0];
-      active.classList.add('active');
-      idInput.value = active.getAttribute('data-variant-id');
-      updateBuyOnce();
-
-      cards.forEach(card => {
-        card.addEventListener('click', () => {
-          cards.forEach(c => c.classList.remove('active'));
-          card.classList.add('active');
-          idInput.value = card.getAttribute('data-variant-id');
-          updateBuyOnce();
-        });
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        idInput.value = card.getAttribute('data-variant-id');
       });
-    } else {
-      // Subscription product: let Appstle own card clicks and selling_plan wiring.
-      // We only refresh Buy Once AFTER Appstle updates the variant id.
-      if (cards.length) {
-        cards.forEach(card => {
-          card.addEventListener('click', () => setTimeout(updateBuyOnce, 0));
-        });
-      }
-      setTimeout(updateBuyOnce, 0);
-    }
+    });
   });
 </script>
-
                  
                   </product-form>
                 </div>
@@ -2287,6 +2259,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
         
+        const defaultVariantId = variantIdInput.value;
         const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
@@ -2304,7 +2277,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = '44138306273459'; // Your base product's variant ID
+              variantIdInput.value = defaultVariantId; // Restore the default variant ID for this product
               console.log('Restored to default variant ID');
             }
           });
@@ -2402,6 +2375,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
         
+        const defaultVariantId = variantIdInput.value;
         const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
@@ -2419,7 +2393,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = '44138306273459'; // Your base product's variant ID
+              variantIdInput.value = defaultVariantId; // Restore the default variant ID for this product
               console.log('Restored to default variant ID');
             }
           });
@@ -2518,6 +2492,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
         
+        const defaultVariantId = variantIdInput.value;
         const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
@@ -2535,7 +2510,7 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = '44138306273459'; // Your base product's variant ID
+              variantIdInput.value = defaultVariantId; // Restore the default variant ID for this product
               console.log('Restored to default variant ID');
             }
           });
