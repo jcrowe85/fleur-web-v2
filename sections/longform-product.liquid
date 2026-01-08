@@ -2258,9 +2258,9 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         // update the product id by chaning the value of the hidden input field name='id'
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
-        
-        const defaultVariantId = variantIdInput.value;
-        const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
+        const baseVariantId = {{ product.selected_or_first_available_variant.id | json }};
+
+const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
@@ -2277,10 +2277,52 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = defaultVariantId; // Restore the default variant ID for this product
+              variantIdInput.value = baseVariantId; // Restore this product's base variant
               console.log('Restored to default variant ID');
             }
           });
+
+
+        // --- Sync "Buy Once" text so ONLY the selected variant's line is visible ---
+        function syncBuyOnce() {
+          const selectedId = String(variantIdInput.value || '');
+          const rows = document.querySelectorAll('.one_time_puchase[data-var-id]');
+          if (!rows || !rows.length) return;
+
+          rows.forEach(r => r.classList.add('hidden'));
+          if (!selectedId) return;
+
+          const selector = '.one_time_puchase[data-var-id="' + CSS.escape(selectedId) + '"]';
+          const activeRow = document.querySelector(selector);
+          if (activeRow) activeRow.classList.remove('hidden');
+        }
+
+        // Run once now, then keep in sync when Appstle/theme updates the variant id
+        syncBuyOnce();
+
+        if (!form.dataset.buyOnceSyncBound) {
+          form.dataset.buyOnceSyncBound = '1';
+
+          // When any Appstle option changes, re-sync after it updates the hidden variant id
+          purchaseOptions.forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (!radio) return;
+            radio.addEventListener('change', () => setTimeout(syncBuyOnce, 0));
+          });
+
+          // Observe programmatic changes to the hidden variant id input
+          const mo = new MutationObserver(() => syncBuyOnce());
+          mo.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
+
+          // Fallback: some scripts set .value (property) without touching the attribute
+          let last = variantIdInput.value;
+          setInterval(() => {
+            if (variantIdInput.value !== last) {
+              last = variantIdInput.value;
+              syncBuyOnce();
+            }
+          }, 250);
+        }
         });
         
         
@@ -2374,9 +2416,9 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         // update the product id by chaning the value of the hidden input field name='id'
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
-        
-        const defaultVariantId = variantIdInput.value;
-        const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
+        const baseVariantId = {{ product.selected_or_first_available_variant.id | json }};
+
+const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
@@ -2393,10 +2435,52 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = defaultVariantId; // Restore the default variant ID for this product
+              variantIdInput.value = baseVariantId; // Restore this product's base variant
               console.log('Restored to default variant ID');
             }
           });
+
+
+        // --- Sync "Buy Once" text so ONLY the selected variant's line is visible ---
+        function syncBuyOnce() {
+          const selectedId = String(variantIdInput.value || '');
+          const rows = document.querySelectorAll('.one_time_puchase[data-var-id]');
+          if (!rows || !rows.length) return;
+
+          rows.forEach(r => r.classList.add('hidden'));
+          if (!selectedId) return;
+
+          const selector = '.one_time_puchase[data-var-id="' + CSS.escape(selectedId) + '"]';
+          const activeRow = document.querySelector(selector);
+          if (activeRow) activeRow.classList.remove('hidden');
+        }
+
+        // Run once now, then keep in sync when Appstle/theme updates the variant id
+        syncBuyOnce();
+
+        if (!form.dataset.buyOnceSyncBound) {
+          form.dataset.buyOnceSyncBound = '1';
+
+          // When any Appstle option changes, re-sync after it updates the hidden variant id
+          purchaseOptions.forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (!radio) return;
+            radio.addEventListener('change', () => setTimeout(syncBuyOnce, 0));
+          });
+
+          // Observe programmatic changes to the hidden variant id input
+          const mo = new MutationObserver(() => syncBuyOnce());
+          mo.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
+
+          // Fallback: some scripts set .value (property) without touching the attribute
+          let last = variantIdInput.value;
+          setInterval(() => {
+            if (variantIdInput.value !== last) {
+              last = variantIdInput.value;
+              syncBuyOnce();
+            }
+          }, 250);
+        }
         });        
         
       }
@@ -2491,9 +2575,9 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         // update the product id by chaning the value of the hidden input field name='id'
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
-        
-        const defaultVariantId = variantIdInput.value;
-        const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
+        const baseVariantId = {{ product.selected_or_first_available_variant.id | json }};
+
+const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
@@ -2510,10 +2594,52 @@ Please note: We do not offer refunds on pre-orders until the product has been re
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = defaultVariantId; // Restore the default variant ID for this product
+              variantIdInput.value = baseVariantId; // Restore this product's base variant
               console.log('Restored to default variant ID');
             }
           });
+
+
+        // --- Sync "Buy Once" text so ONLY the selected variant's line is visible ---
+        function syncBuyOnce() {
+          const selectedId = String(variantIdInput.value || '');
+          const rows = document.querySelectorAll('.one_time_puchase[data-var-id]');
+          if (!rows || !rows.length) return;
+
+          rows.forEach(r => r.classList.add('hidden'));
+          if (!selectedId) return;
+
+          const selector = '.one_time_puchase[data-var-id="' + CSS.escape(selectedId) + '"]';
+          const activeRow = document.querySelector(selector);
+          if (activeRow) activeRow.classList.remove('hidden');
+        }
+
+        // Run once now, then keep in sync when Appstle/theme updates the variant id
+        syncBuyOnce();
+
+        if (!form.dataset.buyOnceSyncBound) {
+          form.dataset.buyOnceSyncBound = '1';
+
+          // When any Appstle option changes, re-sync after it updates the hidden variant id
+          purchaseOptions.forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (!radio) return;
+            radio.addEventListener('change', () => setTimeout(syncBuyOnce, 0));
+          });
+
+          // Observe programmatic changes to the hidden variant id input
+          const mo = new MutationObserver(() => syncBuyOnce());
+          mo.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
+
+          // Fallback: some scripts set .value (property) without touching the attribute
+          let last = variantIdInput.value;
+          setInterval(() => {
+            if (variantIdInput.value !== last) {
+              last = variantIdInput.value;
+              syncBuyOnce();
+            }
+          }, 250);
+        }
         });        
         
       }
