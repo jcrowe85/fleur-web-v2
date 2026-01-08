@@ -757,26 +757,71 @@
       }
     }
 
-    // Clicking "Buy Once" should add ONE-TIME (no selling_plan) using your existing ATC behavior.
+    // Clicking "Buy Once" must add ONE-TIME (no selling_plan). We bypass Appstle by calling /cart/add.js directly.
     section.querySelectorAll('.one_time_puchase.buy_once a').forEach(a => {
-      a.addEventListener('click', (e) => {
+      a.addEventListener('click', async (e) => {
         e.preventDefault();
 
-        let sp = form.querySelector('input[name="selling_plan"]');
-        if (!sp) {
-          sp = document.createElement('input');
-          sp.type = 'hidden';
-          sp.name = 'selling_plan';
-          form.appendChild(sp);
-        }
-        sp.value = '';
+        const variantId = parseInt(idInput.value, 10);
+        if (!variantId) return;
 
-        // submit via the existing button so cart open logic stays consistent
-        const btn = section.querySelector('#ProductSubmitButton-{{ section.id }}') ||
-                    form.querySelector('button[type="submit"][name="add"]') ||
-                    form.querySelector('button[type="submit"]');
-        if (btn) btn.click();
-        else form.submit();
+        // quantity (default 1)
+        const qtyInput = form.querySelector('input[name="quantity"]');
+        const quantity = qtyInput ? Math.max(1, parseInt(qtyInput.value || '1', 10)) : 1;
+
+        // Collect line-item properties, if any (properties[...])
+        const properties = {};
+        form.querySelectorAll('[name^="properties["]').forEach((el) => {
+          const name = el.getAttribute('name');
+          const keyMatch = name && name.match(/^properties\[(.+)\]$/);
+          if (!keyMatch) return;
+          const key = keyMatch[1];
+
+          if (el.type === 'checkbox') {
+            if (el.checked) properties[key] = el.value || 'true';
+          } else if (el.type === 'radio') {
+            if (el.checked) properties[key] = el.value;
+          } else {
+            const val = (el.value || '').trim();
+            if (val !== '') properties[key] = val;
+          }
+        });
+
+        try {
+          const res = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              items: [{
+                id: variantId,
+                quantity,
+                ...(Object.keys(properties).length ? { properties } : {})
+              }]
+            })
+          });
+
+          if (!res.ok) throw new Error('Add to cart failed');
+          await res.json();
+
+          // Open / refresh cart UI in a theme-safe way
+          const drawer = document.querySelector('cart-drawer');
+          if (drawer && typeof drawer.open === 'function') {
+            // Dawn-style
+            drawer.open();
+          } else {
+            // Fallback: go to cart
+            window.location.href = '/cart';
+          }
+
+          // Notify any listeners (cart bubbles, etc.)
+          document.dispatchEvent(new CustomEvent('cart:updated'));
+        } catch (err) {
+          // fallback: submit form normally (last resort)
+          try { form.submit(); } catch (e2) {}
+        }
       });
     });
 
