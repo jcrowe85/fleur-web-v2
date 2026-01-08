@@ -689,9 +689,12 @@
                       {% endfor %}     {% endcomment %}{% if is_subscription_product %}
 
                       {% for variant in product.variants %}
-                        {% if variant.title contains '1' %}
-                          <div class="one_time_puchase buy_once" data-var-id="{{ variant.id }}" data-title="{{ variant.title }}">
-                            <a href="javascript:void(0)">Buy Once for {{ variant.price | money }} {% if block.settings.buy_once_extra_text != blank %}{{block.settings.buy_once_extra_text}}{% endif %}</a>
+                        <div class="one_time_puchase buy_once {% unless product.selected_or_first_available_variant.id == variant.id %}hidden{% endunless %}" data-var-id="{{ variant.id }}" data-title="{{ variant.title }}">
+                          <a href="javascript:void(0)">Buy Once for {{ variant.price | money }} {% if block.settings.buy_once_extra_text != blank %}{{ block.settings.buy_once_extra_text }}{% endif %}</a>
+                        </div>
+                      {% endfor %}   
+
+{% endif %}</a>
                           </div>
                         {% endif %}
                       {% endfor %}   
