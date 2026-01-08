@@ -753,9 +753,16 @@
 
                         <script>
                           (function () {
+                            console.log('🚀 Buy Once script starting...');
                             const sectionId = 'MainProduct-{{ section.id }}';
+                            console.log('🔍 Looking for section with ID:', sectionId);
                             const section = document.getElementById(sectionId);
-                            if (!section) return;
+                            if (!section) {
+                              console.error('❌ Section not found! ID:', sectionId);
+                              console.log('Available sections:', document.querySelectorAll('[id^="MainProduct"]'));
+                              return;
+                            }
+                            console.log('✅ Section found:', section);
 
                             // Function to update "Buy Once" link visibility based on selected variant
                             function updateBuyOnceVisibility(selectedVariantId) {
@@ -950,12 +957,47 @@
                                   if (cartDrawer) {
                                     cartDrawer.classList.remove('is-empty');
                                     if (typeof cartDrawer.renderContents === 'function') {
-                                      cartDrawer.renderContents(response);
+                                      // The response should have sections if we included it in the payload
+                                      // If not, we need to fetch it separately
+                                      if (response.sections) {
+                                        console.log('✅ Response has sections, rendering cart drawer');
+                                        cartDrawer.renderContents(response);
+                                      } else {
+                                        console.warn('⚠️ Response missing sections, fetching separately');
+                                        // Fetch cart drawer HTML separately
+                                        fetch('/?sections=cart-drawer,cart-icon-bubble')
+                                          .then(res => res.text())
+                                          .then(html => {
+                                            // Parse the HTML response (Shopify returns JSON with sections)
+                                            try {
+                                              const sectionsData = JSON.parse(html);
+                                              const sectionsResponse = {
+                                                id: response.id || Date.now(),
+                                                sections: sectionsData
+                                              };
+                                              cartDrawer.renderContents(sectionsResponse);
+                                            } catch (e) {
+                                              console.error('Failed to parse sections response:', e);
+                                              // Fallback: just open the drawer, it will fetch its own content
+                                              if (typeof cartDrawer.open === 'function') {
+                                                cartDrawer.open();
+                                              }
+                                            }
+                                          })
+                                          .catch(err => {
+                                            console.error('Failed to fetch sections:', err);
+                                            if (typeof cartDrawer.open === 'function') {
+                                              cartDrawer.open();
+                                            }
+                                          });
+                                      }
                                     }
-                                    if (typeof cartDrawer.open === 'function') {
-                                      cartDrawer.open();
+                                    if (typeof cartDrawer.open === 'function' && response.sections) {
+                                      // Only auto-open if we have sections, otherwise let renderContents handle it
+                                      setTimeout(() => cartDrawer.open(), 100);
                                     }
                                   } else {
+                                    console.warn('⚠️ No cart drawer found, redirecting to cart');
                                     // Fallback: redirect to cart
                                     window.location.href = '/cart';
                                   }
@@ -980,14 +1022,23 @@
                             }
 
                             // Attach handlers to all "Buy Once" links initially
+                            console.log('🔍 Searching for Buy Once containers in section...');
                             const allBuyOnceContainers = section.querySelectorAll('.one_time_puchase.buy_once');
                             console.log('📦 Found', allBuyOnceContainers.length, 'Buy Once containers');
+                            
+                            if (allBuyOnceContainers.length === 0) {
+                              console.error('❌ NO Buy Once containers found!');
+                              console.log('Section HTML:', section.innerHTML.substring(0, 500));
+                              console.log('Searching for any .one_time_puchase:', document.querySelectorAll('.one_time_puchase'));
+                            }
+                            
                             allBuyOnceContainers.forEach((container, index) => {
                               const variantId = container.getAttribute('data-var-id');
                               const isHidden = container.classList.contains('hidden');
                               console.log(`  Container ${index + 1}: Variant ${variantId}, Hidden: ${isHidden}`);
                               attachBuyOnceHandler(container);
                             });
+                            console.log('✅ Finished attaching handlers to', allBuyOnceContainers.length, 'containers');
                             debugger; // DEBUG: Check initial attachment
 
                             // Update visibility function - also reattach handlers when visibility changes
