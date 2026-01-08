@@ -752,12 +752,37 @@
 
                         <script>
                           (function () {
+                            const sectionId = 'MainProduct-{{ section.id }}';
+                            const section = document.getElementById(sectionId);
+                            if (!section) return;
+
+                            // Function to update "Buy Once" link visibility based on selected variant
+                            function updateBuyOnceVisibility(selectedVariantId) {
+                              const buyOnceLinks = section.querySelectorAll('.one_time_puchase.buy_once');
+                              buyOnceLinks.forEach((link) => {
+                                const linkVariantId = link.getAttribute('data-var-id');
+                                if (linkVariantId === String(selectedVariantId)) {
+                                  link.classList.remove('hidden');
+                                } else {
+                                  link.classList.add('hidden');
+                                }
+                              });
+                            }
+
+                            // Get current variant ID from form input (most reliable source)
+                            function getCurrentVariantId() {
+                              const form = section.querySelector('form[action="/cart/add"]');
+                              if (!form) return null;
+                              const idInput = form.querySelector('input[name="id"]');
+                              return idInput ? idInput.value : null;
+                            }
+
                             // Capture-phase click handler so Appstle/theme handlers can't "win" after us.
                             document.addEventListener(
                               'click',
                               async function (e) {
                                 const link = e.target.closest(
-                                  '#MainProduct-{{ section.id }} .one_time_puchase.buy_once .buy-once-link'
+                                  `#${sectionId} .one_time_puchase.buy_once .buy-once-link`
                                 );
                                 if (!link) return;
 
@@ -765,33 +790,30 @@
                                 e.stopPropagation();
                                 e.stopImmediatePropagation();
 
-                                const section = document.getElementById('MainProduct-{{ section.id }}');
-                                if (!section) return;
+                                // Get current variant from form input (always up-to-date)
+                                const variantId = getCurrentVariantId();
+                                if (!variantId) {
+                                  console.error('Could not determine variant ID');
+                                  return;
+                                }
 
                                 const form = section.querySelector('form[action="/cart/add"]');
                                 const qtyInput = form ? form.querySelector('input[name="quantity"]') : null;
                                 const qty = Math.max(1, parseInt(qtyInput ? qtyInput.value : '1', 10) || 1);
 
-                                // Prefer the currently visible one-time row (your swap logic already controls .hidden)
-                                const activeRow = section.querySelector(
-                                  '.one_time_puchase.buy_once:not(.hidden)[data-var-id]'
-                                );
-                                const fallbackRow = link.closest('.one_time_puchase.buy_once[data-var-id]');
-                                const row = activeRow || fallbackRow;
-                                if (!row) return;
-
-                                const variantId = Number(row.getAttribute('data-var-id'));
-                                if (!variantId) return;
-
                                 try {
                                   // HARD GUARANTEE: one-time add => do NOT include selling_plan
+                                  // This bypasses Appstle completely by using /cart/add.js directly
                                   const res = await fetch('/cart/add.js', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                                     body: JSON.stringify({ id: variantId, quantity: qty }),
                                   });
 
-                                  if (!res.ok) throw new Error('cart/add.js failed');
+                                  if (!res.ok) {
+                                    const errorData = await res.json().catch(() => ({}));
+                                    throw new Error(errorData.description || 'cart/add.js failed');
+                                  }
 
                                   // Open cart drawer if available, otherwise fall back to /cart
                                   const drawer = document.querySelector('cart-drawer');
@@ -800,18 +822,69 @@
                                     return;
                                   }
 
-                                  // Some themes listen for these:
+                                  // Dispatch cart update events for theme compatibility
                                   document.dispatchEvent(new CustomEvent('cart:refresh'));
                                   document.dispatchEvent(new CustomEvent('cart:updated'));
 
+                                  // Fallback: redirect to cart page
                                   window.location.href = '/cart';
                                 } catch (err) {
-                                  console.error(err);
+                                  console.error('One-time purchase failed:', err);
+                                  // Still redirect to cart on error so user can see what happened
                                   window.location.href = '/cart';
                                 }
                               },
-                              true
+                              true // Use capture phase to intercept before Appstle
                             );
+
+                            // Listen for variant changes to update "Buy Once" visibility
+                            // Watch for changes to the variant input field
+                            const form = section.querySelector('form[action="/cart/add"]');
+                            if (form) {
+                              const idInput = form.querySelector('input[name="id"]');
+                              if (idInput) {
+                                // Use MutationObserver to watch for programmatic changes
+                                const observer = new MutationObserver(() => {
+                                  const currentVariantId = idInput.value;
+                                  if (currentVariantId) {
+                                    updateBuyOnceVisibility(currentVariantId);
+                                  }
+                                });
+
+                                observer.observe(idInput, {
+                                  attributes: true,
+                                  attributeFilter: ['value'],
+                                });
+
+                                // Also listen for input events (if variant picker updates it directly)
+                                idInput.addEventListener('change', () => {
+                                  updateBuyOnceVisibility(idInput.value);
+                                });
+
+                                // Initial update
+                                updateBuyOnceVisibility(idInput.value);
+                              }
+                            }
+
+                            // Also watch variant card clicks for subscription products
+                            const variantCards = section.querySelectorAll('.variant-card');
+                            variantCards.forEach((card) => {
+                              card.addEventListener('click', () => {
+                                const variantId = card.getAttribute('data-variant-id');
+                                if (variantId) {
+                                  // Update form input
+                                  const form = section.querySelector('form[action="/cart/add"]');
+                                  if (form) {
+                                    const idInput = form.querySelector('input[name="id"]');
+                                    if (idInput) {
+                                      idInput.value = variantId;
+                                      // Trigger change event to update visibility
+                                      idInput.dispatchEvent(new Event('change', { bubbles: true }));
+                                    }
+                                  }
+                                }
+                              });
+                            });
                           })();
                         </script>
                       {% endif %}
@@ -832,21 +905,39 @@
                         const box = section.querySelector('.custom-variant-box');
                         if (!form || !idInput || !box) return;
 
-                        const isSub = box.getAttribute('data-subscription-product') === 'true';
-                        if (isSub) return;
-
                         const cards = Array.from(box.querySelectorAll('.variant-card'));
                         if (!cards.length) return;
 
+                        // Function to update "Buy Once" visibility
+                        function updateBuyOnceVisibility(variantId) {
+                          const buyOnceLinks = section.querySelectorAll('.one_time_puchase.buy_once');
+                          buyOnceLinks.forEach((link) => {
+                            const linkVariantId = link.getAttribute('data-var-id');
+                            if (linkVariantId === String(variantId)) {
+                              link.classList.remove('hidden');
+                            } else {
+                              link.classList.add('hidden');
+                            }
+                          });
+                        }
+
+                        // Initialize active card
                         let active = cards.find((c) => c.classList.contains('active')) || cards[0];
                         active.classList.add('active');
-                        idInput.value = active.getAttribute('data-variant-id');
+                        const initialVariantId = active.getAttribute('data-variant-id');
+                        idInput.value = initialVariantId;
+                        updateBuyOnceVisibility(initialVariantId);
 
+                        // Handle card clicks
                         cards.forEach((card) => {
                           card.addEventListener('click', () => {
                             cards.forEach((c) => c.classList.remove('active'));
                             card.classList.add('active');
-                            idInput.value = card.getAttribute('data-variant-id');
+                            const variantId = card.getAttribute('data-variant-id');
+                            idInput.value = variantId;
+                            updateBuyOnceVisibility(variantId);
+                            // Trigger change event for other listeners
+                            idInput.dispatchEvent(new Event('change', { bubbles: true }));
                           });
                         });
                       });
