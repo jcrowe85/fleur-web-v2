@@ -790,30 +790,87 @@
                                 e.stopPropagation();
                                 e.stopImmediatePropagation();
 
-                                // Get current variant from form input (always up-to-date)
-                                const variantId = getCurrentVariantId();
+                                // Get variant ID directly from the "Buy Once" link's parent container
+                                // This is more reliable than reading from form input which Appstle may modify
+                                const buyOnceContainer = link.closest('.one_time_puchase.buy_once');
+                                let variantId = buyOnceContainer ? buyOnceContainer.getAttribute('data-var-id') : null;
+
+                                // Fallback: if not found in container, try to get from visible (non-hidden) container
                                 if (!variantId) {
-                                  console.error('Could not determine variant ID');
+                                  const visibleBuyOnce = section.querySelector('.one_time_puchase.buy_once:not(.hidden)');
+                                  variantId = visibleBuyOnce ? visibleBuyOnce.getAttribute('data-var-id') : null;
+                                }
+
+                                // Last fallback: get from form input
+                                if (!variantId) {
+                                  variantId = getCurrentVariantId();
+                                }
+
+                                if (!variantId) {
+                                  console.error('Could not determine variant ID for one-time purchase');
                                   return;
                                 }
+
+                                // Convert to string to ensure it's a valid variant ID
+                                variantId = String(variantId).trim();
 
                                 const form = section.querySelector('form[action="/cart/add"]');
                                 const qtyInput = form ? form.querySelector('input[name="quantity"]') : null;
                                 const qty = Math.max(1, parseInt(qtyInput ? qtyInput.value : '1', 10) || 1);
 
                                 try {
-                                  // HARD GUARANTEE: one-time add => do NOT include selling_plan
+                                  // CRITICAL: Ensure we're NOT including any selling_plan parameter
                                   // This bypasses Appstle completely by using /cart/add.js directly
+                                  // The payload must ONLY contain id and quantity - NO selling_plan field at all
+                                  const payload = {
+                                    id: variantId,
+                                    quantity: qty
+                                  };
+                                  
+                                  // Double-check: ensure selling_plan is completely absent (not null, not undefined, not empty string)
+                                  delete payload.selling_plan;
+
+                                  // Ensure variant ID is a string (Shopify expects string or number)
+                                  payload.id = String(payload.id);
+
+                                  console.log('One-time purchase: Adding variant', payload.id, 'without selling_plan. Payload:', payload);
+
+                                  // Make the request with explicit headers to prevent any middleware interference
                                   const res = await fetch('/cart/add.js', {
                                     method: 'POST',
-                                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                                    body: JSON.stringify({ id: variantId, quantity: qty }),
+                                    headers: { 
+                                      'Content-Type': 'application/json', 
+                                      'Accept': 'application/json',
+                                      'X-Requested-With': 'XMLHttpRequest'
+                                    },
+                                    credentials: 'same-origin',
+                                    body: JSON.stringify(payload),
                                   });
 
                                   if (!res.ok) {
                                     const errorData = await res.json().catch(() => ({}));
+                                    console.error('Cart add error:', errorData);
                                     throw new Error(errorData.description || 'cart/add.js failed');
                                   }
+
+                                  const result = await res.json();
+                                  console.log('One-time purchase success:', result);
+
+                                  // Verify the result doesn't have a selling_plan
+                                  if (result.items && result.items.length > 0) {
+                                    const addedItem = result.items[result.items.length - 1];
+                                    if (addedItem.selling_plan) {
+                                      console.error('ERROR: Item was added with selling_plan despite our request!', addedItem);
+                                      console.error('This suggests Appstle or another script is modifying the cart.');
+                                      // The item was added incorrectly, but we'll still proceed
+                                      // User can manually fix it in the cart if needed
+                                    } else {
+                                      console.log('✓ Confirmed: Item added without selling_plan');
+                                    }
+                                  }
+
+                                  // Small delay to ensure cart is updated before opening drawer
+                                  await new Promise(resolve => setTimeout(resolve, 100));
 
                                   // Open cart drawer if available, otherwise fall back to /cart
                                   const drawer = document.querySelector('cart-drawer');
@@ -823,6 +880,7 @@
                                   }
 
                                   // Dispatch cart update events for theme compatibility
+                                  // Note: These events might trigger Appstle handlers, but the item is already added
                                   document.dispatchEvent(new CustomEvent('cart:refresh'));
                                   document.dispatchEvent(new CustomEvent('cart:updated'));
 
@@ -830,6 +888,7 @@
                                   window.location.href = '/cart';
                                 } catch (err) {
                                   console.error('One-time purchase failed:', err);
+                                  alert('Failed to add item to cart. Please try again.');
                                   // Still redirect to cart on error so user can see what happened
                                   window.location.href = '/cart';
                                 }
