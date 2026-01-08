@@ -1531,21 +1531,35 @@ if(pro_submit_btn_onetime){
   });
 }
 
-//buy once - DISABLED: Now handled in longform-product.liquid with event delegation for all variants
-// This original code only worked for the first variant because querySelector only gets the first element
-/*
-var pro_buy_once_btn = document.querySelector(".template-product-longform .product-form .one_time_puchase.buy_once");
-if(pro_buy_once_btn){
-	pro_buy_once_btn.addEventListener('click',function(event){
-		event.preventDefault();
-		const formData = new FormData();
-		      const config = fetchConfig('javascript');
-      config.headers['X-Requested-With'] = 'XMLHttpRequest';
-      delete config.headers['Content-Type'];
+//buy once - Updated to work for ALL variants using event delegation
+// Original code only worked for first variant because querySelector only gets first element
+document.addEventListener('click', function(event) {
+  // Check if click is on a "Buy Once" link or container
+  const clickedLink = event.target.closest('.buy-once-link');
+  const clickedContainer = event.target.closest('.one_time_puchase.buy_once');
+  
+  // Must be clicking on either the link or its container, and must be in longform product
+  if ((!clickedLink && !clickedContainer) || !document.querySelector('.template-product-longform')) {
+    return; // Not a Buy Once click, ignore
+  }
+  
+  // Get the container (either directly clicked or parent of clicked link)
+  const pro_buy_once_btn = clickedContainer || clickedLink.closest('.one_time_puchase.buy_once');
+  if (!pro_buy_once_btn) {
+    return;
+  }
+  
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const formData = new FormData();
+  const config = fetchConfig('javascript');
+  config.headers['X-Requested-With'] = 'XMLHttpRequest';
+  delete config.headers['Content-Type'];
 
-		   var new_arr = [];
-		   var main_pro_id = pro_buy_once_btn.getAttribute('data-var-id');
-		   var main_pro_title = pro_buy_once_btn.getAttribute('data-title');
+  var new_arr = [];
+  var main_pro_id = pro_buy_once_btn.getAttribute('data-var-id');
+  var main_pro_title = pro_buy_once_btn.getAttribute('data-title');
 
           if(main_pro_id){            
             new_arr.push({ id: main_pro_id, quantity: 1});       
@@ -1561,12 +1575,10 @@ if(pro_buy_once_btn){
 
 		const subs_widget = document.querySelector('.appstle_sub_widget');
 		if(subs_widget){
-			// console.log('title_attr',title_attr);
-			if(main_pro_title.includes('1')){
-				const one_plan_input = subs_widget.querySelector('.appstle_subscription_wrapper_option:not(.appstle_include_dropdown) input[type="radio"]');
-				if(one_plan_input){
-					one_plan_input.checked = true;
-				}
+			// Always check the one-time purchase option, not just for variant 1
+			const one_plan_input = subs_widget.querySelector('.appstle_subscription_wrapper_option:not(.appstle_include_dropdown) input[type="radio"]');
+			if(one_plan_input){
+				one_plan_input.checked = true;
 			}
 		}
 
@@ -1612,9 +1624,7 @@ if(pro_buy_once_btn){
                 var time = document.querySelector('cart-drawer').getAttribute('data-timer');
                 window.cart_limit = time * 60 * 1000;
             })
-	});
-}
-*/
+});
 
 //custom variant card click
   document.addEventListener('click', function(event) {

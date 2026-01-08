@@ -785,9 +785,11 @@
                               return idInput ? idInput.value : null;
                             }
 
+                            // DISABLED: Now handled in global.js with event delegation for all variants
                             // Use event delegation on the section to handle clicks
                             // This works even if links are replaced by other scripts
                             // Use capture phase (true) to intercept BEFORE global.js handlers
+                            /*
                             section.addEventListener('click', async function(event) {
                               // Check if click is on a "Buy Once" link or container
                               const clickedLink = event.target.closest('.buy-once-link');
@@ -1017,6 +1019,7 @@
                                 });
                               });
                             }, true); // Use capture phase to intercept before global.js
+                            */
 
                             // Attach handlers to all "Buy Once" links initially
                             console.log('🔍 Searching for Buy Once containers in section...');
