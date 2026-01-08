@@ -790,29 +790,47 @@
                                 e.stopPropagation();
                                 e.stopImmediatePropagation();
 
-                                // Get variant ID directly from the "Buy Once" link's parent container
-                                // This is more reliable than reading from form input which Appstle may modify
-                                const buyOnceContainer = link.closest('.one_time_puchase.buy_once');
-                                let variantId = buyOnceContainer ? buyOnceContainer.getAttribute('data-var-id') : null;
+                                // Get variant ID from the currently active variant card
+                                // This ensures we're using the same variant that's selected for subscription
+                                // but adding it as a one-time purchase (without selling_plan)
+                                const variantBox = section.querySelector('.custom-variant-box');
+                                const activeVariantCard = variantBox ? variantBox.querySelector('.variant-card.active') : null;
+                                let variantId = null;
 
-                                // Fallback: if not found in container, try to get from visible (non-hidden) container
+                                if (activeVariantCard) {
+                                  variantId = activeVariantCard.getAttribute('data-variant-id');
+                                  console.log('Got variant ID from active variant card:', variantId);
+                                }
+
+                                // Fallback: get from visible "Buy Once" container
                                 if (!variantId) {
                                   const visibleBuyOnce = section.querySelector('.one_time_puchase.buy_once:not(.hidden)');
                                   variantId = visibleBuyOnce ? visibleBuyOnce.getAttribute('data-var-id') : null;
+                                  console.log('Got variant ID from visible Buy Once container:', variantId);
+                                }
+
+                                // Fallback: get from clicked "Buy Once" container
+                                if (!variantId) {
+                                  const buyOnceContainer = link.closest('.one_time_puchase.buy_once');
+                                  variantId = buyOnceContainer ? buyOnceContainer.getAttribute('data-var-id') : null;
+                                  console.log('Got variant ID from clicked Buy Once container:', variantId);
                                 }
 
                                 // Last fallback: get from form input
                                 if (!variantId) {
                                   variantId = getCurrentVariantId();
+                                  console.log('Got variant ID from form input:', variantId);
                                 }
 
                                 if (!variantId) {
                                   console.error('Could not determine variant ID for one-time purchase');
+                                  alert('Unable to determine product variant. Please try selecting a variant first.');
                                   return;
                                 }
 
                                 // Convert to string to ensure it's a valid variant ID
                                 variantId = String(variantId).trim();
+                                console.log('Final variant ID for one-time purchase:', variantId);
 
                                 const form = section.querySelector('form[action="/cart/add"]');
                                 const qtyInput = form ? form.querySelector('input[name="quantity"]') : null;
@@ -854,18 +872,99 @@
                                   }
 
                                   const result = await res.json();
-                                  console.log('One-time purchase success:', result);
+                                  console.log('One-time purchase API response:', result);
 
-                                  // Verify the result doesn't have a selling_plan
+                                  // Verify the result doesn't have a selling_plan and check variant ID
+                                  let itemKey = null;
+                                  let needsFix = false;
                                   if (result.items && result.items.length > 0) {
                                     const addedItem = result.items[result.items.length - 1];
+                                    itemKey = addedItem.key;
+                                    
+                                    console.log('=== VERIFICATION ===');
+                                    console.log('Variant ID we requested:', variantId);
+                                    console.log('Variant ID that was added:', addedItem.variant_id);
+                                    console.log('Full added item:', addedItem);
+                                    
+                                    if (String(addedItem.variant_id) !== String(variantId)) {
+                                      console.error('❌ ERROR: Wrong variant ID was added!');
+                                      console.error('Expected:', variantId, 'Got:', addedItem.variant_id);
+                                      alert('Warning: A different variant was added to cart. Expected: ' + variantId + ', Got: ' + addedItem.variant_id);
+                                    } else {
+                                      console.log('✓ Variant ID matches');
+                                    }
+                                    
                                     if (addedItem.selling_plan) {
-                                      console.error('ERROR: Item was added with selling_plan despite our request!', addedItem);
-                                      console.error('This suggests Appstle or another script is modifying the cart.');
-                                      // The item was added incorrectly, but we'll still proceed
-                                      // User can manually fix it in the cart if needed
+                                      console.error('❌ ERROR: Item was added with selling_plan despite our request!', addedItem.selling_plan);
+                                      console.error('Attempting to fix by removing selling_plan...');
+                                      needsFix = true;
                                     } else {
                                       console.log('✓ Confirmed: Item added without selling_plan');
+                                    }
+                                    console.log('===================');
+                                  }
+
+                                  // If Appstle added a selling_plan, try to fix it
+                                  if (needsFix && itemKey) {
+                                    try {
+                                      // Fetch current cart to get the exact item
+                                      const cartRes = await fetch('/cart.js');
+                                      if (cartRes.ok) {
+                                        const cart = await cartRes.json();
+                                        const problemItem = cart.items.find(item => item.key === itemKey);
+                                        
+                                        if (problemItem && problemItem.selling_plan) {
+                                          console.log('Found item with selling_plan, attempting to change it...');
+                                          
+                                          // Use cart/change.js to update the item without selling_plan
+                                          const changeRes = await fetch('/cart/change.js', {
+                                            method: 'POST',
+                                            headers: { 
+                                              'Content-Type': 'application/json', 
+                                              'Accept': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                              id: itemKey,
+                                              quantity: problemItem.quantity,
+                                              properties: problemItem.properties || {}
+                                              // Explicitly NOT including selling_plan
+                                            }),
+                                          });
+                                          
+                                          if (changeRes.ok) {
+                                            const changeResult = await changeRes.json();
+                                            console.log('Successfully changed item:', changeResult);
+                                            
+                                            // If that didn't work, try removing and re-adding
+                                            if (changeResult.items && changeResult.items.some(item => item.selling_plan)) {
+                                              console.log('Change didn\'t work, trying remove and re-add...');
+                                              
+                                              // Remove the item
+                                              await fetch('/cart/change.js', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                                                body: JSON.stringify({ id: itemKey, quantity: 0 }),
+                                              });
+                                              
+                                              // Small delay
+                                              await new Promise(resolve => setTimeout(resolve, 200));
+                                              
+                                              // Re-add without selling_plan
+                                              const reAddRes = await fetch('/cart/add.js', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                                                body: JSON.stringify({ id: variantId, quantity: qty }),
+                                              });
+                                              
+                                              if (reAddRes.ok) {
+                                                console.log('Successfully re-added item without selling_plan');
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    } catch (fixErr) {
+                                      console.error('Error trying to fix selling_plan:', fixErr);
                                     }
                                   }
 
