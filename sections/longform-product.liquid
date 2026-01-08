@@ -513,7 +513,21 @@
                                       and sp_alloc.selling_plan.price_adjustments.size > 0
                                     -%}
                                       {%- assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value -%}
-                                      {%- assign subscription_price = variant.price -%}
+                                      {%- comment -%} Get subsequent payment price from Appstle "change discount to" fixed price {%- endcomment -%}
+                                      {%- assign subscription_price = null -%}
+                                      {%- comment -%} Try fixed_price property first (Appstle specific) {%- endcomment -%}
+                                      {%- if sp_alloc.selling_plan.fixed_price != blank -%}
+                                        {%- assign subscription_price = sp_alloc.selling_plan.fixed_price -%}
+                                      {%- comment -%} Try price property on selling plan {%- endcomment -%}
+                                      {%- elsif sp_alloc.selling_plan.price != blank -%}
+                                        {%- assign subscription_price = sp_alloc.selling_plan.price -%}
+                                      {%- comment -%} Try price_adjustments value (fixed amount discount) {%- endcomment -%}
+                                      {%- elsif sp_alloc.selling_plan.price_adjustments[0].value != blank -%}
+                                        {%- assign subscription_price = sp_alloc.selling_plan.price_adjustments[0].value -%}
+                                      {%- comment -%} Fallback to variant price if nothing else works {%- endcomment -%}
+                                      {%- else -%}
+                                        {%- assign subscription_price = variant.price -%}
+                                      {%- endif -%}
                                       {%- comment -%} Try multiple ways to get interval_count from Appstle {%- endcomment -%}
                                       {%- assign interval_count = null -%}
                                       {%- comment -%} Try from recurring_deliveries first {%- endcomment -%}
