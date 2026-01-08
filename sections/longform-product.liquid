@@ -688,14 +688,24 @@
                         {% endif %}
                       {% endfor %}     {% endcomment %}
                       {% if is_subscription_product %}
+  <div class="one_time_puchase buy_once" id="BuyOnceLine-{{ section.id }}">
+    <a href="javascript:void(0)" id="BuyOnceBtn-{{ section.id }}">
+      Buy Once for <span id="BuyOncePrice-{{ section.id }}"></span>
+      {% if block.settings.buy_once_extra_text != blank %}
+        {{ block.settings.buy_once_extra_text }}
+      {% endif %}
+    </a>
+  </div>
 
-                      {% for variant in product.variants %}
-                        <div class="one_time_puchase buy_once {% unless product.selected_or_first_available_variant.id == variant.id %}hidden{% endunless %}" data-var-id="{{ variant.id }}" data-title="{{ variant.title }}">
-                          <a href="javascript:void(0)">Buy Once for {{ variant.price | money }}{% if block.settings.buy_once_extra_text != blank %} {{ block.settings.buy_once_extra_text }}{% endif %}</a>
-                        </div>
-                      {% endfor %}
-
-                      {% endif %}
+  <script>
+    window.__BUY_ONCE_PRICE_MAP__ = window.__BUY_ONCE_PRICE_MAP__ || {};
+    window.__BUY_ONCE_PRICE_MAP__[{{ section.id | json }}] = {
+      {% for v in product.variants %}
+        {{ v.id | json }}: {{ v.price | money | json }}{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    };
+  </script>
+{% endif %}
 {% if block.settings.below_extra_text != block %}
                         <div class="below_atc_text">
                           {{ block.settings.below_extra_text }}
@@ -705,33 +715,94 @@
 
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const section = document.getElementById('MainProduct-{{ section.id }}');
-    if (!section) return;
+(function () {
+  const sectionId = {{ section.id | json }};
+  const priceMap = (window.__BUY_ONCE_PRICE_MAP__ && window.__BUY_ONCE_PRICE_MAP__[sectionId]) || {};
 
-    const form = section.querySelector('form[action="/cart/add"]');
-    const idInput = form?.querySelector('input[name="id"]');
-    const box = section.querySelector('.custom-variant-box');
-    if (!form || !idInput || !box) return;
+  function getRoot() {
+    return document.getElementById('MainProduct-{{ section.id }}') || document;
+  }
 
-    const isSub = box.getAttribute('data-subscription-product') === 'true';
-    if (isSub) return;
+  function getVariantIdInput(root) {
+    return root.querySelector('form[action^="/cart/add"] input[name="id"]') || root.querySelector('input[name="id"]');
+  }
 
-    const cards = Array.from(box.querySelectorAll('.variant-card'));
-    if (!cards.length) return;
+  function ensureSellingPlanInput(root) {
+    const form = root.querySelector('form[action^="/cart/add"]');
+    if (!form) return null;
 
-    let active = cards.find(c => c.classList.contains('active')) || cards[0];
-    active.classList.add('active');
-    idInput.value = active.getAttribute('data-variant-id');
+    let sp = form.querySelector('input[name="selling_plan"]');
+    if (!sp) {
+      sp = document.createElement('input');
+      sp.type = 'hidden';
+      sp.name = 'selling_plan';
+      sp.value = '';
+      form.appendChild(sp);
+    }
+    return sp;
+  }
 
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        cards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        idInput.value = card.getAttribute('data-variant-id');
-      });
+  function syncBuyOncePrice() {
+    const root = getRoot();
+    const idInput = getVariantIdInput(root);
+    const priceEl = document.getElementById('BuyOncePrice-{{ section.id }}');
+    if (!idInput || !priceEl) return;
+
+    const vid = String(idInput.value || '');
+    priceEl.textContent = priceMap[vid] || '';
+  }
+
+  function bindBuyOnceClick() {
+    const root = getRoot();
+    const btn = document.getElementById('BuyOnceBtn-{{ section.id }}');
+    if (!btn) return;
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      // Force one-time by clearing selling_plan
+      const sp = ensureSellingPlanInput(root);
+      if (sp) sp.value = '';
+
+      // Trigger the theme/app's normal Add to Cart behavior
+      const atc =
+        root.querySelector('form[action^="/cart/add"] button[type="submit"][name="add"]') ||
+        root.querySelector('form[action^="/cart/add"] button[type="submit"]') ||
+        root.querySelector('.product-form__submit');
+
+      if (atc) atc.click();
     });
+  }
+
+  function bindObservers() {
+    const root = getRoot();
+    const idInput = getVariantIdInput(root);
+    if (!idInput) return;
+
+    // If an app/theme updates the input attribute value
+    const obs = new MutationObserver(syncBuyOncePrice);
+    obs.observe(idInput, { attributes: true, attributeFilter: ['value'] });
+
+    // If an app/theme updates only the property value, keep a tiny fallback poll
+    let last = idInput.value;
+    setInterval(() => {
+      if (idInput.value !== last) {
+        last = idInput.value;
+        syncBuyOncePrice();
+      }
+    }, 200);
+
+    // After clicks/changes that may update variant, resync
+    root.addEventListener('click', () => setTimeout(syncBuyOncePrice, 0));
+    root.addEventListener('change', () => setTimeout(syncBuyOncePrice, 0));
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    syncBuyOncePrice();
+    bindBuyOnceClick();
+    bindObservers();
   });
+})();
 </script>
                  
                   </product-form>
@@ -2258,9 +2329,8 @@ Please note: We do not offer refunds on pre-orders until the product has been re
         // update the product id by chaning the value of the hidden input field name='id'
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
-        const baseVariantId = {{ product.selected_or_first_available_variant.id | json }};
-
-const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
+        
+        const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
@@ -2277,52 +2347,10 @@ const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = baseVariantId; // Restore this product's base variant
+              // Fallback removed: do not overwrite variantIdInput (Appstle/theme controls variant selection)
               console.log('Restored to default variant ID');
             }
           });
-
-
-        // --- Sync "Buy Once" text so ONLY the selected variant's line is visible ---
-        function syncBuyOnce() {
-          const selectedId = String(variantIdInput.value || '');
-          const rows = document.querySelectorAll('.one_time_puchase[data-var-id]');
-          if (!rows || !rows.length) return;
-
-          rows.forEach(r => r.classList.add('hidden'));
-          if (!selectedId) return;
-
-          const selector = '.one_time_puchase[data-var-id="' + CSS.escape(selectedId) + '"]';
-          const activeRow = document.querySelector(selector);
-          if (activeRow) activeRow.classList.remove('hidden');
-        }
-
-        // Run once now, then keep in sync when Appstle/theme updates the variant id
-        syncBuyOnce();
-
-        if (!form.dataset.buyOnceSyncBound) {
-          form.dataset.buyOnceSyncBound = '1';
-
-          // When any Appstle option changes, re-sync after it updates the hidden variant id
-          purchaseOptions.forEach(option => {
-            const radio = option.querySelector('input[type="radio"]');
-            if (!radio) return;
-            radio.addEventListener('change', () => setTimeout(syncBuyOnce, 0));
-          });
-
-          // Observe programmatic changes to the hidden variant id input
-          const mo = new MutationObserver(() => syncBuyOnce());
-          mo.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
-
-          // Fallback: some scripts set .value (property) without touching the attribute
-          let last = variantIdInput.value;
-          setInterval(() => {
-            if (variantIdInput.value !== last) {
-              last = variantIdInput.value;
-              syncBuyOnce();
-            }
-          }, 250);
-        }
         });
         
         
@@ -2416,9 +2444,8 @@ const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper
         // update the product id by chaning the value of the hidden input field name='id'
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
-        const baseVariantId = {{ product.selected_or_first_available_variant.id | json }};
-
-const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
+        
+        const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
@@ -2435,52 +2462,10 @@ const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = baseVariantId; // Restore this product's base variant
+              // Fallback removed: do not overwrite variantIdInput (Appstle/theme controls variant selection)
               console.log('Restored to default variant ID');
             }
           });
-
-
-        // --- Sync "Buy Once" text so ONLY the selected variant's line is visible ---
-        function syncBuyOnce() {
-          const selectedId = String(variantIdInput.value || '');
-          const rows = document.querySelectorAll('.one_time_puchase[data-var-id]');
-          if (!rows || !rows.length) return;
-
-          rows.forEach(r => r.classList.add('hidden'));
-          if (!selectedId) return;
-
-          const selector = '.one_time_puchase[data-var-id="' + CSS.escape(selectedId) + '"]';
-          const activeRow = document.querySelector(selector);
-          if (activeRow) activeRow.classList.remove('hidden');
-        }
-
-        // Run once now, then keep in sync when Appstle/theme updates the variant id
-        syncBuyOnce();
-
-        if (!form.dataset.buyOnceSyncBound) {
-          form.dataset.buyOnceSyncBound = '1';
-
-          // When any Appstle option changes, re-sync after it updates the hidden variant id
-          purchaseOptions.forEach(option => {
-            const radio = option.querySelector('input[type="radio"]');
-            if (!radio) return;
-            radio.addEventListener('change', () => setTimeout(syncBuyOnce, 0));
-          });
-
-          // Observe programmatic changes to the hidden variant id input
-          const mo = new MutationObserver(() => syncBuyOnce());
-          mo.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
-
-          // Fallback: some scripts set .value (property) without touching the attribute
-          let last = variantIdInput.value;
-          setInterval(() => {
-            if (variantIdInput.value !== last) {
-              last = variantIdInput.value;
-              syncBuyOnce();
-            }
-          }, 250);
-        }
         });        
         
       }
@@ -2575,9 +2560,8 @@ const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper
         // update the product id by chaning the value of the hidden input field name='id'
         const form = document.querySelector('form[action="/cart/add"]');
         const variantIdInput = form.querySelector('input[name="id"]');
-        const baseVariantId = {{ product.selected_or_first_available_variant.id | json }};
-
-const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
+        
+        const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
       
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
@@ -2594,52 +2578,10 @@ const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper
               console.log('Updated variant ID to:', customVariantId);
             } else {
               // Optionally restore default variant ID
-              variantIdInput.value = baseVariantId; // Restore this product's base variant
+              // Fallback removed: do not overwrite variantIdInput (Appstle/theme controls variant selection)
               console.log('Restored to default variant ID');
             }
           });
-
-
-        // --- Sync "Buy Once" text so ONLY the selected variant's line is visible ---
-        function syncBuyOnce() {
-          const selectedId = String(variantIdInput.value || '');
-          const rows = document.querySelectorAll('.one_time_puchase[data-var-id]');
-          if (!rows || !rows.length) return;
-
-          rows.forEach(r => r.classList.add('hidden'));
-          if (!selectedId) return;
-
-          const selector = '.one_time_puchase[data-var-id="' + CSS.escape(selectedId) + '"]';
-          const activeRow = document.querySelector(selector);
-          if (activeRow) activeRow.classList.remove('hidden');
-        }
-
-        // Run once now, then keep in sync when Appstle/theme updates the variant id
-        syncBuyOnce();
-
-        if (!form.dataset.buyOnceSyncBound) {
-          form.dataset.buyOnceSyncBound = '1';
-
-          // When any Appstle option changes, re-sync after it updates the hidden variant id
-          purchaseOptions.forEach(option => {
-            const radio = option.querySelector('input[type="radio"]');
-            if (!radio) return;
-            radio.addEventListener('change', () => setTimeout(syncBuyOnce, 0));
-          });
-
-          // Observe programmatic changes to the hidden variant id input
-          const mo = new MutationObserver(() => syncBuyOnce());
-          mo.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
-
-          // Fallback: some scripts set .value (property) without touching the attribute
-          let last = variantIdInput.value;
-          setInterval(() => {
-            if (variantIdInput.value !== last) {
-              last = variantIdInput.value;
-              syncBuyOnce();
-            }
-          }, 250);
-        }
         });        
         
       }
