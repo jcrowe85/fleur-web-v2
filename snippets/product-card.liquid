@@ -138,7 +138,22 @@
     {% endif %}
 
   {%- assign full_p = all_products[product_card_product.handle] | default: product_card_product -%}
-  {%- assign v = full_p.selected_or_first_available_variant -%}
+  {%- assign primary_variant = full_p.selected_or_first_available_variant -%}
+  
+  {%- comment -%}
+    Priority logic for cart title:
+    1. Primary variant's cart_title_short metafield (if exists) - primary check
+    2. Product metafield custom.cart_title_short - secondary check
+    3. Product title (default) - fallback
+  {%- endcomment -%}
+  {%- liquid
+    assign cart_title = product_card_product.title
+    if primary_variant.metafields.custom.cart_title_short != blank
+      assign cart_title = primary_variant.metafields.custom.cart_title_short
+    elsif product_card_product.metafields.custom.cart_title_short != blank
+      assign cart_title = product_card_product.metafields.custom.cart_title_short
+    endif
+  -%}
 
   <h3 class="card__title" style="font-weight: bold">
     <a
@@ -146,11 +161,7 @@
       href="{{ product_card_product.url | default: '#' }}"
       title="{{ product_card_product.title | escape }}"
     >
-      {%- if v.metafields.custom.card_title_short != blank -%}
-        {{ v.metafields.custom.card_title_short }}
-      {%- else -%}
-        {{ product_card_product.title | escape }}
-      {%- endif -%}
+      {{ cart_title | escape }}
     </a>
 
     {% unless hide_product_reviews %}
