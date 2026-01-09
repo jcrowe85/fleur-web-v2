@@ -142,14 +142,16 @@
   
   {%- comment -%}
     Priority logic for cart title:
-    1. Primary variant's cart_title_short metafield (if exists) - primary check
+    1. Primary variant's card_title_short_product_variant or card_title_short_variant metafield (if exists) - primary check
     2. Product metafield custom.cart_title_short - secondary check
     3. Product title (default) - fallback
   {%- endcomment -%}
   {%- liquid
     assign cart_title = product_card_product.title
-    if primary_variant.metafields.custom.cart_title_short != blank
-      assign cart_title = primary_variant.metafields.custom.cart_title_short
+    if primary_variant.metafields.custom.card_title_short_product_variant != blank
+      assign cart_title = primary_variant.metafields.custom.card_title_short_product_variant
+    elsif primary_variant.metafields.custom.card_title_short_variant != blank
+      assign cart_title = primary_variant.metafields.custom.card_title_short_variant
     elsif product_card_product.metafields.custom.cart_title_short != blank
       assign cart_title = product_card_product.metafields.custom.cart_title_short
     endif
