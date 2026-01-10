@@ -2544,8 +2544,8 @@ align-items: center;
 .custom-variant-box .variant_title_and_discount { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .custom-variant-box .save_val {text-transform:uppercase; background-color: #F6CC6B; font-family: Neue Haas Unica W1G; font-weight: 600; font-size: 11px; line-height: 120%; letter-spacing: -0.1px; text-align: center; padding: 6px 14px; }
 .custom-variant-box .middle_content { display: flex; flex-direction: column; gap: 7px; text-align: left; }
-.custom-variant-box .all_common_text { color: #797575; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; }
-.custom-variant-box .sub_text { font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; }
+.custom-variant-box .sub_text { color: #797575; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; }
+.custom-variant-box .all_common_text { font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; }
 .custom-variant-box .discounted_price { font-family: Neue Haas Unica W1G; font-weight: 700; font-size: 18px; line-height: 120%; letter-spacing: -0.1px; text-align: right; }
 .custom-variant-box .original_price.compare_at_price {text-decoration:line-through; color: #797575; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; text-align: right; margin-top: 7px; }
 .custom-variant-box .variant-card.active .title:after {background-image: url(https://cdn.shopify.com/s/files/1/0683/1256/3891/files/Group_1399.svg?v=1764439293);}
