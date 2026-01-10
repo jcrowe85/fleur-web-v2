@@ -584,7 +584,7 @@
                                       {%- else -%}
                                         {%- assign interval_count = quantity -%}
                                       {%- endif -%}
-                                      First payment {{ first_payment | money }}, then {{ subscription_price | money }} every {{ interval_count }} months
+                                      first payment {{ first_payment | money }}, then {{ subscription_price | money }} every {{ interval_count }} months
                                     {%- else -%}
                                       {% if quantity contains 1 %}
                                         a {{ quantity }}-month supply each month
