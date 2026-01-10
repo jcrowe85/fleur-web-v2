@@ -2544,7 +2544,7 @@ align-items: center;
 .custom-variant-box .variant_title_and_discount { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .custom-variant-box .save_val {text-transform:uppercase; background-color: #F6CC6B; font-family: Neue Haas Unica W1G; font-weight: 600; font-size: 11px; line-height: 120%; letter-spacing: -0.1px; text-align: center; padding: 6px 14px; }
 .custom-variant-box .middle_content { display: flex; flex-direction: column; gap: 7px; text-align: left; }
-.custom-variant-box .sub_text { color: #797575; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 10px; line-height: 120%; letter-spacing: -0.1px; }
+.custom-variant-box .sub_text { color: #797575; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; }
 .custom-variant-box .all_common_text { font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 14px; line-height: 120%; letter-spacing: -0.1px; }
 .custom-variant-box .discounted_price { font-family: Neue Haas Unica W1G; font-weight: 700; font-size: 18px; line-height: 120%; letter-spacing: -0.1px; text-align: right; }
 .custom-variant-box .original_price.compare_at_price {text-decoration:line-through; color: #797575; font-family: Neue Haas Unica W1G; font-weight: 400; font-size: 12px; line-height: 120%; letter-spacing: -0.1px; text-align: right; margin-top: 7px; }
@@ -2592,7 +2592,8 @@ align-items: center;
   .product-section .product-form__submit {font-size:17px; line-height: 1; letter-spacing: 0; padding: 9px 10px !important;}
   .product-section h2.h6.product-about__accordion-title {font-size:16px;}
   .product-section .double_media, .product-section .before_after, .product-section .grid_video_image_slider {grid-template-columns:1fr; gap:8px;}
-  .custom-variant-box .sub_text, .custom-variant-box .all_common_text {font-size:10px;}
+  .custom-variant-box .sub_text, .custom-variant-box .all_common_text {font-size:14px;}
+  .sub_text {font-size:12px;}
   .custom-variant-box .discounted_price {font-size:16px;} 
 
 
