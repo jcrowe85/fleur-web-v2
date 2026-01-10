@@ -363,7 +363,29 @@
     {%- assign is_sub = v.metafields.custom.subscription_product.value -%}
   {%- endif -%}
 
-  {%- assign starting_price = full_p.price_min -%}
+  {%- comment -%}
+    Calculate subscription first month price using the same logic as longform-product.liquid
+    Get first payment from price_adjustments[0] (offer discount price) for Appstle subscriptions
+    For "Starting at" price, we need to find the minimum first payment across all variants
+  {%- endcomment -%}
+  {%- liquid
+    assign starting_price = full_p.price_min
+    if is_sub == true and full_p.selling_plan_groups != empty
+      assign min_first_payment = null
+      for variant in full_p.variants
+        assign sp_alloc = variant.selling_plan_allocations | first
+        if sp_alloc and sp_alloc.selling_plan and sp_alloc.selling_plan.price_adjustments and sp_alloc.selling_plan.price_adjustments.size > 0
+          assign first_payment = sp_alloc.selling_plan.price_adjustments[0].value
+          if min_first_payment == null or first_payment < min_first_payment
+            assign min_first_payment = first_payment
+          endif
+        endif
+      endfor
+      if min_first_payment != null
+        assign starting_price = min_first_payment
+      endif
+    endif
+  -%}
 
   {% if is_sub == true %}
     <p class="card__price card__price--subscription">
