@@ -33,6 +33,7 @@
     "quickview_button_style": "primary",
     "quickview_button_layout": "hover",
     "show_breadcrumbs": false,
+    "open_new_tab": true,
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
@@ -1460,8 +1461,8 @@
   "platform_customizations": {
     "custom_css": [
       ":.main-product-descriptionp {font-size: 16px;}",
-      "#email_01KECJEHRJQ4M5JEAY4V8YR06K {background-color: white !important; border: none !important;}",
-      "#email_01KECJEHRJQ4M5JEAY4V8YR06K:focus {border: none !important; outline: none !important;}"
+      "#email_01KEJRHQATXYEPAMC5ZBEWJ4TW {background-color: white !important; border: none !important;}",
+      "#email_01KEJRHQATXYEPAMC5ZBEWJ4TW:focus {border: none !important; outline: none !important;}"
     ]
   }
 }
