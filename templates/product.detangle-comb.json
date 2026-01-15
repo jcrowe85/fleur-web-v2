@@ -450,6 +450,7 @@
     },
     "people_also_purchased_LjWiAx": {
       "type": "people-also-purchased",
+      "disabled": true,
       "name": "People Also Purchased",
       "settings": {
         "color_scheme_inner": "scheme-d00bb240-3df1-4fe8-93f2-9f1b6539fb4b",
@@ -476,6 +477,26 @@
         "custom_product_link": "",
         "margin_top": "no-indent",
         "margin_bottom": "no-indent"
+      }
+    },
+    "1768505351d41cff9a": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_BCy3wE": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_BCy3wE"
+      ],
+      "settings": {
+        "include_margins": true
       }
     },
     "fleur_community_GzMjMh": {
@@ -658,6 +679,7 @@
     "doctor_recommended_Y8YCeJ",
     "stories_carousel_FBPRze",
     "people_also_purchased_LjWiAx",
+    "1768505351d41cff9a",
     "fleur_community_GzMjMh",
     "product-recommendations",
     "faq_KTzaFn",
