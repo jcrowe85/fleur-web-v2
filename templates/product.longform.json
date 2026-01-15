@@ -472,6 +472,26 @@
         "padding_bottom": "no-indent"
       }
     },
+    "17685053304be0417d": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_HQ7ydd": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_HQ7ydd"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
     "17685052097dad3078": {
       "type": "apps",
       "blocks": {
@@ -722,6 +742,7 @@
     "ingredient_slider_MkYMxc",
     "doctor_recommended_Y8YCeJ",
     "stories_carousel_FBPRze",
+    "17685053304be0417d",
     "17685052097dad3078",
     "17685050428d571b92",
     "people_also_purchased_LjWiAx",
