@@ -672,6 +672,26 @@
         "margin_top": "no-indent",
         "margin_bottom": "m"
       }
+    },
+    "176850482959612245": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_xfL4Gw": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_xfL4Gw"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -685,6 +705,7 @@
     "fleur_community_GzMjMh",
     "product-recommendations",
     "faq_KTzaFn",
-    "collapsible_content_kjfQR4"
+    "collapsible_content_kjfQR4",
+    "176850482959612245"
   ]
 }
