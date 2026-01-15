@@ -133,7 +133,7 @@
         "image_ratio": "square",
         "image_fit": "contain",
         "button_label": "Shop all",
-        "button_link": "shopify://collections",
+        "button_link": "shopify://products/bloom-hair-scalp-serum-longform",
         "button_arrow": true,
         "hide_product_summary": true,
         "hide_product_reviews": true,
