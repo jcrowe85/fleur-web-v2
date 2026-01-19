@@ -1462,7 +1462,8 @@
     "custom_css": [
       ":.main-product-descriptionp {font-size: 16px;}",
       "#email_01KFC31YSH4SCGZHVEQRY0YTSS,#phone_number_01KFC31YV1PN54DDDBAAJ3BC28 {background-color: white !important; border: none !important; color: black !important;}",
-      "#email_01KFC31YSH4SCGZHVEQRY0YTSS:focus,#phone_number_01KFC31YV1PN54DDDBAAJ3BC28:focus {border: none !important; outline: none !important; color: black !important;}"
+      "#email_01KFC31YSH4SCGZHVEQRY0YTSS:focus,#phone_number_01KFC31YV1PN54DDDBAAJ3BC28:focus {border: none !important; outline: none !important; color: black !important;}",
+      ".kl-private-reset-css-Xuajs1 {background: white !important}"
     ]
   }
 }
