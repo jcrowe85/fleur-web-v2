@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "main": {
+      "type": "qr-landing-form",
+      "settings": {
+        "heading": "Claim Your Free Derma Stamp",
+        "subtitle": "<p>Scan your QR code to claim your free derma stamp. Simply fill out the form below and we'll send it your way!</p>",
+        "color_scheme": "background-2",
+        "form_heading": "",
+        "form_desc": "",
+        "button_label": "Claim My Free Derma Stamp",
+        "additional_text": "<p>By submitting this form, you agree to receive marketing communications from Fleur.</p>",
+        "success_message": "Thank you! We've received your information and will be in touch soon.",
+        "margin_top": "m",
+        "margin_bottom": "m"
+      }
+    }
+  },
+  "order": ["main"]
+}

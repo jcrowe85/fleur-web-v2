@@ -1,0 +1,339 @@
+{{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  {% render 'section-margin' %}
+  .qr-landing-hero {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .qr-landing-hero__title {
+    font-size: 3.6rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-hero__title {
+      font-size: 4.8rem;
+      margin-bottom: 2.4rem;
+    }
+  }
+  @media screen and (min-width: 1200px) {
+    .qr-landing-hero__title {
+      font-size: 5.6rem;
+      margin-bottom: 3rem;
+    }
+  }
+  .qr-landing-hero__subtitle {
+    font-size: 1.8rem;
+    line-height: 1.5;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-hero__subtitle {
+      font-size: 2rem;
+    }
+  }
+  .qr-landing-form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+{%- endstyle -%}
+
+<div class="qr-landing">
+  <div class="container qr-landing__wrapper">
+    <div class="qr-landing__container">
+      {% if section.settings.heading != blank or section.settings.subtitle != blank %}
+        <div class="qr-landing-hero">
+          {%- if section.settings.heading != blank -%}
+            <h1 class="qr-landing-hero__title">
+              {{ section.settings.heading }}
+            </h1>
+          {%- else -%}
+            <h1 class="qr-landing-hero__title">Claim Your Free Derma Stamp</h1>
+          {%- endif -%}
+          {% if section.settings.subtitle != blank %}
+            <div class="qr-landing-hero__subtitle">
+              {{ section.settings.subtitle }}
+            </div>
+          {% else %}
+            <div class="qr-landing-hero__subtitle">
+              Scan your QR code to claim your free derma stamp. Simply fill out the form below and we'll send it your way!
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+      <div class="qr-landing-form-wrapper">
+        <div class="contact-form__block color-{{ section.settings.color_scheme }} background">
+          {% if section.settings.form_heading != blank or section.settings.form_desc != blank %}
+            <div class="contact-form__header">
+              {%- if section.settings.form_heading != blank -%}
+                <h2 class="contact-form__title">
+                  {{ section.settings.form_heading }}
+                </h2>
+              {%- endif -%}
+              {% if section.settings.form_desc != blank %}
+                <div class="contact-form__desc richtext__content">
+                  {{ section.settings.form_desc }}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+          
+          {%- form 'contact', id: 'QRContactForm', class: 'qr-landing-form' -%}
+            {%- if form.posted_successfully? -%}
+              <div
+                class="form-status form-status-list form__message"
+                tabindex="-1"
+                autofocus
+              >
+                {% render 'icon-success' %}
+                <p>{{ section.settings.success_message | default: "Thank you! We've received your information and will be in touch soon." }}</p>
+              </div>
+            {%- elsif form.errors -%}
+              <div class="form-status form-status-list form__message form__message--error">
+                {% render 'icon-error' %}
+                <p>{{ 'templates.contact.form.error_heading' | t }}</p>
+                <ul>
+                  {%- for field in form.errors -%}
+                    <li>
+                      {%- if field == 'form' -%}
+                        {{ form.errors.messages[field] }}
+                      {%- else -%}
+                        <a href="#QRContactForm-{{ field }}">
+                          {{ form.errors.translated_fields[field] | capitalize }}
+                          {{ form.errors.messages[field] }}
+                        </a>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+            
+            <input type="hidden" name="contact[tags]" value="QR Code, Free Derma Stamp">
+            
+            <div class="field field__name">
+              <label class="field__label small-font" for="QRContactForm-name">
+                Full Name
+                <span class="form-asterisk">*</span>
+              </label>
+              <input
+                class="field__input"
+                autocomplete="name"
+                type="text"
+                id="QRContactForm-name"
+                name="contact[Full Name]"
+                aria-required="true"
+                value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                placeholder="Enter your full name"
+                required
+              >
+            </div>
+            
+            <div class="field">
+              <label class="field__label small-font" for="QRContactForm-email">
+                Email Address
+                <span class="form-asterisk">*</span>
+              </label>
+              <input
+                autocomplete="email"
+                type="email"
+                id="QRContactForm-email"
+                class="field__input"
+                name="contact[email]"
+                spellcheck="false"
+                autocapitalize="off"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                aria-required="true"
+                {% if form.errors contains 'email' %}
+                  aria-invalid="true"
+                  aria-describedby="QRContactForm-email-error"
+                {% endif %}
+                placeholder="Enter your email address"
+                required
+              >
+              {%- if form.errors contains 'email' -%}
+                <small class="contact__field-error" id="QRContactForm-email-error">
+                  <span class="visually-hidden">
+                    {{- 'accessibility.error' | t -}}
+                  </span>
+                  <span class="form__message">
+                    {{- form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email -}}
+                  </span>
+                </small>
+              {%- endif -%}
+            </div>
+            
+            <div class="field">
+              <label class="field__label small-font" for="QRContactForm-phone">
+                Phone Number
+                <span class="form-asterisk">*</span>
+              </label>
+              <input
+                type="tel"
+                id="QRContactForm-phone"
+                class="field__input"
+                autocomplete="tel"
+                name="contact[Phone Number]"
+                pattern="[0-9\-]*"
+                aria-required="true"
+                value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                placeholder="Enter your phone number"
+                required
+              >
+            </div>
+            
+            <div class="contact__bottom">
+              <button type="submit" class="button button--primary button--primary-size">
+                {{ section.settings.button_label | default: "Claim My Free Derma Stamp" }}
+              </button>
+              
+              {% if section.settings.additional_text != blank %}
+                <div class="contact__add-text">
+                  {{ section.settings.additional_text }}
+                </div>
+              {% endif %}
+            </div>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "QR Landing Form",
+  "tag": "section",
+  "class": "spaced-section contact-section",
+  "enabled_on": {
+    "templates": ["*"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Claim Your Free Derma Stamp",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "default": "<p>Scan your QR code to claim your free derma stamp. Simply fill out the form below and we'll send it your way!</p>",
+      "label": "Subtitle"
+    },
+    {
+      "type": "header",
+      "content": "Form Settings"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "background-2",
+      "label": "t:sections.all.color_scheme.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "form_heading",
+      "label": "Form Heading (optional)"
+    },
+    {
+      "type": "richtext",
+      "id": "form_desc",
+      "label": "Form Description (optional)"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Claim My Free Derma Stamp",
+      "label": "Submit Button Label"
+    },
+    {
+      "type": "richtext",
+      "id": "additional_text",
+      "label": "Additional Text (below button)"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "default": "Thank you! We've received your information and will be in touch soon.",
+      "label": "Success Message"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.section-margin.header.content"
+    },
+    {
+      "type": "select",
+      "id": "margin_top",
+      "options": [
+        {
+          "value": "no-indent",
+          "label": "t:sections.all.section-margin.options__1.label"
+        },
+        {
+          "value": "xs",
+          "label": "t:sections.all.section-margin.options__2.label"
+        },
+        {
+          "value": "s",
+          "label": "t:sections.all.section-margin.options__3.label"
+        },
+        {
+          "value": "m",
+          "label": "t:sections.all.section-margin.options__4.label"
+        },
+        {
+          "value": "l",
+          "label": "t:sections.all.section-margin.options__5.label"
+        }
+      ],
+      "default": "m",
+      "label": "t:sections.all.section-margin.margin_top.label"
+    },
+    {
+      "type": "select",
+      "id": "margin_bottom",
+      "options": [
+        {
+          "value": "no-indent",
+          "label": "t:sections.all.section-margin.options__1.label"
+        },
+        {
+          "value": "xs",
+          "label": "t:sections.all.section-margin.options__2.label"
+        },
+        {
+          "value": "s",
+          "label": "t:sections.all.section-margin.options__3.label"
+        },
+        {
+          "value": "m",
+          "label": "t:sections.all.section-margin.options__4.label"
+        },
+        {
+          "value": "l",
+          "label": "t:sections.all.section-margin.options__5.label"
+        }
+      ],
+      "default": "m",
+      "label": "t:sections.all.section-margin.margin_bottom.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "QR Landing Form"
+    }
+  ]
+}
+{% endschema %}
