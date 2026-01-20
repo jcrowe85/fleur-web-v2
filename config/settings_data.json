@@ -1461,8 +1461,8 @@
   "platform_customizations": {
     "custom_css": [
       ":.main-product-descriptionp {font-size: 16px;}",
-      "#email_01KFC3AC1XKRHK53KW5TDYJ7HC, #phone_number_01KFC3AC370WCAKY6AVGMV6T43 {background-color: white !important; border: none !important; color: black !important;}",
-      "#email_01KFC3AC1XKRHK53KW5TDYJ7HC:focus, phone_number_01KFC3AC370WCAKY6AVGMV6T43:focus {border: none !important; outline: none !important; color: black !important;}",
+      "#email_01KFC3AC1XKRHK53KW5TDYJ7HC {background-color: white !important; border: none !important; color: black !important;}",
+      "#email_01KFC3AC1XKRHK53KW5TDYJ7HC:focus {border: none !important; outline: none !important; color: black !important;}",
       ".go2898863277.go2898863277.go2898863277 :not(a) {color: white;}"
     ]
   }
