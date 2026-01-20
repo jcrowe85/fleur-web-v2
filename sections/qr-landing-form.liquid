@@ -72,6 +72,8 @@
     flex: none !important;
     border-radius: 1.2rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff !important;
+    border: 0.1rem solid rgba(0, 0, 0, 0.06);
   }
   @media screen and (min-width: 750px) {
     .qr-landing .contact-form__block {
@@ -101,14 +103,20 @@
       margin-bottom: 2.8rem !important;
     }
   }
-  /* Enhanced label styling */
+  /* Enhanced label styling - positioned above field, left-aligned */
   .qr-landing-form .field__label {
-    display: block;
+    display: block !important;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
     margin-bottom: 0.8rem !important;
     font-size: 1.4rem;
     font-weight: 600;
     color: rgb(var(--color-foreground));
     letter-spacing: -0.01em;
+    text-align: left;
+    width: 100%;
   }
   @media screen and (min-width: 750px) {
     .qr-landing-form .field__label {
@@ -123,8 +131,8 @@
     font-size: 1.6rem;
     line-height: 1.5;
     border-radius: 1rem !important;
-    border: 0.15rem solid rgb(var(--color-border-input));
-    background-color: rgb(var(--color-background-input));
+    border: 0.15rem solid #e2e5e8;
+    background-color: #faf5f2;
     transition: all 0.3s ease;
     height: auto;
     min-height: 5.2rem;
@@ -138,15 +146,17 @@
   }
   .qr-landing-form .field__input:focus {
     outline: none;
-    border-color: rgb(var(--color-foreground));
-    box-shadow: 0 0 0 3px rgba(var(--color-foreground), 0.1);
+    border-color: #11324B;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(17, 50, 75, 0.1);
     transform: translateY(-1px);
   }
   .qr-landing-form .field__input:hover:not(:focus) {
-    border-color: rgba(var(--color-border-input-hover), 0.8);
+    border-color: #d9d9d9;
+    background-color: #faf6f4;
   }
   .qr-landing-form .field__input::placeholder {
-    color: rgba(var(--color-foreground), 0.4);
+    color: rgba(14, 40, 60, 0.4);
     opacity: 1;
   }
   /* Submit button styling */
@@ -230,7 +240,7 @@
               {{ section.settings.heading }}
             </h1>
           {%- else -%}
-            <h1 class="qr-landing-hero__title">Claim Your Free Derma Stamp</h1>
+            <h1 class="qr-landing-hero__title">Free Derma Stamp</h1>
           {%- endif -%}
           {% if section.settings.subtitle != blank %}
             <div class="qr-landing-hero__subtitle">
@@ -238,7 +248,7 @@
             </div>
           {% else %}
             <div class="qr-landing-hero__subtitle">
-              Scan your QR code to claim your free derma stamp. Simply fill out the form below and we'll send it your way!
+              Scan QR code. Fill out form below.
             </div>
           {% endif %}
         </div>
@@ -269,7 +279,7 @@
                 autofocus
               >
                 {% render 'icon-success' %}
-                <p>{{ section.settings.success_message | default: "Thank you! We've received your information and will be in touch soon." }}</p>
+                <p>{{ section.settings.success_message | default: "Thank you! We'll be in touch soon." }}</p>
               </div>
             {%- elsif form.errors -%}
               <div class="form-status form-status-list form__message form__message--error">
@@ -368,7 +378,7 @@
             
             <div class="contact__bottom">
               <button type="submit" class="button button--primary button--primary-size">
-                {{ section.settings.button_label | default: "Claim My Free Derma Stamp" }}
+                {{ section.settings.button_label | default: "Claim Free Stamp" }}
               </button>
               
               {% if section.settings.additional_text != blank %}
@@ -400,13 +410,13 @@
     {
       "type": "inline_richtext",
       "id": "heading",
-      "default": "Claim Your Free Derma Stamp",
+      "default": "Free Derma Stamp",
       "label": "Heading"
     },
     {
       "type": "richtext",
       "id": "subtitle",
-      "default": "<p>Scan your QR code to claim your free derma stamp. Simply fill out the form below and we'll send it your way!</p>",
+      "default": "<p>Scan QR code. Fill out form below.</p>",
       "label": "Subtitle"
     },
     {
@@ -416,7 +426,7 @@
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "default": "background-2",
+      "default": "background-1",
       "label": "t:sections.all.color_scheme.label"
     },
     {
@@ -432,7 +442,7 @@
     {
       "type": "text",
       "id": "button_label",
-      "default": "Claim My Free Derma Stamp",
+      "default": "Claim Free Stamp",
       "label": "Submit Button Label"
     },
     {
@@ -443,7 +453,7 @@
     {
       "type": "text",
       "id": "success_message",
-      "default": "Thank you! We've received your information and will be in touch soon.",
+      "default": "Thank you! We'll be in touch soon.",
       "label": "Success Message"
     },
     {
