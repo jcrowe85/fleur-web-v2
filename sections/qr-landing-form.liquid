@@ -70,10 +70,13 @@
     padding: 2.4rem !important;
     max-width: 100% !important;
     flex: none !important;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
   @media screen and (min-width: 750px) {
     .qr-landing .contact-form__block {
       padding: 3.2rem !important;
+      border-radius: 1.6rem;
     }
   }
   @media screen and (min-width: 1200px) {
@@ -81,7 +84,139 @@
       padding: 4rem !important;
       max-width: 600px !important;
       margin: 0 auto !important;
+      border-radius: 2rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     }
+  }
+  /* Modern form field spacing */
+  .qr-landing-form .field {
+    margin-bottom: 2.4rem !important;
+    position: relative;
+  }
+  .qr-landing-form .field:last-of-type {
+    margin-bottom: 0;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-form .field {
+      margin-bottom: 2.8rem !important;
+    }
+  }
+  /* Enhanced label styling */
+  .qr-landing-form .field__label {
+    display: block;
+    margin-bottom: 0.8rem !important;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: rgb(var(--color-foreground));
+    letter-spacing: -0.01em;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-form .field__label {
+      margin-bottom: 1rem !important;
+      font-size: 1.5rem;
+    }
+  }
+  /* Modern input styling */
+  .qr-landing-form .field__input {
+    width: 100%;
+    padding: 1.6rem 2rem !important;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    border-radius: 1rem !important;
+    border: 0.15rem solid rgb(var(--color-border-input));
+    background-color: rgb(var(--color-background-input));
+    transition: all 0.3s ease;
+    height: auto;
+    min-height: 5.2rem;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-form .field__input {
+      padding: 1.8rem 2.2rem !important;
+      font-size: 1.6rem;
+      min-height: 5.6rem;
+    }
+  }
+  .qr-landing-form .field__input:focus {
+    outline: none;
+    border-color: rgb(var(--color-foreground));
+    box-shadow: 0 0 0 3px rgba(var(--color-foreground), 0.1);
+    transform: translateY(-1px);
+  }
+  .qr-landing-form .field__input:hover:not(:focus) {
+    border-color: rgba(var(--color-border-input-hover), 0.8);
+  }
+  .qr-landing-form .field__input::placeholder {
+    color: rgba(var(--color-foreground), 0.4);
+    opacity: 1;
+  }
+  /* Submit button styling */
+  .qr-landing-form .contact__bottom {
+    margin-top: 3.2rem !important;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-form .contact__bottom {
+      margin-top: 3.6rem !important;
+    }
+  }
+  .qr-landing-form .button--primary {
+    width: 100%;
+    padding: 1.8rem 3rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    text-transform: none;
+    min-height: 5.6rem;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-form .button--primary {
+      padding: 2rem 3.2rem;
+      font-size: 1.7rem;
+      min-height: 6rem;
+    }
+  }
+  .qr-landing-form .button--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(var(--color-button), 0.3);
+  }
+  .qr-landing-form .button--primary:active {
+    transform: translateY(0);
+  }
+  /* Form asterisk styling */
+  .qr-landing-form .form-asterisk {
+    color: rgb(217, 76, 76);
+    margin-left: 0.4rem;
+    font-weight: 600;
+  }
+  /* Additional text spacing */
+  .qr-landing-form .contact__add-text {
+    margin-top: 2rem !important;
+    text-align: center;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    opacity: 0.7;
+  }
+  @media screen and (min-width: 750px) {
+    .qr-landing-form .contact__add-text {
+      margin-top: 2.4rem !important;
+      font-size: 1.4rem;
+    }
+  }
+  /* Error message styling */
+  .qr-landing-form .contact__field-error {
+    margin-top: 0.8rem;
+    display: block;
+  }
+  /* Success/error status messages */
+  .qr-landing-form .form-status {
+    padding: 1.6rem 2rem;
+    border-radius: 1rem;
+    margin-bottom: 2.4rem;
+  }
+  .qr-landing-form .form-status.form__message--error {
+    background-color: rgba(217, 76, 76, 0.1);
+    border: 0.1rem solid rgba(217, 76, 76, 0.3);
   }
 {%- endstyle -%}
 
