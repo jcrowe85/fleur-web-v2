@@ -1461,8 +1461,8 @@
   "platform_customizations": {
     "custom_css": [
       ":.main-product-descriptionp {font-size: 16px;}",
-      "#email_01KFEDTJJB1Z8E2J1CPJP25BG8 {background-color: white !important; border: none !important; color: black !important;}",
-      "#email_01KFEDTJJB1Z8E2J1CPJP25BG8:focus {border: none !important; outline: none !important; color: black !important;}"
+      "#email_01KFC3AC1XKRHK53KW5TDYJ7HC {background-color: white !important; border: none !important; color: black !important;}",
+      "#email_01KFC3AC1XKRHK53KW5TDYJ7HC:focus {border: none !important; outline: none !important; color: black !important;}"
     ]
   }
 }
