@@ -1459,6 +1459,8 @@
     }
   },
   "platform_customizations": {
-    "custom_css": []
+    "custom_css": [
+      ":.main-product-descriptionp {font-size: 16px;}"
+    ]
   }
 }
