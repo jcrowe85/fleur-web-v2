@@ -316,18 +316,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 			  const affiliateClickId = getCookie('affiliate_click_id');
 			  const affiliateId = getCookie('affiliate_id');
 			
-			  if (affiliateClickId) {
-				// Set cart attribute (available in order webhook)
+			  // Check for internal traffic markers in URL
+			  const urlParams = new URLSearchParams(window.location.search);
+			  const refParam = urlParams.get('ref');
+			  const sourceParam = urlParams.get('source');
+			
+			  // Set cart attributes
+			  const attributes = {};
+			  
+			  if (affiliateClickId && refParam !== 'internal' && refParam !== 'direct') {
+				// Only set affiliate attributes if NOT internal traffic
+				attributes['affiliate_click_id'] = affiliateClickId;
+				attributes['affiliate_id'] = affiliateId || '';
+			  }
+			  
+			  if (refParam === 'internal' || refParam === 'direct') {
+				// Mark as internal traffic
+				attributes['ref'] = refParam;
+				if (sourceParam) {
+				  attributes['source'] = sourceParam;
+				}
+			  }
+			
+			  // Update cart with attributes (if any)
+			  if (Object.keys(attributes).length > 0) {
 				fetch('/cart/update.js', {
 				  method: 'POST',
 				  headers: { 'Content-Type': 'application/json' },
-				  body: JSON.stringify({
-					attributes: {
-					  'affiliate_click_id': affiliateClickId,
-					  'affiliate_id': affiliateId || ''
-					}
-				  })
-				}).catch(err => console.error('Affiliate tracking error:', err));
+				  body: JSON.stringify({ attributes })
+				}).catch(err => console.error('Tracking error:', err));
 			  }
 			})();
 			</script>		
