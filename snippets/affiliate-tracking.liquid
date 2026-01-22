@@ -1,0 +1,148 @@
+{% comment %}
+  Affiliate Tracking Script for Shopify (Refersion-style)
+  This script detects ?ref=affiliateNumber parameter and tracks affiliate clicks
+  
+  Installation:
+  1. Go to Shopify Admin → Online Store → Themes → Actions → Edit code
+  2. Navigate to: Snippets → Create new file: "affiliate-tracking"
+  3. Paste this code
+  4. In theme.liquid, add: {% render 'affiliate-tracking' %}
+  
+  This script:
+  - Detects ?ref=30483 parameter on any page
+  - Calls tracking API to record click
+  - Sets cookies for 30-day tracking
+  - Passes affiliate data to cart attributes for checkout
+{% endcomment %}
+
+<script>
+    (function() {
+      // Configuration - Update this with your tracking API URL
+      const TRACKING_API_URL = 'https://your-app-domain.com/api/track'; // TODO: Update with your app URL
+      const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
+      
+      // Function to get cookie value
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+    
+      // Function to set cookie
+      function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+      }
+    
+      // Function to get URL parameter
+      function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+    
+      // Check for ?ref= parameter (Refersion-style tracking)
+      const refParam = getUrlParameter('ref');
+      
+      if (refParam) {
+        // Found ?ref= parameter - track this click
+        const affiliateNumber = refParam;
+        
+        // Call tracking API to record click
+        fetch(`${TRACKING_API_URL}?ref=${affiliateNumber}&shop=${SHOP_ID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.clickId && data.affiliateId) {
+            // Set tracking cookies (30 days)
+            setCookie('affiliate_click_id', data.clickId, 30);
+            setCookie('affiliate_id', data.affiliateId, 30);
+            
+            // Store in sessionStorage for checkout
+            sessionStorage.setItem('affiliate_click_id', data.clickId);
+            sessionStorage.setItem('affiliate_id', data.affiliateId);
+            
+            console.log('Affiliate tracking initialized:', {
+              affiliateNumber: data.affiliateNumber,
+              clickId: data.clickId
+            });
+          }
+        })
+        .catch(err => {
+          console.error('Error tracking affiliate click:', err);
+        });
+      }
+    
+      // Get existing affiliate tracking cookies (from previous visit or path-based link)
+      const affiliateClickId = getCookie('affiliate_click_id');
+      const affiliateId = getCookie('affiliate_id');
+    
+      // If we have affiliate tracking data, ensure it's stored
+      if (affiliateClickId || affiliateId) {
+        // Store in sessionStorage for checkout
+        if (affiliateClickId) {
+          sessionStorage.setItem('affiliate_click_id', affiliateClickId);
+        }
+        if (affiliateId) {
+          sessionStorage.setItem('affiliate_id', affiliateId);
+        }
+      }
+    
+      // For Shopify checkout, pass affiliate data as cart attributes
+      // This ensures tracking works through checkout
+      function updateCartAttributes() {
+        const storedClickId = sessionStorage.getItem('affiliate_click_id');
+        const storedAffiliateId = sessionStorage.getItem('affiliate_id');
+        
+        if (storedClickId && typeof Shopify !== 'undefined') {
+          // Update cart attributes (available in order webhook)
+          fetch('/cart/update.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              attributes: {
+                'affiliate_click_id': storedClickId,
+                'affiliate_id': storedAffiliateId || ''
+              }
+            })
+          }).catch(err => console.error('Error setting cart attributes:', err));
+        }
+      }
+    
+      // Update cart attributes when cart is accessed
+      if (typeof Shopify !== 'undefined') {
+        // Update on page load if cart exists
+        updateCartAttributes();
+        
+        // Also update when cart drawer opens (common Shopify pattern)
+        document.addEventListener('cart:updated', updateCartAttributes);
+      }
+    
+      // Check for internal traffic marker (?ref=internal)
+      const refValue = getUrlParameter('ref');
+      if (refValue === 'internal' || refValue === 'direct') {
+        // Set cart attribute to mark as internal traffic
+        if (typeof Shopify !== 'undefined') {
+          fetch('/cart/update.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              attributes: {
+                'ref': 'internal'
+              }
+            })
+          }).catch(err => console.error('Error setting internal traffic marker:', err));
+        }
+      }
+    })();
+    </script>
+    
