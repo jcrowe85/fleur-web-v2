@@ -23,7 +23,7 @@
       // 'https://ffa92a699509.ngrok-free.app/api/track'
       // NOT: 'https://https://...' (no double https://)
       // NOT: 'https://.../api/track/' (no trailing slash)
-      const TRACKING_API_URL = ' https://always-branches-older-nikon.trycloudflare.com/api/track'; // TODO: Update with your app URL
+      const TRACKING_API_URL = "https://avi-jumping-crm-nevertheless.trycloudflare.com/api/track"; // TODO: Update with your app URL
       const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
       
       // Normalize API URL (remove any accidental double https://)
@@ -37,11 +37,30 @@
         return null;
       }
     
-      // Function to set cookie
+      // Function to set cookie with Secure flag on HTTPS
       function setCookie(name, value, days) {
         const expires = new Date();
         expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+        const secureFlag = window.location.protocol === 'https:' ? ';Secure' : '';
+        document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax${secureFlag}`;
+      }
+    
+      // Function to set localStorage (durable fallback)
+      function setLocalStorage(name, value) {
+        try {
+          localStorage.setItem(name, value);
+        } catch (e) {
+          console.warn('localStorage not available:', e);
+        }
+      }
+    
+      // Function to get localStorage
+      function getLocalStorage(name) {
+        try {
+          return localStorage.getItem(name);
+        } catch (e) {
+          return null;
+        }
       }
     
       // Function to get URL parameter
@@ -73,12 +92,22 @@
         console.log('Affiliate tracking: Detected ref parameter:', affiliateNumber);
         console.log('Calling tracking API:', `${apiUrl}?ref=${affiliateNumber}&shop=${SHOP_ID}`);
         
-        // Call tracking API to record click
-        fetch(`${apiUrl}?ref=${affiliateNumber}&shop=${SHOP_ID}`, {
-          method: 'GET',
+        // Call tracking API to record click (POST for better deduplication)
+        const trackingData = {
+          ref: affiliateNumber,
+          shop: SHOP_ID,
+          landing_url: window.location.href,
+          referrer: document.referrer || '',
+          user_agent_hint: navigator.userAgent.substring(0, 100), // First 100 chars for bot detection
+          timestamp: Date.now(),
+        };
+    
+        fetch(apiUrl, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify(trackingData),
         })
         .then(response => {
           console.log('Tracking API response status:', response.status);
@@ -90,13 +119,17 @@
         .then(data => {
           console.log('Tracking API response data:', data);
           if (data.success && data.clickId && data.affiliateId) {
-            // Set tracking cookies (30 days)
+            // Set tracking cookies (30 days) with Secure flag on HTTPS
             setCookie('affiliate_click_id', data.clickId, 30);
             setCookie('affiliate_id', data.affiliateId, 30);
             
             // Store in sessionStorage for checkout
             sessionStorage.setItem('affiliate_click_id', data.clickId);
             sessionStorage.setItem('affiliate_id', data.affiliateId);
+            
+            // Store in localStorage as durable fallback (survives cookie clears)
+            setLocalStorage('affiliate_click_id', data.clickId);
+            setLocalStorage('affiliate_id', data.affiliateId);
             
             console.log('✅ Affiliate tracking initialized successfully:', {
               affiliateNumber: data.affiliateNumber,
@@ -131,17 +164,38 @@
       }
     
       // Get existing affiliate tracking cookies (from previous visit or path-based link)
-      const affiliateClickId = getCookie('affiliate_click_id');
-      const affiliateId = getCookie('affiliate_id');
+      let affiliateClickId = getCookie('affiliate_click_id');
+      let affiliateId = getCookie('affiliate_id');
     
-      // If we have affiliate tracking data, ensure it's stored
+      // ATTRIBUTION POLICY: Restore from localStorage if cookies missing (cookie caps/clears)
+      // This ensures tracking persists even if cookies are cleared
+      if (!affiliateClickId) {
+        const storedClickId = getLocalStorage('affiliate_click_id');
+        if (storedClickId) {
+          console.log('Restoring affiliate_click_id from localStorage (cookie was cleared)');
+          affiliateClickId = storedClickId;
+          setCookie('affiliate_click_id', storedClickId, 30); // Re-set cookie
+        }
+      }
+      if (!affiliateId) {
+        const storedAffiliateId = getLocalStorage('affiliate_id');
+        if (storedAffiliateId) {
+          console.log('Restoring affiliate_id from localStorage (cookie was cleared)');
+          affiliateId = storedAffiliateId;
+          setCookie('affiliate_id', storedAffiliateId, 30); // Re-set cookie
+        }
+      }
+    
+      // If we have affiliate tracking data, ensure it's stored in all storage types
       if (affiliateClickId || affiliateId) {
         // Store in sessionStorage for checkout
         if (affiliateClickId) {
           sessionStorage.setItem('affiliate_click_id', affiliateClickId);
+          setLocalStorage('affiliate_click_id', affiliateClickId);
         }
         if (affiliateId) {
           sessionStorage.setItem('affiliate_id', affiliateId);
+          setLocalStorage('affiliate_id', affiliateId);
         }
       }
     
