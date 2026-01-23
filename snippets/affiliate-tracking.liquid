@@ -23,7 +23,7 @@
       // 'https://ffa92a699509.ngrok-free.app/api/track'
       // NOT: 'https://https://...' (no double https://)
       // NOT: 'https://.../api/track/' (no trailing slash)
-      const TRACKING_API_URL = 'https://always-branches-older-nikon.trycloudflare.com/api/track'; // TODO: Update with your app URL
+      const TRACKING_API_URL = 'https://your-app-domain.com/api/track'; // TODO: Update with your app URL
       const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
       
       // Normalize API URL (remove any accidental double https://)
@@ -147,41 +147,62 @@
     
       // For Shopify checkout, pass affiliate data as cart attributes
       // This ensures tracking works through checkout
+      let cartUpdateInProgress = false;
+      let cartUpdateTimeout = null;
+      let lastCartAttributes = null;
+    
       function updateCartAttributes() {
-        const storedClickId = sessionStorage.getItem('affiliate_click_id');
-        const storedAffiliateId = sessionStorage.getItem('affiliate_id');
-        
-        // Check for internal traffic marker in URL
-        const urlRefValue = getUrlParameter('ref');
-        const isInternalTraffic = (urlRefValue === 'internal' || urlRefValue === 'direct');
-    
-        if (!storedClickId && !isInternalTraffic) {
-          console.log('No affiliate tracking data to set in cart attributes');
+        // Debounce: prevent multiple simultaneous calls
+        if (cartUpdateInProgress) {
+          console.log('Cart update already in progress, skipping...');
           return;
         }
     
-        if (typeof Shopify === 'undefined') {
-          console.log('Shopify object not available, skipping cart attribute update');
-          return;
+        // Clear any pending timeout
+        if (cartUpdateTimeout) {
+          clearTimeout(cartUpdateTimeout);
         }
     
-        const attributes = {};
+        // Debounce: wait 500ms before executing
+        cartUpdateTimeout = setTimeout(() => {
+          const storedClickId = sessionStorage.getItem('affiliate_click_id');
+          const storedAffiliateId = sessionStorage.getItem('affiliate_id');
+          
+          // Check for internal traffic marker in URL
+          const urlRefValue = getUrlParameter('ref');
+          const isInternalTraffic = (urlRefValue === 'internal' || urlRefValue === 'direct');
     
-        if (storedClickId && !isInternalTraffic) {
-          attributes['affiliate_click_id'] = storedClickId;
-          attributes['affiliate_id'] = storedAffiliateId || '';
-          console.log('Setting cart attributes for affiliate tracking:', {
-            affiliate_click_id: storedClickId,
-            affiliate_id: storedAffiliateId
-          });
-        }
-        
-        if (isInternalTraffic) {
-          attributes['ref'] = urlRefValue;
-          console.log('Setting cart attribute for internal traffic:', urlRefValue);
-        }
+          if (!storedClickId && !isInternalTraffic) {
+            return; // No data to set, skip silently
+          }
     
-        if (Object.keys(attributes).length > 0) {
+          if (typeof Shopify === 'undefined') {
+            return; // Shopify not available, skip silently
+          }
+    
+          const attributes = {};
+    
+          if (storedClickId && !isInternalTraffic) {
+            attributes['affiliate_click_id'] = storedClickId;
+            attributes['affiliate_id'] = storedAffiliateId || '';
+          }
+          
+          if (isInternalTraffic) {
+            attributes['ref'] = urlRefValue;
+          }
+    
+          // Skip if attributes haven't changed
+          const attributesKey = JSON.stringify(attributes);
+          if (lastCartAttributes === attributesKey) {
+            return; // Already set, no need to update again
+          }
+    
+          if (Object.keys(attributes).length === 0) {
+            return; // Nothing to set
+          }
+    
+          cartUpdateInProgress = true;
+    
           // Update cart attributes (available in order webhook)
           fetch('/cart/update.js', {
             method: 'POST',
@@ -190,14 +211,33 @@
             },
             body: JSON.stringify({ attributes })
           })
-          .then(response => response.json())
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else if (response.status === 409) {
+              // 409 Conflict - cart is locked, but that's okay, attributes might already be set
+              console.log('Cart update conflict (409) - attributes may already be set');
+              return null; // Don't treat as error
+            } else {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+          })
           .then(data => {
-            console.log('✅ Cart attributes updated successfully:', attributes);
+            if (data) {
+              lastCartAttributes = attributesKey; // Remember what we set
+              console.log('✅ Cart attributes updated:', attributes);
+            }
           })
           .catch(err => {
-            console.error('❌ Error setting cart attributes:', err);
+            // Only log actual errors, not 409 conflicts
+            if (!err.message || !err.message.includes('409')) {
+              console.error('❌ Error setting cart attributes:', err);
+            }
+          })
+          .finally(() => {
+            cartUpdateInProgress = false;
           });
-        }
+        }, 500); // 500ms debounce
       }
     
       // Update cart attributes when cart is accessed or updated
@@ -220,27 +260,13 @@
           if (form && (form.action && form.action.includes('/cart/add') || 
                        form.classList.contains('product-form') ||
                        form.querySelector('[name="add"]'))) {
-            // Delay slightly to ensure cart is updated
-            setTimeout(updateCartAttributes, 500);
+            // Delay to ensure cart is updated
+            setTimeout(updateCartAttributes, 1000);
           }
         });
         
-        // Also update when items are added via AJAX (listen for fetch/XHR)
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-          const url = args[0];
-          if (typeof url === 'string' && (url.includes('/cart/add') || url.includes('/cart/update'))) {
-            return originalFetch.apply(this, args).then(response => {
-              // Update cart attributes after cart is updated
-              setTimeout(updateCartAttributes, 300);
-              return response;
-            });
-          }
-          return originalFetch.apply(this, args);
-        };
-        
-        // Update periodically to ensure attributes are set (fallback)
-        setInterval(updateCartAttributes, 5000); // Every 5 seconds as fallback
+        // Update periodically to ensure attributes are set (fallback, but less frequently)
+        setInterval(updateCartAttributes, 10000); // Every 10 seconds as fallback
       }
     })();
     </script>
