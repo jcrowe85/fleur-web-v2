@@ -1,5 +1,5 @@
 {% comment %}
-  Affiliate Tracking Script for Shopify (Refersion-style)
+  Affiliate Tracking Script for Shopify
   This script detects ?ref=affiliateNumber parameter and tracks affiliate clicks
   
   Installation:
@@ -9,7 +9,8 @@
   4. In theme.liquid, add: {% render 'affiliate-tracking' %}
   
   This script:
-  - Detects ?ref=30483 parameter on any page
+  - Detects ?ref=30483 parameter on any page (affiliate number)
+  - Detects ?ref=internal or ?ref=direct (internal traffic - no tracking)
   - Calls tracking API to record click
   - Sets cookies for 30-day tracking
   - Passes affiliate data to cart attributes for checkout
@@ -18,8 +19,15 @@
 <script>
     (function() {
       // Configuration - Update this with your tracking API URL
+      // IMPORTANT: Use the full URL WITHOUT trailing slash, e.g.:
+      // 'https://ffa92a699509.ngrok-free.app/api/track'
+      // NOT: 'https://https://...' (no double https://)
+      // NOT: 'https://.../api/track/' (no trailing slash)
       const TRACKING_API_URL = 'https://always-branches-older-nikon.trycloudflare.com/api/track'; // TODO: Update with your app URL
       const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
+      
+      // Normalize API URL (remove any accidental double https://)
+      const normalizedApiUrl = TRACKING_API_URL.replace(/^https?:\/\/https?:\/\//, 'https://').replace(/\/+$/, '');
       
       // Function to get cookie value
       function getCookie(name) {
@@ -42,22 +50,45 @@
         return urlParams.get(name);
       }
     
-      // Check for ?ref= parameter (Refersion-style tracking)
+      // Check for ?ref= parameter (affiliate tracking)
       const refParam = getUrlParameter('ref');
       
-      if (refParam) {
-        // Found ?ref= parameter - track this click
+      // Check if this is internal traffic first (ref=internal or ref=direct)
+      if (refParam === 'internal' || refParam === 'direct') {
+        console.log('Internal traffic detected (ref=' + refParam + ') - skipping affiliate tracking');
+      } else if (refParam) {
+        // Found ?ref= parameter with affiliate number - track this click
         const affiliateNumber = refParam;
         
+        // Validate TRACKING_API_URL is set
+        if (!TRACKING_API_URL || TRACKING_API_URL.includes('your-app-domain.com')) {
+          console.error('Affiliate Tracking Error: TRACKING_API_URL is not configured. Please update the script with your app URL.');
+          console.error('Current TRACKING_API_URL:', TRACKING_API_URL);
+          return; // Don't proceed if API URL is not configured
+        }
+        
+        // Normalize API URL (fix double https:// or other issues)
+        const apiUrl = normalizedApiUrl || TRACKING_API_URL.replace(/^https?:\/\/https?:\/\//, 'https://').replace(/\/+$/, '');
+        
+        console.log('Affiliate tracking: Detected ref parameter:', affiliateNumber);
+        console.log('Calling tracking API:', `${apiUrl}?ref=${affiliateNumber}&shop=${SHOP_ID}`);
+        
         // Call tracking API to record click
-        fetch(`${TRACKING_API_URL}?ref=${affiliateNumber}&shop=${SHOP_ID}`, {
+        fetch(`${apiUrl}?ref=${affiliateNumber}&shop=${SHOP_ID}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         })
-        .then(response => response.json())
+        .then(response => {
+          console.log('Tracking API response status:', response.status);
+          if (!response.ok) {
+            throw new Error(`API returned ${response.status}: ${response.statusText}`);
+          }
+          return response.json();
+        })
         .then(data => {
+          console.log('Tracking API response data:', data);
           if (data.success && data.clickId && data.affiliateId) {
             // Set tracking cookies (30 days)
             setCookie('affiliate_click_id', data.clickId, 30);
@@ -67,15 +98,36 @@
             sessionStorage.setItem('affiliate_click_id', data.clickId);
             sessionStorage.setItem('affiliate_id', data.affiliateId);
             
-            console.log('Affiliate tracking initialized:', {
+            console.log('✅ Affiliate tracking initialized successfully:', {
               affiliateNumber: data.affiliateNumber,
-              clickId: data.clickId
+              clickId: data.clickId,
+              affiliateId: data.affiliateId
             });
+            console.log('✅ Cookies set: affiliate_click_id, affiliate_id');
+          } else {
+            console.error('❌ Tracking API response missing required data:', data);
+            console.error('Expected: success=true, clickId, affiliateId');
           }
         })
         .catch(err => {
-          console.error('Error tracking affiliate click:', err);
+          console.error('❌ Error tracking affiliate click:', err);
+          console.error('Error details:', {
+            message: err.message,
+            stack: err.stack,
+            apiUrl: TRACKING_API_URL
+          });
         });
+      } else {
+        // No ref parameter - check if we have existing cookies
+        const existingClickId = getCookie('affiliate_click_id');
+        if (existingClickId) {
+          console.log('No ref parameter, but existing tracking cookies found:', {
+            affiliate_click_id: existingClickId,
+            affiliate_id: getCookie('affiliate_id')
+          });
+        } else {
+          console.log('No ref parameter and no existing cookies - normal visit (not from affiliate link)');
+        }
       }
     
       // Get existing affiliate tracking cookies (from previous visit or path-based link)
@@ -99,49 +151,96 @@
         const storedClickId = sessionStorage.getItem('affiliate_click_id');
         const storedAffiliateId = sessionStorage.getItem('affiliate_id');
         
-        if (storedClickId && typeof Shopify !== 'undefined') {
+        // Check for internal traffic marker in URL
+        const urlRefValue = getUrlParameter('ref');
+        const isInternalTraffic = (urlRefValue === 'internal' || urlRefValue === 'direct');
+    
+        if (!storedClickId && !isInternalTraffic) {
+          console.log('No affiliate tracking data to set in cart attributes');
+          return;
+        }
+    
+        if (typeof Shopify === 'undefined') {
+          console.log('Shopify object not available, skipping cart attribute update');
+          return;
+        }
+    
+        const attributes = {};
+    
+        if (storedClickId && !isInternalTraffic) {
+          attributes['affiliate_click_id'] = storedClickId;
+          attributes['affiliate_id'] = storedAffiliateId || '';
+          console.log('Setting cart attributes for affiliate tracking:', {
+            affiliate_click_id: storedClickId,
+            affiliate_id: storedAffiliateId
+          });
+        }
+        
+        if (isInternalTraffic) {
+          attributes['ref'] = urlRefValue;
+          console.log('Setting cart attribute for internal traffic:', urlRefValue);
+        }
+    
+        if (Object.keys(attributes).length > 0) {
           // Update cart attributes (available in order webhook)
           fetch('/cart/update.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              attributes: {
-                'affiliate_click_id': storedClickId,
-                'affiliate_id': storedAffiliateId || ''
-              }
-            })
-          }).catch(err => console.error('Error setting cart attributes:', err));
+            body: JSON.stringify({ attributes })
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('✅ Cart attributes updated successfully:', attributes);
+          })
+          .catch(err => {
+            console.error('❌ Error setting cart attributes:', err);
+          });
         }
       }
     
-      // Update cart attributes when cart is accessed
+      // Update cart attributes when cart is accessed or updated
       if (typeof Shopify !== 'undefined') {
         // Update on page load if cart exists
         updateCartAttributes();
         
-        // Also update when cart drawer opens (common Shopify pattern)
+        // Listen for various cart update events (different themes use different events)
         document.addEventListener('cart:updated', updateCartAttributes);
-      }
-    
-      // Check for internal traffic marker (?ref=internal)
-      const refValue = getUrlParameter('ref');
-      if (refValue === 'internal' || refValue === 'direct') {
-        // Set cart attribute to mark as internal traffic
-        if (typeof Shopify !== 'undefined') {
-          fetch('/cart/update.js', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              attributes: {
-                'ref': 'internal'
-              }
-            })
-          }).catch(err => console.error('Error setting internal traffic marker:', err));
-        }
+        document.addEventListener('cart:change', updateCartAttributes);
+        document.addEventListener('cart:refresh', updateCartAttributes);
+        
+        // Also listen for AJAX cart updates (common in modern themes)
+        document.addEventListener('ajaxCart:updated', updateCartAttributes);
+        document.addEventListener('cart:build', updateCartAttributes);
+        
+        // Listen for form submissions that might add to cart
+        document.addEventListener('submit', function(e) {
+          const form = e.target;
+          if (form && (form.action && form.action.includes('/cart/add') || 
+                       form.classList.contains('product-form') ||
+                       form.querySelector('[name="add"]'))) {
+            // Delay slightly to ensure cart is updated
+            setTimeout(updateCartAttributes, 500);
+          }
+        });
+        
+        // Also update when items are added via AJAX (listen for fetch/XHR)
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+          const url = args[0];
+          if (typeof url === 'string' && (url.includes('/cart/add') || url.includes('/cart/update'))) {
+            return originalFetch.apply(this, args).then(response => {
+              // Update cart attributes after cart is updated
+              setTimeout(updateCartAttributes, 300);
+              return response;
+            });
+          }
+          return originalFetch.apply(this, args);
+        };
+        
+        // Update periodically to ensure attributes are set (fallback)
+        setInterval(updateCartAttributes, 5000); // Every 5 seconds as fallback
       }
     })();
     </script>
