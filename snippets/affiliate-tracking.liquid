@@ -23,7 +23,7 @@
       // 'https://ffa92a699509.ngrok-free.app/api/track'
       // NOT: 'https://https://...' (no double https://)
       // NOT: 'https://.../api/track/' (no trailing slash)
-      const TRACKING_API_URL = 'https://always-branches-older-nikon.trycloudflare.com/api/track'; // TODO: Update with your app URL
+      const TRACKING_API_URL = ' https://always-branches-older-nikon.trycloudflare.com/api/track'; // TODO: Update with your app URL
       const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
       
       // Normalize API URL (remove any accidental double https://)
@@ -204,12 +204,16 @@
           cartUpdateInProgress = true;
     
           // Update cart attributes (available in order webhook)
+          // Also set note_attributes as fallback (some Shopify stores use this)
           fetch('/cart/update.js', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ attributes })
+            body: JSON.stringify({ 
+              attributes,
+              note: attributes['affiliate_click_id'] ? `affiliate_click_id:${attributes['affiliate_click_id']}` : undefined
+            })
           })
           .then(response => {
             if (response.ok) {
@@ -262,6 +266,62 @@
                        form.querySelector('[name="add"]'))) {
             // Delay to ensure cart is updated
             setTimeout(updateCartAttributes, 1000);
+          }
+        });
+        
+        // CRITICAL: Set attributes right before checkout begins
+        // This ensures they persist through checkout (as note_attributes on Order)
+        // Intercept checkout button clicks and form submissions
+        document.addEventListener('click', function(e) {
+          const target = e.target;
+          const checkoutButton = target.closest('a[href*="/checkout"], button[type="submit"], form[action*="/checkout"], [name="checkout"], [data-checkout], .cart__checkout, .checkout-button');
+          
+          if (checkoutButton) {
+            console.log('Checkout button clicked - ensuring cart attributes are set before checkout');
+            // Set attributes immediately (synchronously if possible, or with minimal delay)
+            // Remove debounce for this critical moment
+            const storedClickId = sessionStorage.getItem('affiliate_click_id');
+            const storedAffiliateId = sessionStorage.getItem('affiliate_id');
+            const urlRefValue = getUrlParameter('ref');
+            const isInternalTraffic = (urlRefValue === 'internal' || urlRefValue === 'direct');
+            
+            if ((storedClickId || isInternalTraffic) && typeof Shopify !== 'undefined') {
+              const attributes = {};
+              if (storedClickId && !isInternalTraffic) {
+                attributes['affiliate_click_id'] = storedClickId;
+                attributes['affiliate_id'] = storedAffiliateId || '';
+              }
+              if (isInternalTraffic) {
+                attributes['ref'] = urlRefValue;
+              }
+              
+              if (Object.keys(attributes).length > 0) {
+                // CRITICAL: Set attributes immediately before checkout
+                // Use fetch with keepalive for reliable delivery (doesn't block checkout)
+                fetch('/cart/update.js', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ attributes }),
+                  keepalive: true // Keep request alive even if page unloads
+                })
+                .then(() => {
+                  console.log('✅ Cart attributes set before checkout:', attributes);
+                })
+                .catch((err) => {
+                  console.error('❌ Failed to set cart attributes before checkout:', err);
+                });
+              }
+            }
+          }
+        }, true); // Use capture phase to catch early
+        
+        // Also intercept checkout form submissions
+        document.addEventListener('submit', function(e) {
+          const form = e.target;
+          if (form && (form.action && form.action.includes('/checkout') || 
+                       form.action && form.action.includes('/cart'))) {
+            console.log('Checkout form submitted - ensuring cart attributes are set');
+            updateCartAttributes(); // Call without debounce delay
           }
         });
         
