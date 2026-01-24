@@ -23,7 +23,7 @@
       // 'https://ffa92a699509.ngrok-free.app/api/track'
       // NOT: 'https://https://...' (no double https://)
       // NOT: 'https://.../api/track/' (no trailing slash)
-      const TRACKING_API_URL = "https://affiliates.tryfleur.com/api/track"; // TODO: Update with your app URL
+      const TRACKING_API_URL = 'https://your-app-domain.com/api/track'; // TODO: Update with your app URL
       const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
       
       // Normalize API URL (remove any accidental double https://)
@@ -92,6 +92,14 @@
         console.log('Affiliate tracking: Detected ref parameter:', affiliateNumber);
         console.log('Calling tracking API:', `${apiUrl}?ref=${affiliateNumber}&shop=${SHOP_ID}`);
         
+        // Capture postback parameters from URL (transaction_id, affiliate_id, sub1, sub2, sub3, sub4)
+        const transactionId = getUrlParameter('transaction_id');
+        const affiliateId = getUrlParameter('affiliate_id');
+        const sub1 = getUrlParameter('sub1');
+        const sub2 = getUrlParameter('sub2');
+        const sub3 = getUrlParameter('sub3');
+        const sub4 = getUrlParameter('sub4');
+        
         // Call tracking API to record click (POST for better deduplication)
         const trackingData = {
           ref: affiliateNumber,
@@ -100,6 +108,13 @@
           referrer: document.referrer || '',
           user_agent_hint: navigator.userAgent.substring(0, 100), // First 100 chars for bot detection
           timestamp: Date.now(),
+          // Postback parameters from affiliate redirect URL
+          transaction_id: transactionId || null,
+          affiliate_id: affiliateId || null,
+          sub1: sub1 || null,
+          sub2: sub2 || null,
+          sub3: sub3 || null,
+          sub4: sub4 || null,
         };
     
         fetch(apiUrl, {
