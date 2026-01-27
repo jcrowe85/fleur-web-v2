@@ -175,6 +175,16 @@
 	<span class="caption caption-{{ block.id }} {% if text_animation and parallax == false %} slide-up-animated{% endif %}"
 	{% if text_animation == false %}data-swiper-parallax="-600"{% endif %} >{{ block.settings.caption }}</span>
 {% endif %}
+								{% if block.settings.eyebrow_text != blank %}
+									<div
+										class="slideshow-slide__eyebrow {% if text_animation and parallax == false %} slide-up-animated{% endif %}"
+										{% if text_animation == false %}data-swiper-parallax="-600"{% endif %}
+									>
+										{% if text_animation %}<div class="slide-up-item">{% endif %}
+											{{ block.settings.eyebrow_text }}
+										{% if text_animation %}</div>{% endif %}
+									</div>
+								{% endif %}
 								{% if block.settings.heading != blank %}
 									<h1
 										class="slideshow-slide__title h1 {% if text_animation and parallax == false %} slide-up-animated{% endif %}"
@@ -533,6 +543,12 @@
 						"type":"color",
 						"id":"text_color",
 						"label":"Caption Text Color"
+					},
+					{
+						"type": "text",
+						"id": "eyebrow_text",
+						"label": "Eyebrow Text",
+						"info": "Small text displayed above the heading"
 					},
 					{
 						"type": "inline_richtext",
