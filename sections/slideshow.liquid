@@ -164,27 +164,19 @@
 	{%- liquid
 	assign bg_color = block.settings.bg_color | default: "#dc2626"
 	assign text_color = block.settings.text_color | default: "#ffffff"
+	assign caption_font_size = block.settings.caption_font_size | default: 12
 	-%}
 
 	<style>
 	.caption-{{ block.id }} {
 		background-color: {{ bg_color }};
 		color: {{ text_color }};
+		font-size: {{ caption_font_size }}px;
 	}
 	</style>
 	<span class="caption caption-{{ block.id }} {% if text_animation and parallax == false %} slide-up-animated{% endif %}"
 	{% if text_animation == false %}data-swiper-parallax="-600"{% endif %} >{{ block.settings.caption }}</span>
 {% endif %}
-								{% if block.settings.eyebrow_text != blank %}
-									<div
-										class="slideshow-slide__eyebrow {% if text_animation and parallax == false %} slide-up-animated{% endif %}"
-										{% if text_animation == false %}data-swiper-parallax="-600"{% endif %}
-									>
-										{% if text_animation %}<div class="slide-up-item">{% endif %}
-											{{ block.settings.eyebrow_text }}
-										{% if text_animation %}</div>{% endif %}
-									</div>
-								{% endif %}
 								{% if block.settings.heading != blank %}
 									<h1
 										class="slideshow-slide__title h1 {% if text_animation and parallax == false %} slide-up-animated{% endif %}"
@@ -545,10 +537,14 @@
 						"label":"Caption Text Color"
 					},
 					{
-						"type": "text",
-						"id": "eyebrow_text",
-						"label": "Eyebrow Text",
-						"info": "Small text displayed above the heading"
+						"type": "range",
+						"id": "caption_font_size",
+						"min": 8,
+						"max": 24,
+						"step": 1,
+						"default": 12,
+						"unit": "px",
+						"label": "Caption Font Size"
 					},
 					{
 						"type": "inline_richtext",

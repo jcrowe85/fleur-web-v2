@@ -80,14 +80,6 @@
     padding: var(--slideshow-bottom) 0 calc(var(--slideshow-bottom) + 1rem);
   }
 }
-.slideshow-slide__eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 1.2rem;
-  opacity: 0.85;
-  margin-bottom: 0.8rem;
-  font-weight: 500;
-}
 .slideshow-slide__title {
   margin: 0 0 1.6rem;
 }
