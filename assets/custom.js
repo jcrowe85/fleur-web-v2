@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    //Ak custom code
-    if(document.querySelector('.main-pro-sec').classList.contains('template-product-longform')){
+    //Ak custom code - do NOT force subscription when URL has ?variant= (preserves shared link selection)
+    if(document.querySelector('.main-pro-sec') && document.querySelector('.main-pro-sec').classList.contains('template-product-longform')){
         var isALARendered;
         function ALAcheck() {
             isALARendered = setInterval(function () {
@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function customALA() {
             var selector = document.querySelector('.appstle_sub_widget');
             if(selector) {
-                clearInterval(isALARendered);     
+                clearInterval(isALARendered);
+                if (window.location.search.indexOf('variant=') !== -1) return;
                 const subs_widget = document.querySelector('.appstle_sub_widget');
                 if(subs_widget){
                     const subs_plan_input = subs_widget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
@@ -58,8 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         subs_plan_input.checked = true;
                     }
                 }
-                
-            }  
+            }
         }
     }
     //Ak custom code
