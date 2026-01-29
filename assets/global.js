@@ -1623,6 +1623,8 @@ document.addEventListener('click', function(event) {
 
 // Track last variant card user selected by clicking (so second click on same = add to cart)
 var _lastVariantCardSelectedByClick = null;
+var _lastSameCardClickTime = 0;
+var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
 
 //custom variant card click
   document.addEventListener('click', function(event) {
@@ -1632,12 +1634,16 @@ var _lastVariantCardSelectedByClick = null;
     // Click on the already-selected option: only add to cart if they had already selected it by a prior click (second click)
     if (alreadyActiveCard === clicked) {
       if (_lastVariantCardSelectedByClick === clicked) {
-        var longformSubmit = document.querySelector(
-          '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
-        );
-        if (longformSubmit) longformSubmit.click();
+        var elapsed = Date.now() - _lastSameCardClickTime;
+        if (elapsed >= _minMsBetweenSameCardClicks) {
+          var longformSubmit = document.querySelector(
+            '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
+          );
+          if (longformSubmit) longformSubmit.click();
+        }
       } else {
         _lastVariantCardSelectedByClick = clicked;
+        _lastSameCardClickTime = Date.now();
       }
       return;
     }
