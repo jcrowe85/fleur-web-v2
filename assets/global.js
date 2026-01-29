@@ -1358,30 +1358,11 @@ customElements.define("product-model", ProductModel);
 
 
    setTimeout(function(){
-    var ij = 1;
+    if (window.location.search.indexOf('variant=') !== -1) return;
     var variantCards = document.querySelectorAll('.custom-variant-box .variant-card');
-    var variantCount = variantCards.length;
-    
-    if( variantCount > 0 ){
-      // Determine which variant to select based on page type
-      var targetIndex;
-      
-      if (variantCount === 1) {
-        // Single variant page (3-unit or 6-unit page) - select the first (and only) variant
-        targetIndex = 1;
-      } else {
-        // Multiple variants page (single unit page) - select the second variant (3-month option)
-        targetIndex = 2;
-      }
-      
-      variantCards.forEach(ninput => {
-        if (ij === targetIndex) {
-          ninput.click();
-        }
-        ij++;
-      });
+    if (variantCards.length > 0) {
+      variantCards[0].click();
     }
-    
   },300);
 
   //pro button
