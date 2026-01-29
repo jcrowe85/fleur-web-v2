@@ -1720,14 +1720,12 @@ document.addEventListener('click', function(event) {
 
 	}else{
 		const index = parseInt(clicked.getAttribute('data-index'));
-		if (!isNaN(index) && index > 0) {
-		if( index > 1) {
-	// Add 'active' to the corresponding number of product boxes
+		if (!isNaN(index) && index >= 1) {
+	// Add 'active' to the corresponding number of product boxes (index 1 = first box only)
 			for (let i = 0; i < index; i++) {
 			const box = document.querySelector(`.gift-container .product-box:nth-child(${i + 1})`);
 			if (box) box.classList.add('active');
 			}
-		}
 		}
 	}
 

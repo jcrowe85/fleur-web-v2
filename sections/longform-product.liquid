@@ -1257,6 +1257,32 @@
                           });
                         }
 
+                        // Sync gift boxes to match the active variant (same logic as global.js variant-card click)
+                        function syncGiftBoxesToActiveCard() {
+                          const activeCard = box.querySelector('.variant-card.active');
+                          if (!activeCard) return;
+                          const index = parseInt(activeCard.getAttribute('data-index'), 10);
+                          if (isNaN(index) || index < 1) return;
+                          const giftContainer = document.querySelector('.gift-container');
+                          if (!giftContainer) return;
+                          giftContainer.querySelectorAll('.product-box').forEach(function(b) { b.classList.remove('active'); });
+                          if (activeCard.hasAttribute('data-title')) {
+                            if (index === 1) {
+                              giftContainer.querySelectorAll('.product-box').forEach(function(b) { b.classList.add('active'); });
+                            } else {
+                              for (let i = 0; i < 3; i++) {
+                                const el = giftContainer.querySelector('.product-box:nth-child(' + (i + 1) + ')');
+                                if (el) el.classList.add('active');
+                              }
+                            }
+                          } else {
+                            for (let i = 0; i < index; i++) {
+                              const el = giftContainer.querySelector('.product-box:nth-child(' + (i + 1) + ')');
+                              if (el) el.classList.add('active');
+                            }
+                          }
+                        }
+
                         // Sync selection and URL: variant from URL if present, else first purchase option
                         function applyVariant(variantId) {
                           const card = cards.find((c) => c.getAttribute('data-variant-id') === String(variantId));
@@ -1269,6 +1295,7 @@
                           const url = new URL(window.location.href);
                           url.searchParams.set('variant', variantId);
                           window.history.replaceState({}, '', url.toString());
+                          syncGiftBoxesToActiveCard();
                         }
 
                         const urlParams = new URLSearchParams(window.location.search);
