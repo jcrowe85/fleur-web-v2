@@ -1621,19 +1621,28 @@ document.addEventListener('click', function(event) {
             })
 });
 
+// Track last variant card user selected by clicking (so second click on same = add to cart)
+var _lastVariantCardSelectedByClick = null;
+
 //custom variant card click
   document.addEventListener('click', function(event) {
   const clicked = event.target.closest('.custom-variant-box .variant-card');
   if (clicked) {
     const alreadyActiveCard = document.querySelector('.custom-variant-box .variant-card.active');
-    // Click on the already-selected option = add to cart and open drawer (any time between clicks)
+    // Click on the already-selected option: only add to cart if they had already selected it by a prior click (second click)
     if (alreadyActiveCard === clicked) {
-      var longformSubmit = document.querySelector(
-        '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
-      );
-      if (longformSubmit) longformSubmit.click();
+      if (_lastVariantCardSelectedByClick === clicked) {
+        var longformSubmit = document.querySelector(
+          '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
+        );
+        if (longformSubmit) longformSubmit.click();
+      } else {
+        _lastVariantCardSelectedByClick = clicked;
+      }
       return;
     }
+
+    _lastVariantCardSelectedByClick = clicked;
 
     // Remove 'active' class from all variant cards
     document.querySelectorAll('.custom-variant-box .variant-card').forEach(card => {
