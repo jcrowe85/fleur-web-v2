@@ -130,6 +130,7 @@
   class="container section-{{ section.id }}-padding color-{{ section.settings.color_scheme }} background main-pro-sec template-product-longform"
   id="MainProduct-{{ section.id }}"
   data-section="{{ section.id }}"
+  data-first-variant-id="{{ product.variants.first.id }}"
 >
   <div class="product{% if product.media.size > 0 %} row{% else %} product--no-media{% endif %}{% if section.settings.image_gallery_collage == "stacked" %} product__stacked{% endif %}">
     <div class="product__outer{% if section.settings.desktop_alignment == 'left' %} product__outer--desktop-order{% endif %}{% if section.settings.mobile_alignment == 'after' %} product__outer--mobile-order{% endif %}">
@@ -1241,6 +1242,8 @@
                         const cards = Array.from(box.querySelectorAll('.variant-card'));
                         if (!cards.length) return;
 
+                        const firstVariantId = section.getAttribute('data-first-variant-id') || cards[0].getAttribute('data-variant-id');
+
                         // Function to update "Buy Once" visibility
                         function updateBuyOnceVisibility(variantId) {
                           const buyOnceLinks = section.querySelectorAll('.one_time_puchase.buy_once');
@@ -1254,30 +1257,32 @@
                           });
                         }
 
-                        // Initialize: use variant from URL if present, otherwise first purchase option
+                        // Sync selection and URL: variant from URL if present, else first purchase option
+                        function applyVariant(variantId) {
+                          const card = cards.find((c) => c.getAttribute('data-variant-id') === String(variantId));
+                          if (card) {
+                            cards.forEach((c) => c.classList.remove('active'));
+                            card.classList.add('active');
+                          }
+                          idInput.value = String(variantId);
+                          updateBuyOnceVisibility(variantId);
+                          const url = new URL(window.location.href);
+                          url.searchParams.set('variant', variantId);
+                          window.history.replaceState({}, '', url.toString());
+                        }
+
                         const urlParams = new URLSearchParams(window.location.search);
                         const variantFromUrl = urlParams.get('variant');
-                        const initialVariantId = variantFromUrl !== null ? variantFromUrl : cards[0].getAttribute('data-variant-id');
-                        if (!variantFromUrl) idInput.value = initialVariantId;
-                        let active = cards.find((c) => c.getAttribute('data-variant-id') === initialVariantId) || cards[0];
-                        cards.forEach((c) => c.classList.remove('active'));
-                        active.classList.add('active');
-                        idInput.value = active.getAttribute('data-variant-id');
-                        updateBuyOnceVisibility(idInput.value);
+                        const initialVariantId = (variantFromUrl && cards.some((c) => c.getAttribute('data-variant-id') === variantFromUrl))
+                          ? variantFromUrl
+                          : firstVariantId;
+                        applyVariant(initialVariantId);
 
                         // Handle card clicks
                         cards.forEach((card) => {
                           card.addEventListener('click', () => {
-                            cards.forEach((c) => c.classList.remove('active'));
-                            card.classList.add('active');
                             const variantId = card.getAttribute('data-variant-id');
-                            idInput.value = variantId;
-                            updateBuyOnceVisibility(variantId);
-                            // Update URL so the link can be shared and opens with this option selected
-                            const url = new URL(window.location.href);
-                            url.searchParams.set('variant', variantId);
-                            window.history.replaceState({}, '', url.toString());
-                            // Trigger change event for other listeners
+                            applyVariant(variantId);
                             idInput.dispatchEvent(new Event('change', { bubbles: true }));
                           });
                         });
@@ -2797,6 +2802,7 @@
         // clone purchase element container
         const originalElement = document.querySelector('.appstle_subscription_wrapper_option');
         const originalElementLabel = originalElement.querySelector('.appstle_one_time_text')
+        originalElement.setAttribute('data-variant-id', '{{ product.variants.first.id }}');
         const clonedElement = originalElement.cloneNode(originalElement);
         clonedElement.setAttribute('data-variant-id', '44138710663347');
 
@@ -2873,6 +2879,30 @@
 
         const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
 
+        function getVariantIdForOption(option) {
+          const vid = option.getAttribute('data-variant-id');
+          return vid || '{{ product.variants.first.id }}';
+        }
+
+        function syncAppstleFromUrl() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const variantFromUrl = urlParams.get('variant');
+          const firstOption = purchaseOptions[0];
+          const firstVariantId = getVariantIdForOption(firstOption);
+          const targetVariantId = variantFromUrl && Array.from(purchaseOptions).some(o => getVariantIdForOption(o) === variantFromUrl)
+            ? variantFromUrl
+            : firstVariantId;
+          const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === targetVariantId) || firstOption;
+          const targetRadio = targetOption.querySelector('input[type="radio"]');
+          if (targetRadio) {
+            targetRadio.checked = true;
+            variantIdInput.value = targetVariantId;
+          }
+          const url = new URL(window.location.href);
+          url.searchParams.set('variant', targetVariantId);
+          window.history.replaceState({}, '', url.toString());
+        }
+
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
 
@@ -2885,16 +2915,16 @@
             const customVariantId = selectedOption.getAttribute('data-variant-id');
             if (customVariantId) {
               variantIdInput.value = customVariantId;
-              console.log('Updated variant ID to:', customVariantId);
             } else {
-              // Optionally restore default variant ID
-              variantIdInput.value = '44138306273459'; // Your base product's variant ID
-              console.log('Restored to default variant ID');
+              variantIdInput.value = '{{ product.variants.first.id }}';
             }
+            const url = new URL(window.location.href);
+            url.searchParams.set('variant', variantIdInput.value);
+            window.history.replaceState({}, '', url.toString());
           });
         });
 
-
+        syncAppstleFromUrl();
       }
 
       window.addEventListener('load', function() {
@@ -2908,6 +2938,7 @@
         // clone purchase element container
         const originalElement = document.querySelector('.appstle_subscription_wrapper_option');
         const originalElementLabel = originalElement.querySelector('.appstle_one_time_text')
+        originalElement.setAttribute('data-variant-id', '{{ product.variants.first.id }}');
         const clonedElement = originalElement.cloneNode(originalElement);
         clonedElement.setAttribute('data-variant-id', '44138710663347');
 
@@ -2988,6 +3019,30 @@
 
         const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
 
+        function getVariantIdForOption(option) {
+          const vid = option.getAttribute('data-variant-id');
+          return vid || '{{ product.variants.first.id }}';
+        }
+
+        function syncAppstleFromUrl() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const variantFromUrl = urlParams.get('variant');
+          const firstOption = purchaseOptions[0];
+          const firstVariantId = getVariantIdForOption(firstOption);
+          const targetVariantId = variantFromUrl && Array.from(purchaseOptions).some(o => getVariantIdForOption(o) === variantFromUrl)
+            ? variantFromUrl
+            : firstVariantId;
+          const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === targetVariantId) || firstOption;
+          const targetRadio = targetOption.querySelector('input[type="radio"]');
+          if (targetRadio) {
+            targetRadio.checked = true;
+            variantIdInput.value = targetVariantId;
+          }
+          const url = new URL(window.location.href);
+          url.searchParams.set('variant', targetVariantId);
+          window.history.replaceState({}, '', url.toString());
+        }
+
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
 
@@ -2996,19 +3051,19 @@
           radio.addEventListener('change', () => {
             const selectedOption = radio.closest('.appstle_subscription_wrapper_option');
 
-            // If this option has a custom variant id, override the form's variant input
             const customVariantId = selectedOption.getAttribute('data-variant-id');
             if (customVariantId) {
               variantIdInput.value = customVariantId;
-              console.log('Updated variant ID to:', customVariantId);
             } else {
-              // Optionally restore default variant ID
-              variantIdInput.value = '44138306273459'; // Your base product's variant ID
-              console.log('Restored to default variant ID');
+              variantIdInput.value = '{{ product.variants.first.id }}';
             }
+            const url = new URL(window.location.href);
+            url.searchParams.set('variant', variantIdInput.value);
+            window.history.replaceState({}, '', url.toString());
           });
         });
 
+        syncAppstleFromUrl();
       }
 
       window.addEventListener('load', function() {
@@ -3022,6 +3077,7 @@
         // clone purchase element container
         const originalElement = document.querySelector('.appstle_subscription_wrapper_option');
         const originalElementLabel = originalElement.querySelector('.appstle_one_time_text')
+        originalElement.setAttribute('data-variant-id', '{{ product.variants.first.id }}');
         const clonedElement = originalElement.cloneNode(originalElement);
         clonedElement.setAttribute('data-variant-id', '44138710663347');
 
@@ -3104,6 +3160,30 @@
 
         const purchaseOptions = document.querySelectorAll('.appstle_subscription_wrapper_option');
 
+        function getVariantIdForOption(option) {
+          const vid = option.getAttribute('data-variant-id');
+          return vid || '{{ product.variants.first.id }}';
+        }
+
+        function syncAppstleFromUrl() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const variantFromUrl = urlParams.get('variant');
+          const firstOption = purchaseOptions[0];
+          const firstVariantId = getVariantIdForOption(firstOption);
+          const targetVariantId = variantFromUrl && Array.from(purchaseOptions).some(o => getVariantIdForOption(o) === variantFromUrl)
+            ? variantFromUrl
+            : firstVariantId;
+          const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === targetVariantId) || firstOption;
+          const targetRadio = targetOption.querySelector('input[type="radio"]');
+          if (targetRadio) {
+            targetRadio.checked = true;
+            variantIdInput.value = targetVariantId;
+          }
+          const url = new URL(window.location.href);
+          url.searchParams.set('variant', targetVariantId);
+          window.history.replaceState({}, '', url.toString());
+        }
+
         purchaseOptions.forEach(option => {
           const radio = option.querySelector('input[type="radio"]');
 
@@ -3112,19 +3192,19 @@
           radio.addEventListener('change', () => {
             const selectedOption = radio.closest('.appstle_subscription_wrapper_option');
 
-            // If this option has a custom variant id, override the form's variant input
             const customVariantId = selectedOption.getAttribute('data-variant-id');
             if (customVariantId) {
               variantIdInput.value = customVariantId;
-              console.log('Updated variant ID to:', customVariantId);
             } else {
-              // Optionally restore default variant ID
-              variantIdInput.value = '44138306273459'; // Your base product's variant ID
-              console.log('Restored to default variant ID');
+              variantIdInput.value = '{{ product.variants.first.id }}';
             }
+            const url = new URL(window.location.href);
+            url.searchParams.set('variant', variantIdInput.value);
+            window.history.replaceState({}, '', url.toString());
           });
         });
 
+        syncAppstleFromUrl();
       }
 
       window.addEventListener('load', function() {
