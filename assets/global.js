@@ -1635,7 +1635,8 @@ var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
     if (alreadyActiveCard === clicked) {
       if (_lastVariantCardSelectedByClick === clicked) {
         var elapsed = Date.now() - _lastSameCardClickTime;
-        if (elapsed >= _minMsBetweenSameCardClicks) {
+        var isFirstOption = clicked.getAttribute('data-index') === '1';
+        if (elapsed >= _minMsBetweenSameCardClicks || isFirstOption) {
           var longformSubmit = document.querySelector(
             '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
           );
