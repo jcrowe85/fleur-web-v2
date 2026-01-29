@@ -2887,19 +2887,26 @@
         function syncAppstleFromUrl() {
           const urlParams = new URLSearchParams(window.location.search);
           const variantFromUrl = urlParams.get('variant');
+          if (variantFromUrl) {
+            // URL has a variant: keep form correct, and only change which option is checked if we find a match
+            variantIdInput.value = variantFromUrl;
+            const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === variantFromUrl);
+            if (targetOption) {
+              const targetRadio = targetOption.querySelector('input[type="radio"]');
+              if (targetRadio) targetRadio.checked = true;
+            }
+            return;
+          }
+          // No variant in URL: default to first option and update URL
           const firstOption = purchaseOptions[0];
           const firstVariantId = getVariantIdForOption(firstOption);
-          const targetVariantId = variantFromUrl && Array.from(purchaseOptions).some(o => getVariantIdForOption(o) === variantFromUrl)
-            ? variantFromUrl
-            : firstVariantId;
-          const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === targetVariantId) || firstOption;
-          const targetRadio = targetOption.querySelector('input[type="radio"]');
-          if (targetRadio) {
-            targetRadio.checked = true;
-            variantIdInput.value = targetVariantId;
+          const firstRadio = firstOption.querySelector('input[type="radio"]');
+          if (firstRadio) {
+            firstRadio.checked = true;
+            variantIdInput.value = firstVariantId;
           }
           const url = new URL(window.location.href);
-          url.searchParams.set('variant', targetVariantId);
+          url.searchParams.set('variant', firstVariantId);
           window.history.replaceState({}, '', url.toString());
         }
 
@@ -2911,7 +2918,6 @@
           radio.addEventListener('change', () => {
             const selectedOption = radio.closest('.appstle_subscription_wrapper_option');
 
-            // If this option has a custom variant id, override the form's variant input
             const customVariantId = selectedOption.getAttribute('data-variant-id');
             if (customVariantId) {
               variantIdInput.value = customVariantId;
@@ -3027,19 +3033,24 @@
         function syncAppstleFromUrl() {
           const urlParams = new URLSearchParams(window.location.search);
           const variantFromUrl = urlParams.get('variant');
+          if (variantFromUrl) {
+            variantIdInput.value = variantFromUrl;
+            const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === variantFromUrl);
+            if (targetOption) {
+              const targetRadio = targetOption.querySelector('input[type="radio"]');
+              if (targetRadio) targetRadio.checked = true;
+            }
+            return;
+          }
           const firstOption = purchaseOptions[0];
           const firstVariantId = getVariantIdForOption(firstOption);
-          const targetVariantId = variantFromUrl && Array.from(purchaseOptions).some(o => getVariantIdForOption(o) === variantFromUrl)
-            ? variantFromUrl
-            : firstVariantId;
-          const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === targetVariantId) || firstOption;
-          const targetRadio = targetOption.querySelector('input[type="radio"]');
-          if (targetRadio) {
-            targetRadio.checked = true;
-            variantIdInput.value = targetVariantId;
+          const firstRadio = firstOption.querySelector('input[type="radio"]');
+          if (firstRadio) {
+            firstRadio.checked = true;
+            variantIdInput.value = firstVariantId;
           }
           const url = new URL(window.location.href);
-          url.searchParams.set('variant', targetVariantId);
+          url.searchParams.set('variant', firstVariantId);
           window.history.replaceState({}, '', url.toString());
         }
 
@@ -3168,19 +3179,24 @@
         function syncAppstleFromUrl() {
           const urlParams = new URLSearchParams(window.location.search);
           const variantFromUrl = urlParams.get('variant');
+          if (variantFromUrl) {
+            variantIdInput.value = variantFromUrl;
+            const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === variantFromUrl);
+            if (targetOption) {
+              const targetRadio = targetOption.querySelector('input[type="radio"]');
+              if (targetRadio) targetRadio.checked = true;
+            }
+            return;
+          }
           const firstOption = purchaseOptions[0];
           const firstVariantId = getVariantIdForOption(firstOption);
-          const targetVariantId = variantFromUrl && Array.from(purchaseOptions).some(o => getVariantIdForOption(o) === variantFromUrl)
-            ? variantFromUrl
-            : firstVariantId;
-          const targetOption = Array.from(purchaseOptions).find(o => getVariantIdForOption(o) === targetVariantId) || firstOption;
-          const targetRadio = targetOption.querySelector('input[type="radio"]');
-          if (targetRadio) {
-            targetRadio.checked = true;
-            variantIdInput.value = targetVariantId;
+          const firstRadio = firstOption.querySelector('input[type="radio"]');
+          if (firstRadio) {
+            firstRadio.checked = true;
+            variantIdInput.value = firstVariantId;
           }
           const url = new URL(window.location.href);
-          url.searchParams.set('variant', targetVariantId);
+          url.searchParams.set('variant', firstVariantId);
           window.history.replaceState({}, '', url.toString());
         }
 
