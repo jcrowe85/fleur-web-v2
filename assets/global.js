@@ -1621,10 +1621,41 @@ document.addEventListener('click', function(event) {
             })
 });
 
-// Track last variant id selected by user click (so second click on same option = add to cart). Compare by variant id so duplicate DOM nodes (e.g. same option in two boxes) and pre-selected default are treated as same option.
+// Track last variant id selected by user click (so second click on same option = add to cart)
 var _lastVariantIdSelectedByClick = null;
 var _lastSameCardClickTime = 0;
 var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
+// Pre-selected/default option: first click adds to cart (no prior "selection" click)
+var _initialActiveVariantId = null;
+function _setInitialActiveVariantId() {
+  var activeCard = document.querySelector('.custom-variant-box .variant-card.active');
+  if (activeCard) _initialActiveVariantId = activeCard.getAttribute('data-variant-id');
+}
+function _initLongformVariantState() {
+  _setInitialActiveVariantId();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(_initLongformVariantState, 0);
+  });
+} else {
+  setTimeout(_initLongformVariantState, 0);
+}
+
+function _triggerLongformAddToCart(clickedVariantId) {
+  var longformSubmit = document.querySelector(
+    '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
+  );
+  if (!longformSubmit) return;
+  var idInput = longformSubmit.closest('form') && longformSubmit.closest('form').querySelector('input[name="id"]');
+  if (idInput && clickedVariantId) idInput.value = clickedVariantId;
+  var subsWidget = document.querySelector('.appstle_sub_widget');
+  if (subsWidget) {
+    var subsPlanInput = subsWidget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
+    if (subsPlanInput) subsPlanInput.checked = true;
+  }
+  setTimeout(function() { longformSubmit.click(); }, 50);
+}
 
 //custom variant card click
   document.addEventListener('click', function(event) {
@@ -1635,27 +1666,18 @@ var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
     const activeVariantId = alreadyActiveCard && alreadyActiveCard.getAttribute('data-variant-id');
     const isClickingAlreadySelectedOption = activeVariantId && activeVariantId === clickedVariantId;
 
-    // Click on the already-selected option: only add to cart if they had already selected it by a prior click (second click)
+    // Click on the already-selected option
     if (isClickingAlreadySelectedOption) {
+      // Pre-selected/default option: first click adds to cart (it was never "selected by click")
+      if (clickedVariantId === _initialActiveVariantId) {
+        _triggerLongformAddToCart(clickedVariantId);
+        return;
+      }
+      // User had selected another option then clicked back: add to cart only on second click (with 400ms guard)
       if (_lastVariantIdSelectedByClick === clickedVariantId) {
         var elapsed = Date.now() - _lastSameCardClickTime;
-        var isFirstOption = clicked.getAttribute('data-index') === '1';
-        if (elapsed >= _minMsBetweenSameCardClicks || isFirstOption) {
-          var longformSubmit = document.querySelector(
-            '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
-          );
-          if (longformSubmit) {
-            // Sync form to active card (same as CTA reads) so correct variant/selling_plan is added
-            var idInput = longformSubmit.closest('form') && longformSubmit.closest('form').querySelector('input[name="id"]');
-            if (idInput && clickedVariantId) idInput.value = clickedVariantId;
-            var subsWidget = document.querySelector('.appstle_sub_widget');
-            if (subsWidget) {
-              var subsPlanInput = subsWidget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
-              if (subsPlanInput) subsPlanInput.checked = true;
-            }
-            // Defer click so form/Appstle state is committed (fixes wrong variant on mobile)
-            setTimeout(function() { longformSubmit.click(); }, 50);
-          }
+        if (elapsed >= _minMsBetweenSameCardClicks) {
+          _triggerLongformAddToCart(clickedVariantId);
         }
       } else {
         _lastVariantIdSelectedByClick = clickedVariantId;
