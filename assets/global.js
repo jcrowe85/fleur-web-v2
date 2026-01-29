@@ -1621,8 +1621,8 @@ document.addEventListener('click', function(event) {
             })
 });
 
-// Track last variant card user selected by clicking (so second click on same = add to cart)
-var _lastVariantCardSelectedByClick = null;
+// Track last variant id selected by user click (so second click on same option = add to cart). Compare by variant id so duplicate DOM nodes (e.g. same option in two boxes) and pre-selected default are treated as same option.
+var _lastVariantIdSelectedByClick = null;
 var _lastSameCardClickTime = 0;
 var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
 
@@ -1631,9 +1631,13 @@ var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
   const clicked = event.target.closest('.custom-variant-box .variant-card');
   if (clicked) {
     const alreadyActiveCard = document.querySelector('.custom-variant-box .variant-card.active');
+    const clickedVariantId = clicked.getAttribute('data-variant-id');
+    const activeVariantId = alreadyActiveCard && alreadyActiveCard.getAttribute('data-variant-id');
+    const isClickingAlreadySelectedOption = activeVariantId && activeVariantId === clickedVariantId;
+
     // Click on the already-selected option: only add to cart if they had already selected it by a prior click (second click)
-    if (alreadyActiveCard === clicked) {
-      if (_lastVariantCardSelectedByClick === clicked) {
+    if (isClickingAlreadySelectedOption) {
+      if (_lastVariantIdSelectedByClick === clickedVariantId) {
         var elapsed = Date.now() - _lastSameCardClickTime;
         var isFirstOption = clicked.getAttribute('data-index') === '1';
         if (elapsed >= _minMsBetweenSameCardClicks || isFirstOption) {
@@ -1643,8 +1647,7 @@ var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
           if (longformSubmit) {
             // Sync form to active card (same as CTA reads) so correct variant/selling_plan is added
             var idInput = longformSubmit.closest('form') && longformSubmit.closest('form').querySelector('input[name="id"]');
-            var variantId = clicked.getAttribute('data-variant-id');
-            if (idInput && variantId) idInput.value = variantId;
+            if (idInput && clickedVariantId) idInput.value = clickedVariantId;
             var subsWidget = document.querySelector('.appstle_sub_widget');
             if (subsWidget) {
               var subsPlanInput = subsWidget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
@@ -1655,13 +1658,13 @@ var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
           }
         }
       } else {
-        _lastVariantCardSelectedByClick = clicked;
+        _lastVariantIdSelectedByClick = clickedVariantId;
         _lastSameCardClickTime = Date.now();
       }
       return;
     }
 
-    _lastVariantCardSelectedByClick = clicked;
+    _lastVariantIdSelectedByClick = clickedVariantId;
 
     // Remove 'active' class from all variant cards
     document.querySelectorAll('.custom-variant-box .variant-card').forEach(card => {
