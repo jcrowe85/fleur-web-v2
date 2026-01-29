@@ -38,31 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    //Ak custom code - do NOT force subscription when URL has ?variant= (preserves shared link selection)
-    if(document.querySelector('.main-pro-sec') && document.querySelector('.main-pro-sec').classList.contains('template-product-longform')){
-        var isALARendered;
-        function ALAcheck() {
-            isALARendered = setInterval(function () {
-                customALA()
-            }, 200);
-        }
-        ALAcheck();
-        function customALA() {
-            var selector = document.querySelector('.appstle_sub_widget');
-            if(selector) {
-                clearInterval(isALARendered);
-                if (window.location.search.indexOf('variant=') !== -1) return;
-                const subs_widget = document.querySelector('.appstle_sub_widget');
-                if(subs_widget){
-                    const subs_plan_input = subs_widget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
-                    if(subs_plan_input){
-                        subs_plan_input.checked = true;
-                    }
-                }
-            }
-        }
-    }
-    //Ak custom code
+    // DISABLED: Default auto product selector - was forcing subscription option on longform product
+    // and overriding URL-based selection. Selection is now controlled by longform-product.liquid
+    // (syncAppstleFromUrl: first option when no ?variant=, else option from URL).
+    // if(document.querySelector('.main-pro-sec') && document.querySelector('.main-pro-sec').classList.contains('template-product-longform')){
+    //     var isALARendered;
+    //     function ALAcheck() { isALARendered = setInterval(customALA, 200); }
+    //     ALAcheck();
+    //     function customALA() {
+    //         var selector = document.querySelector('.appstle_sub_widget');
+    //         if(selector) {
+    //             clearInterval(isALARendered);
+    //             const subs_widget = document.querySelector('.appstle_sub_widget');
+    //             if(subs_widget){
+    //                 const subs_plan_input = subs_widget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
+    //                 if(subs_plan_input){ subs_plan_input.checked = true; }
+    //             }
+    //         }
+    //     }
+    // }
         
 
 });
