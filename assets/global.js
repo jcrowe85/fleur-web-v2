@@ -1639,7 +1639,19 @@ var _minMsBetweenSameCardClicks = 400; // avoid mobile double-fire from one tap
           var longformSubmit = document.querySelector(
             '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
           );
-          if (longformSubmit) longformSubmit.click();
+          if (longformSubmit) {
+            // Sync form to active card (same as CTA reads) so correct variant/selling_plan is added
+            var idInput = longformSubmit.closest('form') && longformSubmit.closest('form').querySelector('input[name="id"]');
+            var variantId = clicked.getAttribute('data-variant-id');
+            if (idInput && variantId) idInput.value = variantId;
+            var subsWidget = document.querySelector('.appstle_sub_widget');
+            if (subsWidget) {
+              var subsPlanInput = subsWidget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
+              if (subsPlanInput) subsPlanInput.checked = true;
+            }
+            // Defer click so form/Appstle state is committed (fixes wrong variant on mobile)
+            setTimeout(function() { longformSubmit.click(); }, 50);
+          }
         }
       } else {
         _lastVariantCardSelectedByClick = clicked;
