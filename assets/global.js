@@ -1621,15 +1621,19 @@ document.addEventListener('click', function(event) {
             })
 });
 
-// Track which variant card was active before a click (for double-click add-to-cart)
-var _variantCardActiveBeforeClick = null;
-
 //custom variant card click
   document.addEventListener('click', function(event) {
   const clicked = event.target.closest('.custom-variant-box .variant-card');
   if (clicked) {
-    // Remember which card was selected before this click (for double-click-to-add)
-    _variantCardActiveBeforeClick = document.querySelector('.custom-variant-box .variant-card.active');
+    const alreadyActiveCard = document.querySelector('.custom-variant-box .variant-card.active');
+    // Click on the already-selected option = add to cart and open drawer (any time between clicks)
+    if (alreadyActiveCard === clicked) {
+      var longformSubmit = document.querySelector(
+        '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
+      );
+      if (longformSubmit) longformSubmit.click();
+      return;
+    }
 
     // Remove 'active' class from all variant cards
     document.querySelectorAll('.custom-variant-box .variant-card').forEach(card => {
@@ -1736,19 +1740,6 @@ var _variantCardActiveBeforeClick = null;
 	}
 
   }
-});
-
-// Double-click the selected variant card to add to cart and open cart drawer (CTA below fold)
-document.addEventListener('dblclick', function(event) {
-  const clicked = event.target.closest('.custom-variant-box .variant-card');
-  if (!clicked) return;
-  var longformSubmit = document.querySelector(
-    '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
-  );
-  if (!longformSubmit) return;
-  // Only trigger add-to-cart when they double-clicked the option that was already selected (before the first click of the double)
-  if (_variantCardActiveBeforeClick !== clicked) return;
-  longformSubmit.click();
 });
 
 	const productSlider = () => {
