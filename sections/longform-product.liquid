@@ -483,7 +483,7 @@
                             {%- comment -%} ✅ Subscription-enabled UI (guarded) {%- endcomment -%}
                             {% for variant in product.variants %}
                               <div
-                                class="variant-card {% if forloop.first %}active{% endif %}"
+                                class="variant-card {% if variant.id == product.selected_or_first_available_variant.id %}active{% endif %}"
                                 data-variant-id="{{ variant.id }}"
                                 data-title="{{ variant.title }}"
                                 data-index="{{ forloop.index  }}"
@@ -1254,12 +1254,16 @@
                           });
                         }
 
-                        // Initialize active card
-                        let active = cards.find((c) => c.classList.contains('active')) || cards[0];
+                        // Initialize: use variant from URL if present, otherwise first purchase option
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const variantFromUrl = urlParams.get('variant');
+                        const initialVariantId = variantFromUrl !== null ? variantFromUrl : cards[0].getAttribute('data-variant-id');
+                        if (!variantFromUrl) idInput.value = initialVariantId;
+                        let active = cards.find((c) => c.getAttribute('data-variant-id') === initialVariantId) || cards[0];
+                        cards.forEach((c) => c.classList.remove('active'));
                         active.classList.add('active');
-                        const initialVariantId = active.getAttribute('data-variant-id');
-                        idInput.value = initialVariantId;
-                        updateBuyOnceVisibility(initialVariantId);
+                        idInput.value = active.getAttribute('data-variant-id');
+                        updateBuyOnceVisibility(idInput.value);
 
                         // Handle card clicks
                         cards.forEach((card) => {
@@ -1269,6 +1273,10 @@
                             const variantId = card.getAttribute('data-variant-id');
                             idInput.value = variantId;
                             updateBuyOnceVisibility(variantId);
+                            // Update URL so the link can be shared and opens with this option selected
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('variant', variantId);
+                            window.history.replaceState({}, '', url.toString());
                             // Trigger change event for other listeners
                             idInput.dispatchEvent(new Event('change', { bubbles: true }));
                           });
