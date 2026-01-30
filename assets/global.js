@@ -1668,6 +1668,7 @@ function _triggerLongformAddToCart(clickedVariantId) {
       } else {
         _lastVariantIdSelectedByClick = clickedVariantId;
         _lastSameCardClickTime = Date.now();
+        _userHasLeftDefaultOption = true;
       }
       return;
     }
