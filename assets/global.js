@@ -1621,21 +1621,10 @@ document.addEventListener('click', function(event) {
             })
 });
 
-// Pre-selected option (default): first click adds to cart. Other options: second click adds to cart.
-var _initialActiveVariantId = null;
+// Default (first) option: first click adds to cart. Other options: second click adds to cart.
 var _lastVariantIdSelectedByClick = null;
 var _lastSameCardClickTime = 0;
 var _minMsBetweenSameCardClicks = 400;
-
-function _setInitialActiveVariantId() {
-  var activeCard = document.querySelector('.custom-variant-box .variant-card.active');
-  if (activeCard) _initialActiveVariantId = activeCard.getAttribute('data-variant-id');
-}
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() { setTimeout(_setInitialActiveVariantId, 0); });
-} else {
-  setTimeout(_setInitialActiveVariantId, 0);
-}
 
 function _triggerLongformAddToCart(clickedVariantId) {
   var longformSubmit = document.querySelector(
@@ -1663,12 +1652,13 @@ function _triggerLongformAddToCart(clickedVariantId) {
 
     // Click on the currently selected option
     if (isClickingSelectedOption) {
-      // Pre-selected (default) option: first click adds to cart
-      if (clickedVariantId === _initialActiveVariantId) {
+      var isDefaultOption = clicked.getAttribute('data-index') === '1';
+      // Default (first) option: first click adds to cart
+      if (isDefaultOption) {
         _triggerLongformAddToCart(clickedVariantId);
         return;
       }
-      // Other options: add to cart only on second click (after they selected it once), with 400ms guard for mobile
+      // Other options: add to cart only on second click (they must have selected it first)
       if (_lastVariantIdSelectedByClick === clickedVariantId) {
         var elapsed = Date.now() - _lastSameCardClickTime;
         if (elapsed >= _minMsBetweenSameCardClicks) {
