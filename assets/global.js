@@ -1621,6 +1621,22 @@ document.addEventListener('click', function(event) {
             })
 });
 
+// Pre-selected option (default): first click adds to cart. Other options: second click adds to cart.
+var _initialActiveVariantId = null;
+var _lastVariantIdSelectedByClick = null;
+var _lastSameCardClickTime = 0;
+var _minMsBetweenSameCardClicks = 400;
+
+function _setInitialActiveVariantId() {
+  var activeCard = document.querySelector('.custom-variant-box .variant-card.active');
+  if (activeCard) _initialActiveVariantId = activeCard.getAttribute('data-variant-id');
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(_setInitialActiveVariantId, 0); });
+} else {
+  setTimeout(_setInitialActiveVariantId, 0);
+}
+
 function _triggerLongformAddToCart(clickedVariantId) {
   var longformSubmit = document.querySelector(
     '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
@@ -1645,11 +1661,27 @@ function _triggerLongformAddToCart(clickedVariantId) {
     const activeVariantId = alreadyActiveCard && alreadyActiveCard.getAttribute('data-variant-id');
     const isClickingSelectedOption = activeVariantId && activeVariantId === clickedVariantId;
 
-    // Click on the currently selected option (pre-selected default or any option after selecting it) → add to cart
+    // Click on the currently selected option
     if (isClickingSelectedOption) {
-      _triggerLongformAddToCart(clickedVariantId);
+      // Pre-selected (default) option: first click adds to cart
+      if (clickedVariantId === _initialActiveVariantId) {
+        _triggerLongformAddToCart(clickedVariantId);
+        return;
+      }
+      // Other options: add to cart only on second click (after they selected it once), with 400ms guard for mobile
+      if (_lastVariantIdSelectedByClick === clickedVariantId) {
+        var elapsed = Date.now() - _lastSameCardClickTime;
+        if (elapsed >= _minMsBetweenSameCardClicks) {
+          _triggerLongformAddToCart(clickedVariantId);
+        }
+      } else {
+        _lastVariantIdSelectedByClick = clickedVariantId;
+        _lastSameCardClickTime = Date.now();
+      }
       return;
     }
+
+    _lastVariantIdSelectedByClick = clickedVariantId;
 
     // Remove 'active' class from all variant cards
     document.querySelectorAll('.custom-variant-box .variant-card').forEach(card => {
