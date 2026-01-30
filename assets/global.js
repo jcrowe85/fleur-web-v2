@@ -1621,10 +1621,11 @@ document.addEventListener('click', function(event) {
             })
 });
 
-// Default (first) option: first click adds to cart. Other options: second click adds to cart.
+// Default option: 1 click adds to cart only while still "default" (never clicked away). Once user selects another option, default becomes 2-click like the rest.
 var _lastVariantIdSelectedByClick = null;
 var _lastSameCardClickTime = 0;
 var _minMsBetweenSameCardClicks = 400;
+var _userHasLeftDefaultOption = false;
 
 function _triggerLongformAddToCart(clickedVariantId) {
   var longformSubmit = document.querySelector(
@@ -1653,12 +1654,12 @@ function _triggerLongformAddToCart(clickedVariantId) {
     // Click on the currently selected option
     if (isClickingSelectedOption) {
       var isDefaultOption = clicked.getAttribute('data-index') === '1';
-      // Default (first) option: first click adds to cart
-      if (isDefaultOption) {
+      // Default option: 1-click add only if user has never clicked away from it
+      if (isDefaultOption && !_userHasLeftDefaultOption) {
         _triggerLongformAddToCart(clickedVariantId);
         return;
       }
-      // Other options: add to cart only on second click (they must have selected it first)
+      // All other cases (non-default or default after clicking away): 2-click add
       if (_lastVariantIdSelectedByClick === clickedVariantId) {
         var elapsed = Date.now() - _lastSameCardClickTime;
         if (elapsed >= _minMsBetweenSameCardClicks) {
@@ -1672,6 +1673,7 @@ function _triggerLongformAddToCart(clickedVariantId) {
     }
 
     _lastVariantIdSelectedByClick = clickedVariantId;
+    if (clicked.getAttribute('data-index') !== '1') _userHasLeftDefaultOption = true;
 
     // Remove 'active' class from all variant cards
     document.querySelectorAll('.custom-variant-box .variant-card').forEach(card => {
