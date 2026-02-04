@@ -5026,6 +5026,8 @@ font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "S
 
 }
 
-.icart-new-box {
-  display: none !important;
+.icart-items .icart-slick-items .icart-gift-all {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 135px);
 }
