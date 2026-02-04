@@ -5027,11 +5027,11 @@ font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "S
 }
 
 .icart-items .icart-slick-items .icart-gift-all {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 135px);
+    display: flex !important;
+    flex-direction: column !important;
+    height: calc(100vh - 135px) !important;
 }
 
 .icart-checkout .icartCartSubTotalContain {
-      margin-top: auto;
+      margin-top: auto !important;
 }
