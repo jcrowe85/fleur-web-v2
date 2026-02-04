@@ -5025,3 +5025,7 @@ hr,
 font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
 }
+
+.icart-new-box {
+  display: none !important;
+}
