@@ -5038,4 +5038,5 @@ font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "S
 
 .icart-tag {
   display: none;
+  width: 100%;
 }
