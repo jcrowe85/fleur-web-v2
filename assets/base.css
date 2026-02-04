@@ -5031,3 +5031,7 @@ font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "S
     flex-direction: column;
     height: calc(100vh - 135px);
 }
+
+.icart-checkout .icartCartSubTotalContain {
+      margin-top: auto;
+}
