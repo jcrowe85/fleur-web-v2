@@ -5026,6 +5026,10 @@ font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "S
 
 }
 
+.icartContain {
+      overflow: hidden !important;
+}
+
 .icart-items {
     display: flex !important;
     flex-direction: column !important;
@@ -5034,9 +5038,27 @@ font-family: "Neue Haas Unica", system-ui, -apple-system, BlinkMacSystemFont, "S
 
 .icart-checkout {
       margin-top: auto !important;
+      width: 100% !important;
 }
 
 .icart-tag {
   display: none;
-  width: 100%;
 }
+
+.icart-header-title, .icart-header {
+  text-align: left !important;
+  font-weight: normal !important;
+}
+
+.icart-header-contain {
+  border-bottom: 1px solid lightgray;
+  padding: 10px 20px !important;
+}
+
+.icart-item-content {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
