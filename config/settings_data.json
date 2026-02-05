@@ -1466,7 +1466,7 @@
       ".go2898863277.go2898863277.go2898863277 :not(a) {color: white;}",
       ".needsclick.go204553826.kl-private-reset-css-Xuajs1 {text-decoration: underline;}",
       "@media (max-width: 768px) {.needsclick.klaviyo-form.klaviyo-form-version-cid_1.go417382439.kl-private-reset-css-Xuajs1 {width: 100vw !important; height: 100vh !important; border-radius: 0 !important; }}",
-      ".needsclick.klaviyo-close-form go2324193863.kl-private-reset-css-Xuajs1 {cursor: not-allowed;}"
+      ".klaviyo-close-form {cursor: not-allowed;}"
     ]
   }
 }
