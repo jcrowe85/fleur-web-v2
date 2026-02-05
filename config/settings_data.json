@@ -1463,7 +1463,8 @@
       ":.main-product-descriptionp {font-size: 16px;}",
       "#email_01KFC3AC1XKRHK53KW5TDYJ7HC {background-color: white !important; border: none !important; color: black !important;}",
       "#email_01KFC3AC1XKRHK53KW5TDYJ7HC:focus {border: none !important; outline: none !important; color: black !important;}",
-      ".go2898863277.go2898863277.go2898863277 :not(a) {color: white;}"
+      ".go2898863277.go2898863277.go2898863277 :not(a) {color: white;}",
+      ".kl-private-reset-css-Xuajs1 {text-decoration: underline;}"
     ]
   }
 }
