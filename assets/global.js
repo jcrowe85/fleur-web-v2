@@ -1385,7 +1385,18 @@ if(pro_submit_btn){
     event.preventDefault();
         pro_submit_btn.classList.add('loading');
     
-       
+    // Ensure subscription option is selected and Appstle has updated the form
+    var subsWidget = document.querySelector('.appstle_sub_widget');
+    if (subsWidget) {
+      var subsPlanInput = subsWidget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
+      if (subsPlanInput && !subsPlanInput.checked) {
+        subsPlanInput.checked = true;
+        subsPlanInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+    
+    // Small delay to let Appstle update hidden selling_plan input
+    setTimeout(function() {
         var timeStamp = Math.round(new Date().getTime()/1000);
         const arr = [];
 
@@ -1455,8 +1466,7 @@ if(pro_submit_btn){
   
               })
             })
-
-  
+    }, 100);
         
         return false;
   });
