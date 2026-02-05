@@ -1,0 +1,177 @@
+{{ 'analytics-dashboard.css' | asset_url | stylesheet_tag }}
+
+<div class="analytics-dashboard" data-shop="{{ shop.permanent_domain }}">
+  <div class="analytics-header">
+    <h1 class="analytics-title">Analytics Dashboard</h1>
+    <div class="analytics-controls">
+      <select class="analytics-time-range" data-time-range>
+        <option value="1h">Last Hour</option>
+        <option value="24h" selected>Last 24 Hours</option>
+        <option value="7d">Last 7 Days</option>
+        <option value="30d">Last 30 Days</option>
+      </select>
+      <button class="analytics-refresh-btn" aria-label="Refresh analytics">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 0V5M10 15V20M15 10H20M0 10H5M17.071 2.929L13.536 6.464M6.464 13.536L2.929 17.071M17.071 17.071L13.536 13.536M6.464 6.464L2.929 2.929" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+  
+  <div class="analytics-content">
+    <!-- Key Metrics Overview -->
+    <div class="analytics-metrics-section">
+      <h2 class="section-title">Key Metrics</h2>
+      <div class="analytics-metrics-grid">
+        <div class="analytics-metric-card large">
+          <div class="metric-icon">👥</div>
+          <div class="metric-content">
+            <div class="metric-value" data-metric="total_visitors">-</div>
+            <div class="metric-label">Total Visitors</div>
+            <div class="metric-change" data-metric-change="total_visitors"></div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card large">
+          <div class="metric-icon">📊</div>
+          <div class="metric-content">
+            <div class="metric-value" data-metric="bounce_rate">-</div>
+            <div class="metric-label">Bounce Rate</div>
+            <div class="metric-change" data-metric-change="bounce_rate"></div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card large">
+          <div class="metric-icon">⏱️</div>
+          <div class="metric-content">
+            <div class="metric-value" data-metric="avg_session_time">-</div>
+            <div class="metric-label">Avg Session Time</div>
+            <div class="metric-change" data-metric-change="avg_session_time"></div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card large">
+          <div class="metric-icon">📄</div>
+          <div class="metric-content">
+            <div class="metric-value" data-metric="pages_per_session">-</div>
+            <div class="metric-label">Pages per Session</div>
+            <div class="metric-change" data-metric-change="pages_per_session"></div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card large">
+          <div class="metric-icon">🔄</div>
+          <div class="metric-content">
+            <div class="metric-value" data-metric="sessions">-</div>
+            <div class="metric-label">Total Sessions</div>
+            <div class="metric-change" data-metric-change="sessions"></div>
+          </div>
+        </div>
+        
+        <div class="analytics-metric-card large">
+          <div class="metric-icon">🌍</div>
+          <div class="metric-content">
+            <div class="metric-value" data-metric="unique_visitors">-</div>
+            <div class="metric-label">Unique Visitors</div>
+            <div class="metric-change" data-metric-change="unique_visitors"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Real-Time Visitors -->
+    <div class="analytics-section">
+      <h2 class="section-title">Real-Time Visitors</h2>
+      <div class="analytics-visitors-map" data-visitors-map>
+        <div class="analytics-loading">Loading visitor map...</div>
+      </div>
+      <div class="analytics-visitors-list" data-visitors-list>
+        <div class="analytics-loading">Loading active visitors...</div>
+      </div>
+    </div>
+    
+    <!-- Top Pages -->
+    <div class="analytics-section">
+      <h2 class="section-title">Top Pages</h2>
+      <div class="analytics-top-pages" data-top-pages>
+        <div class="analytics-loading">Loading top pages...</div>
+      </div>
+    </div>
+    
+    <!-- Entry/Exit Pages -->
+    <div class="analytics-section two-column">
+      <div class="analytics-column">
+        <h2 class="section-title">Top Entry Pages</h2>
+        <div class="analytics-entry-pages" data-entry-pages>
+          <div class="analytics-loading">Loading entry pages...</div>
+        </div>
+      </div>
+      <div class="analytics-column">
+        <h2 class="section-title">Top Exit Pages</h2>
+        <div class="analytics-exit-pages" data-exit-pages>
+          <div class="analytics-loading">Loading exit pages...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Traffic Sources -->
+    <div class="analytics-section">
+      <h2 class="section-title">Traffic Sources</h2>
+      <div class="analytics-traffic-sources" data-traffic-sources>
+        <div class="analytics-loading">Loading traffic sources...</div>
+      </div>
+    </div>
+    
+    <!-- Device & Browser Breakdown -->
+    <div class="analytics-section two-column">
+      <div class="analytics-column">
+        <h2 class="section-title">Devices</h2>
+        <div class="analytics-devices" data-devices>
+          <div class="analytics-loading">Loading device data...</div>
+        </div>
+      </div>
+      <div class="analytics-column">
+        <h2 class="section-title">Browsers</h2>
+        <div class="analytics-browsers" data-browsers>
+          <div class="analytics-loading">Loading browser data...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Geographic Distribution -->
+    <div class="analytics-section">
+      <h2 class="section-title">Geographic Distribution</h2>
+      <div class="analytics-geography" data-geography>
+        <div class="analytics-loading">Loading geographic data...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ 'analytics-dashboard.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Analytics Dashboard",
+  "settings": [
+    {
+      "type": "text",
+      "id": "api_url",
+      "label": "Analytics API URL",
+      "default": "https://affiliates.tryfleur.com/api/analytics",
+      "info": "Base URL for analytics API"
+    },
+    {
+      "type": "range",
+      "id": "refresh_interval",
+      "label": "Refresh Interval (seconds)",
+      "min": 5,
+      "max": 60,
+      "step": 5,
+      "default": 10,
+      "info": "How often to refresh analytics data"
+    }
+  ]
+}
+{% endschema %}

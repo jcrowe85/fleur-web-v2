@@ -1,0 +1,65 @@
+{% comment %}
+  Account Navigation Menu
+  Displays navigation links for account pages including Analytics
+{% endcomment %}
+
+<nav class="account-navigation" aria-label="Account navigation">
+  <ul class="account-navigation-list list-unstyled">
+    <li>
+      <a 
+        href="{{ routes.account_url }}" 
+        class="account-nav-link {% if template.name == 'account' %}active{% endif %}"
+      >
+        Dashboard
+      </a>
+    </li>
+    <li>
+      <a 
+        href="/pages/analytics" 
+        class="account-nav-link {% if page.handle == 'analytics' %}active{% endif %}"
+      >
+        Analytics
+      </a>
+    </li>
+    <li>
+      <a 
+        href="{{ routes.account_addresses_url }}" 
+        class="account-nav-link {% if template.name == 'addresses' %}active{% endif %}"
+      >
+        Addresses
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .account-navigation {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .account-navigation-list {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .account-nav-link {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 0;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  
+  .account-nav-link:hover,
+  .account-nav-link.active {
+    color: #1a1a1a;
+    border-bottom-color: #4f46e5;
+  }
+</style>

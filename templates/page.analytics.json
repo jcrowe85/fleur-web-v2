@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "analytics_dashboard": {
+      "type": "analytics-dashboard",
+      "settings": {
+        "api_url": "https://affiliates.tryfleur.com/api/analytics",
+        "refresh_interval": 10
+      }
+    }
+  },
+  "order": ["analytics_dashboard"]
+}

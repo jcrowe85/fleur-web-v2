@@ -1,0 +1,242 @@
+{% comment %}
+  Real-Time Visitor Analytics Tracking Script
+  This script tracks visitor behavior and sends data to analytics API
+  
+  Installation:
+  1. Add to theme.liquid: {% render 'visitor-analytics-tracking' %}
+  2. Configure ANALYTICS_API_URL below
+{% endcomment %}
+
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration - Update with your analytics API URL
+  const ANALYTICS_API_URL = 'https://affiliates.tryfleur.com/api/analytics/track'; // TODO: Update with your API URL
+  const SHOP_ID = '{{ shop.permanent_domain }}';
+  
+  // Session tracking
+  let sessionId = sessionStorage.getItem('analytics_session_id') || generateSessionId();
+  let sessionStartTime = parseInt(sessionStorage.getItem('analytics_session_start')) || Date.now();
+  let pageViews = parseInt(sessionStorage.getItem('analytics_page_views')) || 0;
+  let pagesVisited = JSON.parse(sessionStorage.getItem('analytics_pages_visited') || '[]');
+  let entryPage = sessionStorage.getItem('analytics_entry_page') || window.location.pathname;
+  let lastPageTime = parseInt(sessionStorage.getItem('analytics_last_page_time')) || Date.now();
+  
+  // Initialize session if new
+  if (!sessionStorage.getItem('analytics_session_id')) {
+    sessionStorage.setItem('analytics_session_id', sessionId);
+    sessionStorage.setItem('analytics_session_start', sessionStartTime.toString());
+    sessionStorage.setItem('analytics_entry_page', entryPage);
+  }
+  
+  // Track current page
+  const currentPage = window.location.pathname;
+  if (!pagesVisited.includes(currentPage)) {
+    pagesVisited.push(currentPage);
+    pageViews++;
+    sessionStorage.setItem('analytics_page_views', pageViews.toString());
+    sessionStorage.setItem('analytics_pages_visited', JSON.stringify(pagesVisited));
+  }
+  
+  // Generate unique session ID
+  function generateSessionId() {
+    return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+  
+  // Get visitor fingerprint (for unique visitor tracking)
+  function getVisitorFingerprint() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top';
+    ctx.font = '14px Arial';
+    ctx.fillText('Visitor fingerprint', 2, 2);
+    
+    const fingerprint = [
+      navigator.userAgent,
+      navigator.language,
+      screen.width + 'x' + screen.height,
+      new Date().getTimezoneOffset(),
+      canvas.toDataURL()
+    ].join('|');
+    
+    // Simple hash
+    let hash = 0;
+    for (let i = 0; i < fingerprint.length; i++) {
+      const char = fingerprint.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return 'visitor_' + Math.abs(hash).toString(36);
+  }
+  
+  // Get referrer information
+  function getReferrerInfo() {
+    const referrer = document.referrer || '';
+    if (!referrer) return { type: 'direct', url: '' };
+    
+    try {
+      const referrerUrl = new URL(referrer);
+      const currentUrl = new URL(window.location.href);
+      
+      if (referrerUrl.hostname === currentUrl.hostname) {
+        return { type: 'internal', url: referrer };
+      } else {
+        return { type: 'external', url: referrer, domain: referrerUrl.hostname };
+      }
+    } catch (e) {
+      return { type: 'unknown', url: referrer };
+    }
+  }
+  
+  // Get device and browser info
+  function getDeviceInfo() {
+    const ua = navigator.userAgent;
+    const isMobile = /Mobile|Android|iPhone|iPad/i.test(ua);
+    const isTablet = /Tablet|iPad/i.test(ua);
+    
+    let deviceType = 'desktop';
+    if (isTablet) deviceType = 'tablet';
+    else if (isMobile) deviceType = 'mobile';
+    
+    return {
+      type: deviceType,
+      userAgent: ua.substring(0, 200), // Limit length
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      language: navigator.language,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || new Date().getTimezoneOffset().toString()
+    };
+  }
+  
+  // Track page view
+  function trackPageView() {
+    const now = Date.now();
+    const timeOnPreviousPage = now - lastPageTime;
+    lastPageTime = now;
+    sessionStorage.setItem('analytics_last_page_time', now.toString());
+    
+    const trackingData = {
+      event: 'page_view',
+      session_id: sessionId,
+      visitor_id: getVisitorFingerprint(),
+      shop: SHOP_ID,
+      page: {
+        url: window.location.href,
+        path: window.location.pathname,
+        title: document.title,
+        referrer: document.referrer || ''
+      },
+      session: {
+        start_time: sessionStartTime,
+        page_views: pageViews,
+        pages_visited: pagesVisited,
+        entry_page: entryPage,
+        time_on_page: timeOnPreviousPage
+      },
+      referrer: getReferrerInfo(),
+      device: getDeviceInfo(),
+      timestamp: now
+    };
+    
+    // Send to API
+    sendTrackingData(trackingData);
+  }
+  
+  // Track user interaction events
+  function trackEvent(eventType, eventData = {}) {
+    const trackingData = {
+      event: eventType,
+      session_id: sessionId,
+      visitor_id: getVisitorFingerprint(),
+      shop: SHOP_ID,
+      page: {
+        url: window.location.href,
+        path: window.location.pathname
+      },
+      event_data: eventData,
+      timestamp: Date.now()
+    };
+    
+    sendTrackingData(trackingData);
+  }
+  
+  // Send data to analytics API
+  function sendTrackingData(data) {
+    if (!ANALYTICS_API_URL || ANALYTICS_API_URL.includes('your-api-url')) {
+      console.warn('Analytics API URL not configured');
+      return;
+    }
+    
+    // Use sendBeacon for better reliability (doesn't block page unload)
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      navigator.sendBeacon(ANALYTICS_API_URL, blob);
+    } else {
+      // Fallback to fetch
+      fetch(ANALYTICS_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+        keepalive: true
+      }).catch(err => {
+        console.warn('Analytics tracking error:', err);
+      });
+    }
+  }
+  
+  // Track page view on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', trackPageView);
+  } else {
+    trackPageView();
+  }
+  
+  // Track time on page before unload
+  window.addEventListener('beforeunload', function() {
+    const timeOnPage = Date.now() - lastPageTime;
+    trackEvent('page_exit', {
+      time_on_page: timeOnPage,
+      exit_page: window.location.pathname
+    });
+  });
+  
+  // Track scroll depth
+  let maxScroll = 0;
+  window.addEventListener('scroll', function() {
+    const scrollPercent = Math.round(
+      ((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight) * 100
+    );
+    if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
+      maxScroll = scrollPercent;
+      trackEvent('scroll', { depth: scrollPercent });
+    }
+  }, { passive: true });
+  
+  // Track clicks on external links
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (link && link.href) {
+      try {
+        const linkUrl = new URL(link.href);
+        const currentUrl = new URL(window.location.href);
+        
+        if (linkUrl.hostname !== currentUrl.hostname) {
+          trackEvent('external_link_click', {
+            url: link.href,
+            text: link.textContent.trim().substring(0, 100)
+          });
+        }
+      } catch (e) {
+        // Invalid URL, ignore
+      }
+    }
+  });
+  
+  // Expose tracking function globally for custom events
+  window.trackAnalyticsEvent = trackEvent;
+  
+})();
+</script>
