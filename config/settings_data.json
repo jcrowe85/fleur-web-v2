@@ -1465,7 +1465,7 @@
       "#email_01KFC3AC1XKRHK53KW5TDYJ7HC:focus {border: none !important; outline: none !important; color: black !important;}",
       ".go2898863277.go2898863277.go2898863277 :not(a) {color: white;}",
       ".needsclick.go204553826.kl-private-reset-css-Xuajs1 {text-decoration: underline;}",
-      ".needsclick.kl-private-reset-css-Xuajs1 {/* width: 100vw; height: 100vh; */}"
+      "@media (max-width: 768px) {.klaviyo-form-X7UkCf{width: 100vw; height: 100vh;}}"
     ]
   }
 }
