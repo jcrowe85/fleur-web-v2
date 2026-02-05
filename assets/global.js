@@ -1632,14 +1632,27 @@ function _triggerLongformAddToCart(clickedVariantId) {
     '.template-product-longform .product-form__buttons .product-form__submit, .template-product-longform-ver2 .product-form__buttons .product-form__submit'
   );
   if (!longformSubmit) return;
-  var idInput = longformSubmit.closest('form') && longformSubmit.closest('form').querySelector('input[name="id"]');
+  var form = longformSubmit.closest('form');
+  var idInput = form && form.querySelector('input[name="id"]');
   if (idInput && clickedVariantId) idInput.value = clickedVariantId;
+  var clickedCard = document.querySelector('.custom-variant-box .variant-card[data-variant-id="' + clickedVariantId + '"]');
+  if (clickedCard && clickedCard.hasAttribute('data-title')) {
+    var titleAttr = clickedCard.getAttribute('data-title');
+    document.querySelectorAll('.product-form__input input[name="Bottle"]').forEach(function(sinput) {
+      if (sinput.value === titleAttr) {
+        sinput.click();
+      }
+    });
+  }
   var subsWidget = document.querySelector('.appstle_sub_widget');
   if (subsWidget) {
     var subsPlanInput = subsWidget.querySelector('.appstle_subscription_wrapper_option.appstle_include_dropdown input[type="radio"]');
-    if (subsPlanInput) subsPlanInput.checked = true;
+    if (subsPlanInput) {
+      subsPlanInput.checked = true;
+      subsPlanInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   }
-  setTimeout(function() { longformSubmit.click(); }, 50);
+  setTimeout(function() { longformSubmit.click(); }, 150);
 }
 
 //custom variant card click
