@@ -503,6 +503,13 @@
           const pageViews = parseInt(getLocalStorage('analytics_page_views') || '1');
           const pagesVisited = JSON.parse(getLocalStorage('analytics_pages_visited') || JSON.stringify([window.location.pathname]));
           
+          // Capture URL parameters as key-value pairs
+          const urlParams: Record<string, string> = {};
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          urlSearchParams.forEach((value, key) => {
+            urlParams[key] = value;
+          });
+          
           const analyticsData = {
             event: 'page_view',
             session_id: sessionId,
@@ -514,6 +521,7 @@
               path: window.location.pathname,
               url: window.location.href,
               title: document.title,
+              url_params: urlParams, // Add URL parameters
             },
             session: {
               start_time: sessionStart,
