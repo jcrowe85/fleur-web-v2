@@ -17,7 +17,7 @@
         "slide": {
           "type": "slide",
           "settings": {
-            "text": "<p>subscribe today and save 55% off your first order. <a href=\"https://tryfleur.com/cart/clear?return_to=/cart/add?items[][id]=44826097221811%26items[][quantity]=1%26items[][selling_plan]=4593811635%26items[][id]=44829528391859%26items[][quantity]=1%26items[][id]=44138710597811%26items[][quantity]=1%26return_to=/checkout\" title=\"https://tryfleur.com/cart/clear?return_to=/cart/add?items[][id]=44826097221811%26items[][quantity]=1%26items[][selling_plan]=4593811635%26items[][id]=44829528391859%26items[][quantity]=1%26items[][id]=44138710597811%26items[][quantity]=1%26return_to=/checkout\"><span style=\"text-decoration:underline\">Click Here</span></a></p>",
+            "text": "<p>subscribe today and save 50% off your first order. <a href=\"https://tryfleur.com/cart/clear?return_to=/cart/add?items[][id]=44826097221811%26items[][quantity]=1%26items[][selling_plan]=4593811635%26items[][id]=44829528391859%26items[][quantity]=1%26items[][id]=44138710597811%26items[][quantity]=1%26return_to=/checkout\" title=\"https://tryfleur.com/cart/clear?return_to=/cart/add?items[][id]=44826097221811%26items[][quantity]=1%26items[][selling_plan]=4593811635%26items[][id]=44829528391859%26items[][quantity]=1%26items[][id]=44138710597811%26items[][quantity]=1%26return_to=/checkout\"><span style=\"text-decoration:underline\">Click Here</span></a></p>",
             "button_label": "",
             "button_link": "shopify://products/bloom",
             "button_arrow": false
