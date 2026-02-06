@@ -17,14 +17,13 @@
 {% endcomment %}
 
 <script>
-  console.log('loading affiliate script')
   (function() {
     // Configuration - Update this with your tracking API URL
     // IMPORTANT: Use the full URL WITHOUT trailing slash, e.g.:
     // 'https://ffa92a699509.ngrok-free.app/api/track'
     // NOT: 'https://https://...' (no double https://)
     // NOT: 'https://.../api/track/' (no trailing slash)
-    const TRACKING_API_URL = 'https://affiliates.tryfleur.com/api/track'; // TODO: Update with your app URL
+    const TRACKING_API_URL = 'https://affiliates.tryfleur.com/api/track';
     const SHOP_ID = '{{ shop.permanent_domain }}'; // Shopify liquid variable
     
     // Normalize API URL (remove any accidental double https://)
@@ -82,7 +81,7 @@
       // Internal traffic - skip tracking
     } else if (refParam) {
       // Found ?ref= parameter with affiliate number - track this click
-      const affiliateNumber = refParam;
+      const affiliateNumber = refParam;f
       
       // Validate TRACKING_API_URL is set
       if (!TRACKING_API_URL || TRACKING_API_URL.includes('your-app-domain.com')) {
