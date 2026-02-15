@@ -1403,24 +1403,19 @@ if(pro_submit_btn){
         var main_pro_id = document.querySelector('[name="id"]').value;
         var selling_plan = document.querySelector('[name="selling_plan"]').value;
      
-        var giftWrapper = document.querySelector('.free_gift-wrapp[data-gift-variant-ids]');
-        if (giftWrapper) {
-          var idsStr = (giftWrapper.getAttribute('data-gift-variant-ids') || '').trim();
-          if (idsStr) {
-            idsStr.split(',').forEach(function(id) {
-              id = (id && id.trim) ? id.trim() : id;
-              if (id) {
-                arr.push({ id: id, quantity: 1, properties: { '_time_stamp': timeStamp, '_free_product': 'yes' } });
-              }
-            });
-          }
-        }
-        if (arr.length === 0) {
-          var productBoxes = document.querySelectorAll('.free_gift-wrapp .product-box.active');
+        const productBoxes = document.querySelectorAll('.free_gift-wrapp .product-box.active');
+        if (productBoxes.length > 0) {
           productBoxes.forEach(function(box) {
-            var pdataId = box.getAttribute('data-id');
-            if (pdataId !== undefined && pdataId !== '' && pdataId !== null) {
-              arr.unshift({ id: pdataId, quantity: 1, properties: { '_time_stamp': timeStamp, '_free_product': 'yes' } });
+            const pdataId = box.getAttribute('data-id');
+            if (pdataId !== undefined && pdataId !== '' && pdataId !== null ) {
+              arr.unshift({
+                id: pdataId,
+                quantity: 1,
+                properties: {
+                  '_time_stamp': timeStamp,
+                  '_free_product': 'yes'
+                }
+              });
             }
           });
         }
