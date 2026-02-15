@@ -1448,7 +1448,10 @@ if(pro_submit_btn){
                 const cartDrawer = document.querySelector('cart-drawer');
                 if (cartDrawer) {
                   cartDrawer.classList.remove('is-empty');
-                  cartDrawer.renderContents(response);
+                  try { cartDrawer.renderContents(response); } catch (e) { console.warn('Cart drawer render:', e); }
+                  if (typeof cartDrawer.open === 'function') {
+                    setTimeout(function() { cartDrawer.open(); }, 150);
+                  }
                 }
                 var time = document.querySelector('cart-drawer') && document.querySelector('cart-drawer').getAttribute('data-timer');
                 if (time) window.cart_limit = time * 60 * 1000;
@@ -1625,7 +1628,7 @@ document.addEventListener('click', function(event) {
 // Default option: 1 click adds to cart only while still "default" (never clicked away). Once user selects another option, default becomes 2-click like the rest.
 var _lastVariantIdSelectedByClick = null;
 var _lastSameCardClickTime = 0;
-var _minMsBetweenSameCardClicks = 400;
+var _minMsBetweenSameCardClicks = 100;
 var _userHasLeftDefaultOption = false;
 
 function _triggerLongformAddToCart(clickedVariantId) {
