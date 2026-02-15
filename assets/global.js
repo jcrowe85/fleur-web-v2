@@ -1,3 +1,4 @@
+/* dicknose */
 document.addEventListener('DOMContentLoaded', function() {
 	const slideInItems = document.querySelectorAll('.slide-up-animated');
 	if (!slideInItems) return;
