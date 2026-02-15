@@ -1403,32 +1403,22 @@ if(pro_submit_btn){
         var main_pro_id = document.querySelector('[name="id"]').value;
         var selling_plan = document.querySelector('[name="selling_plan"]').value;
      
-        // Collect gift variant IDs: from data attribute (Liquid) and from DOM .product-box[data-id] (fallback/dedupe)
-        var giftIds = [];
-        var giftWrapper = document.querySelector('.free_gift-wrapp');
-        if (giftWrapper) {
-          var idsStr = (giftWrapper.getAttribute('data-gift-variant-ids') || '').trim();
-          if (idsStr) {
-            idsStr.split(',').forEach(function(id) {
-              id = (id && id.trim) ? id.trim() : id;
-              if (id && giftIds.indexOf(id) === -1) giftIds.push(id);
-            });
-          }
-          document.querySelectorAll('.free_gift-wrapp .product-box[data-id]').forEach(function(box) {
-            var id = box.getAttribute('data-id');
-            if (id && giftIds.indexOf(id) === -1) giftIds.push(id);
-          });
-        }
-        giftIds.forEach(function(id) {
-          arr.push({
-            id: id,
-            quantity: 1,
-            properties: {
-              '_time_stamp': timeStamp,
-              '_free_product': 'yes'
+        const productBoxes = document.querySelectorAll('.free_gift-wrapp .product-box.active');
+        if (productBoxes.length > 0) {
+          productBoxes.forEach(function(box) {
+            const pdataId = box.getAttribute('data-id');
+            if (pdataId !== undefined && pdataId !== '' && pdataId !== null ) {
+              arr.unshift({
+                id: pdataId,
+                quantity: 1,
+                properties: {
+                  '_time_stamp': timeStamp,
+                  '_free_product': 'yes'
+                }
+              });
             }
           });
-        });
+        }
    var new_arr = [];
           if(main_pro_id){
             if(selling_plan){
@@ -1438,35 +1428,39 @@ if(pro_submit_btn){
             }
           }
          var sections = ['cart-drawer', 'cart-icon-bubble'];
-         function addOneItem(itemsPayload) {
-           return fetch('/cart/add.js', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ items: itemsPayload, sections: sections })
-           }).then(function(res) {
-             if (!res.ok) return res.json().then(function(err) { throw new Error(err.description || err.message || 'Cart add failed'); });
-             return res.json();
-           });
-         }
-         function addMainProduct() {
-           return addOneItem(new_arr);
-         }
-         // Add each gift in its own request, then main product (so no item is dropped)
-         var promise = Promise.resolve();
-         arr.forEach(function(item) {
-           promise = promise.then(function() { return addOneItem([item]); });
-         });
-         promise = promise.then(function() { return addMainProduct(); });
-         promise
-            .then(function(response) {
-                pro_submit_btn.classList.remove('loading');
+            fetch('/cart/add.js', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  items: arr,
+                sections: sections
+              }),
+            })
+            .then(response => response.json())
+            .then(response =>  {
+				pro_submit_btn.classList.remove('loading');
+                var sections = ['cart-drawer', 'cart-icon-bubble'];
+              fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    items: new_arr,
+                  sections: sections
+                }),
+              })
+              .then(response => response.json())
+              .then(response =>  {
                 const cartDrawer = document.querySelector('cart-drawer');
-                if (cartDrawer) {
-                  cartDrawer.classList.remove('is-empty');
-                  cartDrawer.renderContents(response);
-                }
-                var time = document.querySelector('cart-drawer') && document.querySelector('cart-drawer').getAttribute('data-timer');
-                if (time) window.cart_limit = time * 60 * 1000;
+                cartDrawer.classList.remove('is-empty');
+                cartDrawer.renderContents(response);
+                pro_submit_btn.classList.remove('loading');
+                var time = document.querySelector('cart-drawer').getAttribute('data-timer');
+                window.cart_limit = time * 60 * 1000;
+              })
             })
             .catch(function(err) {
               pro_submit_btn.classList.remove('loading');
