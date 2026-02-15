@@ -1403,11 +1403,12 @@ if(pro_submit_btn){
         var main_pro_id = document.querySelector('[name="id"]').value;
         var selling_plan = document.querySelector('[name="selling_plan"]').value;
      
-        const productBoxes = document.querySelectorAll('.free_gift-wrapp .product-box.active');
+        // Include all gift products (have data-id); skip .first_free-ship which has no data-id
+        const productBoxes = document.querySelectorAll('.free_gift-wrapp .product-box[data-id]');
         if (productBoxes.length > 0) {
           productBoxes.forEach(function(box) {
             const pdataId = box.getAttribute('data-id');
-            if (pdataId !== undefined && pdataId !== '' && pdataId !== null ) {
+            if (pdataId !== undefined && pdataId !== '' && pdataId !== null) {
               arr.unshift({
                 id: pdataId,
                 quantity: 1,
