@@ -1403,14 +1403,15 @@ if(pro_submit_btn){
         var main_pro_id = document.querySelector('[name="id"]').value;
         var selling_plan = document.querySelector('[name="selling_plan"]').value;
      
-        // Include all gift products (have data-id); skip .first_free-ship which has no data-id
-        const productBoxes = document.querySelectorAll('.free_gift-wrapp .product-box[data-id]');
-        if (productBoxes.length > 0) {
-          productBoxes.forEach(function(box) {
-            const pdataId = box.getAttribute('data-id');
-            if (pdataId !== undefined && pdataId !== '' && pdataId !== null) {
-              arr.unshift({
-                id: pdataId,
+        // Use gift variant IDs from section (single source of truth; includes all gifts from metafield)
+        var giftWrapper = document.querySelector('.free_gift-wrapp[data-gift-variant-ids]');
+        if (giftWrapper) {
+          var idsStr = giftWrapper.getAttribute('data-gift-variant-ids') || '';
+          idsStr.split(',').forEach(function(id) {
+            id = (id && id.trim) ? id.trim() : id;
+            if (id) {
+              arr.push({
+                id: id,
                 quantity: 1,
                 properties: {
                   '_time_stamp': timeStamp,
@@ -1429,20 +1430,31 @@ if(pro_submit_btn){
             }
           }
          var sections = ['cart-drawer', 'cart-icon-bubble'];
-         // Single cart/add.js request with serum + gifts so Shopify (and Klaviyo abandoned cart) see full cart atomically
-         var allItems = arr.concat(new_arr);
-            fetch('/cart/add.js', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  items: allItems,
-                sections: sections
-              }),
-            })
-            .then(response => response.json())
-            .then(response =>  {
+         // Two requests: gifts first so discount can apply, then main product
+         function addMainProduct() {
+           return fetch('/cart/add.js', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ items: new_arr, sections: sections })
+           }).then(function(res) {
+             if (!res.ok) return res.json().then(function(err) { throw new Error(err.description || err.message || 'Cart add failed'); });
+             return res.json();
+           });
+         }
+         var promise = arr.length > 0
+           ? fetch('/cart/add.js', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ items: arr, sections: sections })
+             })
+               .then(function(res) {
+                 if (!res.ok) return res.json().then(function(err) { throw new Error(err.description || err.message || 'Cart add failed'); });
+                 return res.json();
+               })
+               .then(function() { return addMainProduct(); })
+           : addMainProduct();
+         promise
+            .then(function(response) {
                 pro_submit_btn.classList.remove('loading');
                 const cartDrawer = document.querySelector('cart-drawer');
                 if (cartDrawer) {
