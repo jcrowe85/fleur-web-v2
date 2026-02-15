@@ -657,7 +657,14 @@
                         </div>
                       </div>
                       {% if is_subscription_product %}
-                        <div class="free_gift-wrapp">
+                        {%- assign gift_variant_ids = '' -%}
+                        {%- for gp in product.metafields.custom.free_gift_products.value -%}
+                          {%- if gp.first_available_variant.id -%}
+                            {%- if gift_variant_ids != '' -%}{%- assign gift_variant_ids = gift_variant_ids | append: ',' -%}{%- endif -%}
+                            {%- assign gift_variant_ids = gift_variant_ids | append: gp.first_available_variant.id -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        <div class="free_gift-wrapp" data-gift-variant-ids="{{ gift_variant_ids }}">
                           {% if product.metafields.custom.free_gift_headline.value != blank %}
                             <h3>
                               {{ product.metafields.custom.free_gift_headline.value }}
