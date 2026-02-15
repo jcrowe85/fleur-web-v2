@@ -1403,24 +1403,32 @@ if(pro_submit_btn){
         var main_pro_id = document.querySelector('[name="id"]').value;
         var selling_plan = document.querySelector('[name="selling_plan"]').value;
      
-        // Use gift variant IDs from section (single source of truth; includes all gifts from metafield)
-        var giftWrapper = document.querySelector('.free_gift-wrapp[data-gift-variant-ids]');
+        // Collect gift variant IDs: from data attribute (Liquid) and from DOM .product-box[data-id] (fallback/dedupe)
+        var giftIds = [];
+        var giftWrapper = document.querySelector('.free_gift-wrapp');
         if (giftWrapper) {
-          var idsStr = giftWrapper.getAttribute('data-gift-variant-ids') || '';
-          idsStr.split(',').forEach(function(id) {
-            id = (id && id.trim) ? id.trim() : id;
-            if (id) {
-              arr.push({
-                id: id,
-                quantity: 1,
-                properties: {
-                  '_time_stamp': timeStamp,
-                  '_free_product': 'yes'
-                }
-              });
-            }
+          var idsStr = (giftWrapper.getAttribute('data-gift-variant-ids') || '').trim();
+          if (idsStr) {
+            idsStr.split(',').forEach(function(id) {
+              id = (id && id.trim) ? id.trim() : id;
+              if (id && giftIds.indexOf(id) === -1) giftIds.push(id);
+            });
+          }
+          document.querySelectorAll('.free_gift-wrapp .product-box[data-id]').forEach(function(box) {
+            var id = box.getAttribute('data-id');
+            if (id && giftIds.indexOf(id) === -1) giftIds.push(id);
           });
         }
+        giftIds.forEach(function(id) {
+          arr.push({
+            id: id,
+            quantity: 1,
+            properties: {
+              '_time_stamp': timeStamp,
+              '_free_product': 'yes'
+            }
+          });
+        });
    var new_arr = [];
           if(main_pro_id){
             if(selling_plan){
@@ -1430,29 +1438,25 @@ if(pro_submit_btn){
             }
           }
          var sections = ['cart-drawer', 'cart-icon-bubble'];
-         // Two requests: gifts first so discount can apply, then main product
-         function addMainProduct() {
+         function addOneItem(itemsPayload) {
            return fetch('/cart/add.js', {
              method: 'POST',
              headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({ items: new_arr, sections: sections })
+             body: JSON.stringify({ items: itemsPayload, sections: sections })
            }).then(function(res) {
              if (!res.ok) return res.json().then(function(err) { throw new Error(err.description || err.message || 'Cart add failed'); });
              return res.json();
            });
          }
-         var promise = arr.length > 0
-           ? fetch('/cart/add.js', {
-               method: 'POST',
-               headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify({ items: arr, sections: sections })
-             })
-               .then(function(res) {
-                 if (!res.ok) return res.json().then(function(err) { throw new Error(err.description || err.message || 'Cart add failed'); });
-                 return res.json();
-               })
-               .then(function() { return addMainProduct(); })
-           : addMainProduct();
+         function addMainProduct() {
+           return addOneItem(new_arr);
+         }
+         // Add each gift in its own request, then main product (so no item is dropped)
+         var promise = Promise.resolve();
+         arr.forEach(function(item) {
+           promise = promise.then(function() { return addOneItem([item]); });
+         });
+         promise = promise.then(function() { return addMainProduct(); });
          promise
             .then(function(response) {
                 pro_submit_btn.classList.remove('loading');
