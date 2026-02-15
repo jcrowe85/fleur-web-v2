@@ -1455,16 +1455,16 @@ if(pro_submit_btn){
               .then(response => response.json())
               .then(response =>  {
                 const cartDrawer = document.querySelector('cart-drawer');
-                cartDrawer.classList.remove('is-empty');
+                // return false;
+                cartDrawer.classList.remove('is-empty');          
                 cartDrawer.renderContents(response);
+                
                 pro_submit_btn.classList.remove('loading');
+  
                 var time = document.querySelector('cart-drawer').getAttribute('data-timer');
                 window.cart_limit = time * 60 * 1000;
+  
               })
-            })
-            .catch(function(err) {
-              pro_submit_btn.classList.remove('loading');
-              console.error('Cart add failed:', err);
             })
     }, 100);
         
