@@ -1428,43 +1428,32 @@ if(pro_submit_btn){
             }
           }
          var sections = ['cart-drawer', 'cart-icon-bubble'];
+         // Single cart/add.js request with serum + gifts so Shopify (and Klaviyo abandoned cart) see full cart atomically
+         var allItems = arr.concat(new_arr);
             fetch('/cart/add.js', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                  items: arr,
+                  items: allItems,
                 sections: sections
               }),
             })
             .then(response => response.json())
             .then(response =>  {
-				pro_submit_btn.classList.remove('loading');
-                var sections = ['cart-drawer', 'cart-icon-bubble'];
-              fetch('/cart/add.js', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    items: new_arr,
-                  sections: sections
-                }),
-              })
-              .then(response => response.json())
-              .then(response =>  {
-                const cartDrawer = document.querySelector('cart-drawer');
-                // return false;
-                cartDrawer.classList.remove('is-empty');          
-                cartDrawer.renderContents(response);
-                
                 pro_submit_btn.classList.remove('loading');
-  
-                var time = document.querySelector('cart-drawer').getAttribute('data-timer');
-                window.cart_limit = time * 60 * 1000;
-  
-              })
+                const cartDrawer = document.querySelector('cart-drawer');
+                if (cartDrawer) {
+                  cartDrawer.classList.remove('is-empty');
+                  cartDrawer.renderContents(response);
+                }
+                var time = document.querySelector('cart-drawer') && document.querySelector('cart-drawer').getAttribute('data-timer');
+                if (time) window.cart_limit = time * 60 * 1000;
+            })
+            .catch(function(err) {
+              pro_submit_btn.classList.remove('loading');
+              console.error('Cart add failed:', err);
             })
     }, 100);
         
