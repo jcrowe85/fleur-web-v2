@@ -106,7 +106,7 @@
     "month_year": "%B %Y"
   },
   "newsletter": {
-    "label": "Sign up for our Newsletter", 
+    "label": "Sign up for our Newsletter",
     "success": "Thanks for subscribing",
     "button_label": "Subscribe",
     "button_label_request": "Send request"
@@ -170,7 +170,7 @@
   "products": {
     "product": {
       "back": "Collection",
-      "add_to_cart": "Start Now", 
+      "add_to_cart": "Start Now",
       "on_sale": "Sale",
       "choose_product_options": "Choose options for {{ product_name }}",
       "product_variants": "Product variants",
@@ -568,6 +568,13 @@
       "max_characters": "{{ max_chars }} characters max",
       "send_on": "YYYY-MM-DD",
       "send_on_label": "Send on (optional)"
+    }
+  },
+  "shopify": {
+    "checkout": {
+      "alternative_payment_method_banner": {
+        "or": "★★★★★ Rated 4.9/5 by over 2.3k satisfied customers"
+      }
     }
   }
 }
